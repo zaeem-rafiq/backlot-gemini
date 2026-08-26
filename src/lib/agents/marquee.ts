@@ -124,17 +124,20 @@ export class MarqueeAgent {
       }
     }
 
-    if (marketEvidence.length === 0) {
-      marketEvidence = this.parallelClient.getFallbackCitations(
-        `${scriptParse.title} indie short film festival market comps`,
-        "Verified historical indie short distribution and festival programming data."
-      );
+    if (marketEvidence.length > 0) {
+      onLog?.("info", `Marquee incorporated ${marketEvidence.length} live Parallel market citation(s).`);
+    } else {
+      onLog?.("info", "Marquee running with live market search offline. Pitch kit grounded in script, coverage, and budget numbers.");
     }
-
-    onLog?.("info", `Marquee incorporated ${marketEvidence.length} live Parallel market citations.`);
 
     // 2. Synthesize Pitch Kit with Gemini
     const budgetTotalFormatted = `$${budget.summary.grandTotal.toLocaleString()}`;
+
+    const marketResearchContext = marketEvidence.length > 0
+      ? `MARKET RESEARCH EVIDENCE (RETRIEVED LIVE VIA PARALLEL SEARCH API):
+${marketEvidence.map((e) => `- [${e.title}](${e.url}): ${e.snippet}`).join("\n")}`
+      : `MARKET RESEARCH EVIDENCE:
+[Live Parallel Search API market queries offline/unconfigured. Do NOT hallucinate fake box office statistics or fake external URLs. Ground festival strategy solely in established festival profiles.]`;
 
     const prompt = `Synthesize a comprehensive pitch kit and greenlight deck for the screenplay '${scriptParse.title}'.
 
@@ -147,8 +150,7 @@ SCREENPLAY METRICS:
 - Ledger Audited Budget Total: ${budgetTotalFormatted} across ${budget.sections.length} production categories.
 - Shoot Days: ${budget.sections.find((s) => s.category === "Crew")?.items[0]?.qty || "N/A"} days.
 
-MARKET RESEARCH EVIDENCE (FROM PARALLEL SEARCH API):
-${marketEvidence.map((e) => `- [${e.title}](${e.url}): ${e.snippet}`).join("\n")}
+${marketResearchContext}
 
 INSTRUCTIONS:
 - Craft a punchy tagline under 10 words.

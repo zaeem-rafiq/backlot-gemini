@@ -48,9 +48,9 @@ export class ParallelSearchClient {
     if (!this.isConfigured()) {
       onLog?.(
         "warn",
-        "PARALLEL_API_KEY not configured. Using calibrated historical market index."
+        "PARALLEL_API_KEY not configured. Live market research unavailable."
       );
-      return this.getFallbackCitations(query, options.marketContext);
+      return [];
     }
 
     try {
@@ -75,9 +75,9 @@ export class ParallelSearchClient {
         const errorText = await response.text().catch(() => "");
         onLog?.(
           "warn",
-          `Parallel Search API returned HTTP ${response.status}: ${errorText}. Falling back to cached market index.`
+          `Parallel Search API returned HTTP ${response.status}: ${errorText}. Live market research unavailable.`
         );
-        return this.getFallbackCitations(query, options.marketContext);
+        return [];
       }
 
       const data: ParallelRawSearchResponse = await response.json();
@@ -97,7 +97,6 @@ export class ParallelSearchClient {
           snippet = item.snippet.trim();
         }
 
-        // Clean snippet length
         if (snippet.length > 280) {
           snippet = snippet.slice(0, 277) + "...";
         }
@@ -113,7 +112,11 @@ export class ParallelSearchClient {
       }
 
       if (results.length === 0) {
-        return this.getFallbackCitations(query, options.marketContext);
+        onLog?.(
+          "warn",
+          "Parallel Search returned 0 matching results for query."
+        );
+        return [];
       }
 
       onLog?.(
@@ -124,52 +127,13 @@ export class ParallelSearchClient {
     } catch (err) {
       onLog?.(
         "warn",
-        `Parallel Search API network error: ${String(err)}. Using calibrated market evidence.`
+        `Parallel Search API call failed: ${String(err)}. Live market research unavailable.`
       );
-      return this.getFallbackCitations(query, options.marketContext);
+      return [];
     }
   }
 
-  public getFallbackCitations(
-    query: string,
-    marketContext?: string
-  ): ParallelSourceCitation[] {
-    const qLower = query.toLowerCase();
-
-    if (qLower.includes("festival") || qLower.includes("sundance") || qLower.includes("short")) {
-      return [
-        {
-          title: "Sundance Film Festival: Short Film Program Track Record",
-          url: "https://www.sundance.org/festivals/short-film-program",
-          snippet: "Narrative sci-fi and thriller shorts with tight structural containment have achieved top programmer selection rates (over 12,000 annual submissions).",
-          query,
-          relevance: marketContext || "Validates festival submission tier and curatorial programming profile.",
-        },
-        {
-          title: "SXSW Midnighters & Narrative Shorts Selection Trends",
-          url: "https://www.sxsw.com/film-festival/shorts",
-          snippet: "High-concept thrillers with practical physical effects and period audio aesthetics rank among the highest audience engagement scores in short format showcases.",
-          query,
-          relevance: marketContext || "Validates midnight genre and narrative short film festival positioning.",
-        },
-      ];
-    }
-
-    return [
-      {
-        title: "The Vast of Night — Production & Festival Case Study",
-        url: "https://variety.com/2019/film/reviews/the-vast-of-night-review-1203348630",
-        snippet: "Andrew Patterson's 1950s radio-switchboard sci-fi thriller grossed critical acclaim after winning Slamdance Audience Award, demonstrating high ROI for audio-driven atmospheric thrillers.",
-        query,
-        relevance: marketContext || "Primary comparable for audio-driven high-tension mystery premise.",
-      },
-      {
-        title: "Indie Short Film Budgeting & Acquisition Benchmarks",
-        url: "https://filmmakermagazine.com/short-film-distribution-roi",
-        snippet: "Sub-$20k contained narrative shorts with professional 1st AD breakdowns and clear festival strategies yield the strongest festival showcase to feature packaging conversion.",
-        query,
-        relevance: marketContext || "Benchmarking line-item budget efficiency and festival distribution ROI.",
-      },
-    ];
+  public getFallbackCitations(): ParallelSourceCitation[] {
+    return [];
   }
 }
