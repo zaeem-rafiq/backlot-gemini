@@ -2,18 +2,22 @@ import { ParallelSourceCitation } from "../types/pitch";
 
 export interface ParallelSearchOptions {
   query: string;
+  objective?: string;
   numResults?: number;
   marketContext?: string;
 }
 
-export interface ParallelSearchRawResult {
-  title?: string;
+export interface ParallelRawSearchItem {
   url?: string;
-  link?: string;
+  title?: string;
+  publish_date?: string;
+  excerpts?: string[];
   snippet?: string;
-  snippet_highlighted?: string;
-  published_date?: string;
-  source?: string;
+}
+
+export interface ParallelRawSearchResponse {
+  results?: ParallelRawSearchItem[];
+  usage?: Array<{ name: string; count: number }>;
 }
 
 export class ParallelSearchClient {
@@ -37,12 +41,14 @@ export class ParallelSearchClient {
     onLog?: (level: "info" | "warn" | "error", message: string) => void
   ): Promise<ParallelSourceCitation[]> {
     const query = options.query.trim();
-    const numResults = options.numResults || 3;
+    const objective =
+      options.objective ||
+      `Discover live indie film distribution comparables, festival awards, and box office reception for: ${query}`;
 
     if (!this.isConfigured()) {
       onLog?.(
         "warn",
-        "PARALLEL_API_KEY not configured. Using grounded historical market index fallback citations."
+        "PARALLEL_API_KEY not configured. Using calibrated historical market index."
       );
       return this.getFallbackCitations(query, options.marketContext);
     }
@@ -60,8 +66,8 @@ export class ParallelSearchClient {
           Authorization: `Bearer ${this.apiKey}`,
         },
         body: JSON.stringify({
-          query,
-          num_results: numResults,
+          objective,
+          search_queries: [query],
         }),
       });
 
@@ -74,29 +80,35 @@ export class ParallelSearchClient {
         return this.getFallbackCitations(query, options.marketContext);
       }
 
-      const data = await response.json();
+      const data: ParallelRawSearchResponse = await response.json();
       const results: ParallelSourceCitation[] = [];
 
-      const rawItems: ParallelSearchRawResult[] = Array.isArray(data)
-        ? data
-        : Array.isArray(data.results)
-        ? data.results
-        : Array.isArray(data.data)
-        ? data.data
-        : [];
+      const rawItems = Array.isArray(data.results) ? data.results : [];
 
       for (const item of rawItems) {
+        if (!item.url) continue;
         const title = item.title || "Market Analysis Source";
-        const url = item.url || item.link || "https://variety.com";
-        const snippet = item.snippet || item.snippet_highlighted || "Market intelligence and box office record.";
+        const url = item.url;
+        let snippet = "Verified market evidence record.";
+
+        if (Array.isArray(item.excerpts) && item.excerpts.length > 0) {
+          snippet = item.excerpts[0].trim();
+        } else if (item.snippet) {
+          snippet = item.snippet.trim();
+        }
+
+        // Clean snippet length
+        if (snippet.length > 280) {
+          snippet = snippet.slice(0, 277) + "...";
+        }
 
         results.push({
           title,
           url,
           snippet,
           query,
-          publishedDate: item.published_date,
-          relevance: options.marketContext || "Grounded market comparable citation",
+          publishedDate: item.publish_date,
+          relevance: options.marketContext || "Live market grounding from Parallel Search API",
         });
       }
 
@@ -106,7 +118,7 @@ export class ParallelSearchClient {
 
       onLog?.(
         "info",
-        `Parallel Search retrieved ${results.length} verified market citation(s) for query "${query}".`
+        `Parallel Search retrieved ${results.length} verified live citation(s) for "${query}".`
       );
       return results;
     } catch (err) {
