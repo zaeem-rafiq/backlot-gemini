@@ -30,9 +30,10 @@ This file defines the project-level rules, architecture invariants, and testing 
 
 ## 3. Verified Model Fallback Chains (Gemini Enterprise Agent Platform / Vertex AI)
 
-- **Reasoning & Script Parsing (Ink, Slate):** `gemini-2.5-flash` → `gemini-2.5-pro` → `gemini-2.5-flash-lite` (authenticated via Google Cloud ADC on `us-central1-aiplatform.googleapis.com`)
-- **Fast Synthesis & Packaging (Easel, Marquee):** `gemini-2.5-flash-lite` → `gemini-2.5-flash`
-- **Visual Previz / Storyboard (Easel):** `gemini-2.5-flash-image` → `gemini-3-pro-image` (gracefully degrades to Previz Cards when unbilled)
+- **Global Agent Platform Endpoint:** `global-aiplatform.googleapis.com` (authenticated via Google Cloud ADC on `polygraph-hackathon`)
+- **Reasoning & Script Parsing (Ink, Slate):** `gemini-3.5-flash` → `gemini-3-flash-preview` → `gemini-2.5-flash` → `gemini-2.5-pro`
+- **Fast Synthesis & Packaging (Easel, Marquee):** `gemini-3.1-flash-lite` → `gemini-2.5-flash-lite` → `gemini-2.5-flash`
+- **Visual Previz / Storyboard (Easel):** `gemini-2.5-flash-image` → `gemini-3.1-flash-image` → `gemini-3-pro-image` (degrades to Previz Cards if unrendered)
 - **Local Fallback Chains (Gemini Developer API):** `gemini-3.5-flash` → `gemini-2.5-flash` → `gemini-2.5-flash-lite`
 
 ### 429 & Quota Handling

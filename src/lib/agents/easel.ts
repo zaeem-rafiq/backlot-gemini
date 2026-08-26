@@ -131,10 +131,13 @@ ${breakdown.breakdowns.map((b) => `Scene ${b.sceneId} (Complexity ${b.complexity
     frame: Frame,
     onLog?: (level: "info" | "warn" | "error", message: string) => void
   ): Promise<string | undefined> {
-    onLog?.("info", `Rendering visual frame ${frame.frameId} via Gemini image chain...`);
-
-    // In a billed environment, calls Gemini image generation.
-    // In free tier / previz mode, gracefully returns undefined to preserve zero-quota operation.
-    return undefined;
+    onLog?.("info", `Rendering visual frame ${frame.frameId} via Gemini Enterprise Agent Platform image chain...`);
+    try {
+      const result = await this.client.generateImage(frame.imagePrompt, { onLog });
+      return result.imageUrl;
+    } catch (err) {
+      onLog?.("warn", `Frame ${frame.frameId} image generation skipped: ${String(err)}. Degraded to previz card.`);
+      return undefined;
+    }
   }
 }

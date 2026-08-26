@@ -5,7 +5,7 @@ import {
   classifyGeminiError,
   COOLDOWN_DAILY_EXHAUSTION_MS,
   COOLDOWN_MODEL_NOT_FOUND_MS,
-  VERTEX_AGENT_PLATFORM_CHAINS,
+  AGENT_PLATFORM_GLOBAL_CHAINS,
   DEVELOPER_API_CHAINS,
 } from "./fallback-chain";
 
@@ -21,6 +21,12 @@ export interface GenerateStructuredOptions {
 export interface GenerateStructuredResult<T> {
   data: T;
   rawText: string;
+  modelUsed: string;
+  durationMs: number;
+}
+
+export interface GenerateImageResult {
+  imageUrl: string;
   modelUsed: string;
   durationMs: number;
 }
@@ -42,17 +48,17 @@ export class GeminiStudioClient {
       options.project ||
       process.env.GCP_PROJECT ||
       process.env.GOOGLE_CLOUD_PROJECT ||
-      process.env.PROJECT_ID;
-    this.location = options.location || process.env.GCP_LOCATION || "us-central1";
+      process.env.PROJECT_ID ||
+      "polygraph-hackathon";
+    this.location = options.location || process.env.GCP_LOCATION || "global";
 
-    // Select Vertex / Gemini Enterprise Agent Platform if project is present or explicitly enabled
     this.isVertex = Boolean(
       options.vertexai ||
         process.env.USE_VERTEX === "true" ||
         (this.project && this.project.trim().length > 0)
     );
 
-    const chains = this.isVertex ? VERTEX_AGENT_PLATFORM_CHAINS : DEVELOPER_API_CHAINS;
+    const chains = this.isVertex ? AGENT_PLATFORM_GLOBAL_CHAINS : DEVELOPER_API_CHAINS;
     this.fallbackManager = fallbackManager || new ModelFallbackManager(chains);
   }
 
@@ -62,6 +68,7 @@ export class GeminiStudioClient {
     authMechanism: string;
     project?: string;
     location?: string;
+    imageGenerationAvailable: boolean;
   } {
     if (this.isVertex) {
       return {
@@ -70,12 +77,14 @@ export class GeminiStudioClient {
         authMechanism: "Application Default Credentials (ADC / Service Account IAM)",
         project: this.project,
         location: this.location,
+        imageGenerationAvailable: true,
       };
     }
     return {
       backend: "Gemini Developer API",
       endpoint: "generativelanguage.googleapis.com",
       authMechanism: "API Key (Local Fallback)",
+      imageGenerationAvailable: false,
     };
   }
 
@@ -94,6 +103,46 @@ export class GeminiStudioClient {
       );
     }
     return new GoogleGenAI({ apiKey: this.apiKey });
+  }
+
+  public async generateImage(
+    prompt: string,
+    options: { onLog?: (level: "info" | "warn" | "error", message: string) => void } = {}
+  ): Promise<GenerateImageResult> {
+    const startTime = Date.now();
+    const candidateModels = this.fallbackManager.getCandidateModels("image");
+    const ai = this.getClient();
+    let lastError: unknown = null;
+
+    for (const model of candidateModels) {
+      try {
+        options.onLog?.("info", `Rendering visual frame with ${model} on Agent Platform (${this.location})...`);
+        const res = await ai.models.generateContent({
+          model,
+          contents: prompt,
+        });
+
+        const candidate = res.candidates?.[0];
+        const parts = candidate?.content?.parts || [];
+        for (const p of parts) {
+          if (p.inlineData?.data && p.inlineData.mimeType) {
+            const dataUrl = `data:${p.inlineData.mimeType};base64,${p.inlineData.data}`;
+            const durationMs = Date.now() - startTime;
+            options.onLog?.("info", `Rendered visual frame via ${model} in ${durationMs}ms.`);
+            return {
+              imageUrl: dataUrl,
+              modelUsed: model,
+              durationMs,
+            };
+          }
+        }
+      } catch (err) {
+        lastError = err;
+        options.onLog?.("warn", `Image rendering attempt failed on ${model}: ${String(err)}`);
+      }
+    }
+
+    throw new Error(`Failed to generate image across image fallback models. Last error: ${String(lastError)}`);
   }
 
   public async generateStructured<T>(
@@ -119,7 +168,7 @@ export class GeminiStudioClient {
         try {
           options.onLog?.(
             "info",
-            `Dispatching task to ${model} on ${backendInfo.backend} via ${backendInfo.authMechanism} (attempt ${retryCount + 1}/${maxRetries + 1})...`
+            `Dispatching task to ${model} on ${backendInfo.backend} (${backendInfo.location}) (attempt ${retryCount + 1}/${maxRetries + 1})...`
           );
 
           const config: Record<string, unknown> = {

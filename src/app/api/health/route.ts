@@ -1,12 +1,14 @@
 import { NextResponse } from "next/server";
 import { GeminiStudioClient } from "@/lib/ai/gemini-client";
 import { ParallelSearchClient } from "@/lib/parallel/client";
+import { ModelFallbackManager } from "@/lib/ai/fallback-chain";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
   const geminiClient = new GeminiStudioClient();
   const parallelClient = new ParallelSearchClient();
+  const fallbackManager = new ModelFallbackManager();
   const backendInfo = geminiClient.getBackendInfo();
 
   return NextResponse.json({
@@ -18,9 +20,11 @@ export async function GET() {
       auth: backendInfo.authMechanism,
       project: backendInfo.project || "N/A",
       location: backendInfo.location || "N/A",
-      models: {
-        reasoning: "gemini-2.5-flash -> gemini-2.5-pro -> gemini-2.5-flash-lite",
-        fast: "gemini-2.5-flash-lite -> gemini-2.5-flash",
+      imageGenerationAvailable: backendInfo.imageGenerationAvailable,
+      activeModelChains: {
+        reasoning: fallbackManager.getCandidateModels("reasoning"),
+        fast: fallbackManager.getCandidateModels("fast"),
+        image: fallbackManager.getCandidateModels("image"),
       },
     },
     partnerIntegration: {

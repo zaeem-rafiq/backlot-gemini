@@ -6,18 +6,21 @@ export interface ModelChainConfig {
   image: string[];
 }
 
-export const VERTEX_AGENT_PLATFORM_CHAINS: ModelChainConfig = {
+export const AGENT_PLATFORM_GLOBAL_CHAINS: ModelChainConfig = {
   reasoning: [
-    process.env.MODEL_REASONING_OVERRIDE || "gemini-2.5-flash",
+    process.env.MODEL_REASONING_OVERRIDE || "gemini-3.5-flash",
+    "gemini-3-flash-preview",
+    "gemini-2.5-flash",
     "gemini-2.5-pro",
-    "gemini-2.5-flash-lite",
   ],
   fast: [
-    process.env.MODEL_FAST_OVERRIDE || "gemini-2.5-flash-lite",
+    process.env.MODEL_FAST_OVERRIDE || "gemini-3.1-flash-lite",
+    "gemini-2.5-flash-lite",
     "gemini-2.5-flash",
   ],
   image: [
     process.env.MODEL_IMAGE_OVERRIDE || "gemini-2.5-flash-image",
+    "gemini-3.1-flash-image",
     "gemini-3-pro-image",
   ],
 };
@@ -30,23 +33,19 @@ export const DEVELOPER_API_CHAINS: ModelChainConfig = {
   ],
   fast: [
     process.env.MODEL_FAST_OVERRIDE || "gemini-3.1-flash-lite",
-    "gemini-2.5-flash",
     "gemini-2.5-flash-lite",
+    "gemini-2.5-flash",
   ],
   image: [
     process.env.MODEL_IMAGE_OVERRIDE || "gemini-3.1-flash-image",
-    "gemini-3-pro-image",
     "gemini-2.5-flash-image",
   ],
 };
 
-export const DEFAULT_MODEL_CHAINS: ModelChainConfig =
-  process.env.USE_VERTEX === "true" || process.env.GCP_PROJECT || process.env.GOOGLE_CLOUD_PROJECT
-    ? VERTEX_AGENT_PLATFORM_CHAINS
-    : DEVELOPER_API_CHAINS;
+export const DEFAULT_MODEL_CHAINS: ModelChainConfig = AGENT_PLATFORM_GLOBAL_CHAINS;
 
 export interface QuotaState {
-  modelCooldowns: Map<string, number>; // model -> epoch ms when cooldown expires
+  modelCooldowns: Map<string, number>;
 }
 
 const globalQuotaState: QuotaState = {
@@ -58,8 +57,8 @@ export const COOLDOWN_MODEL_NOT_FOUND_MS = 60 * 60 * 1000; // 1 hour
 
 export interface ErrorClassification {
   is429: boolean;
-  isDailyExhaustion: boolean; // true if retry delay > 60s or message indicates daily quota
-  isThrottle: boolean; // true if retry delay <= 60s
+  isDailyExhaustion: boolean;
+  isThrottle: boolean;
   is503: boolean;
   isModelNotFound: boolean;
   retryDelaySeconds?: number;
@@ -113,14 +112,6 @@ export function classifyGeminiError(error: unknown): ErrorClassification {
       } else {
         isThrottle = true;
       }
-    } else if (
-      errStr.includes("daily") ||
-      errStr.includes("day") ||
-      errStr.includes("free tier") ||
-      errStr.includes("limit: 0") ||
-      errStr.includes("billing")
-    ) {
-      isDailyExhaustion = true;
     } else {
       isDailyExhaustion = true;
     }
@@ -153,7 +144,6 @@ export class ModelFallbackManager {
     const chain = this.chains[task];
     const now = Date.now();
 
-    // Filter out models currently in cooldown
     const available = chain.filter((model) => {
       const cooldownUntil = this.quotaState.modelCooldowns.get(model);
       return !cooldownUntil || now >= cooldownUntil;
@@ -163,7 +153,6 @@ export class ModelFallbackManager {
       return available;
     }
 
-    // If all models in cooldown, return the full chain in order of earliest cooldown expiration
     return [...chain].sort((a, b) => {
       const aTime = this.quotaState.modelCooldowns.get(a) || 0;
       const bTime = this.quotaState.modelCooldowns.get(b) || 0;
