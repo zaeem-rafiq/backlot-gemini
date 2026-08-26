@@ -6,7 +6,23 @@ export interface ModelChainConfig {
   image: string[];
 }
 
-export const DEFAULT_MODEL_CHAINS: ModelChainConfig = {
+export const VERTEX_AGENT_PLATFORM_CHAINS: ModelChainConfig = {
+  reasoning: [
+    process.env.MODEL_REASONING_OVERRIDE || "gemini-2.5-flash",
+    "gemini-2.5-pro",
+    "gemini-2.5-flash-lite",
+  ],
+  fast: [
+    process.env.MODEL_FAST_OVERRIDE || "gemini-2.5-flash-lite",
+    "gemini-2.5-flash",
+  ],
+  image: [
+    process.env.MODEL_IMAGE_OVERRIDE || "gemini-2.5-flash-image",
+    "gemini-3-pro-image",
+  ],
+};
+
+export const DEVELOPER_API_CHAINS: ModelChainConfig = {
   reasoning: [
     process.env.MODEL_REASONING_OVERRIDE || "gemini-3.5-flash",
     "gemini-3-flash-preview",
@@ -23,6 +39,11 @@ export const DEFAULT_MODEL_CHAINS: ModelChainConfig = {
     "gemini-2.5-flash-image",
   ],
 };
+
+export const DEFAULT_MODEL_CHAINS: ModelChainConfig =
+  process.env.USE_VERTEX === "true" || process.env.GCP_PROJECT || process.env.GOOGLE_CLOUD_PROJECT
+    ? VERTEX_AGENT_PLATFORM_CHAINS
+    : DEVELOPER_API_CHAINS;
 
 export interface QuotaState {
   modelCooldowns: Map<string, number>; // model -> epoch ms when cooldown expires
@@ -77,7 +98,6 @@ export function classifyGeminiError(error: unknown): ErrorClassification {
     errStr.includes("Too Many Requests");
 
   let retryDelaySeconds: number | undefined;
-  // Try to parse retry delay from error message (e.g. 'retry after 72s' or 'RESOURCE_EXHAUSTED: ... retry in 120s')
   const retryMatch = errStr.match(/retry(?: after| in)? (\d+)(?:\s*(?:s|seconds))?/i);
   if (retryMatch && retryMatch[1]) {
     retryDelaySeconds = parseInt(retryMatch[1], 10);
@@ -102,7 +122,6 @@ export function classifyGeminiError(error: unknown): ErrorClassification {
     ) {
       isDailyExhaustion = true;
     } else {
-      // Default to daily exhaustion on free-tier 429 to protect fallback chain
       isDailyExhaustion = true;
     }
   }
@@ -167,6 +186,6 @@ export class ModelFallbackManager {
 
   public isModelInCooldown(model: string): boolean {
     const cooldownUntil = this.quotaState.modelCooldowns.get(model);
-    return !!cooldownUntil && Date.now() < cooldownUntil;
+    return !cooldownUntil ? false : Date.now() < cooldownUntil;
   }
 }

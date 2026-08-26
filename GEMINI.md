@@ -28,16 +28,17 @@ This file defines the project-level rules, architecture invariants, and testing 
 
 ---
 
-## 3. Verified Model Fallback Chains
+## 3. Verified Model Fallback Chains (Gemini Enterprise Agent Platform / Vertex AI)
 
-- **Reasoning / Extraction (Ink, Slate):** `gemini-3.5-flash` → `gemini-3-flash-preview` → `gemini-2.5-flash`
-- **Fast Generation:** `gemini-3.1-flash-lite` → `gemini-2.5-flash` → `gemini-2.5-flash-lite`
-- **Visual Previz / Image (Easel):** `gemini-3.1-flash-image` → `gemini-3-pro-image` → `gemini-2.5-flash-image` (degrades to previz card)
+- **Reasoning & Script Parsing (Ink, Slate):** `gemini-2.5-flash` → `gemini-2.5-pro` → `gemini-2.5-flash-lite` (authenticated via Google Cloud ADC on `us-central1-aiplatform.googleapis.com`)
+- **Fast Synthesis & Packaging (Easel, Marquee):** `gemini-2.5-flash-lite` → `gemini-2.5-flash`
+- **Visual Previz / Storyboard (Easel):** `gemini-2.5-flash-image` → `gemini-3-pro-image` (gracefully degrades to Previz Cards when unbilled)
+- **Local Fallback Chains (Gemini Developer API):** `gemini-3.5-flash` → `gemini-2.5-flash` → `gemini-2.5-flash-lite`
 
-### 429 Handling
+### 429 & Quota Handling
 - **Daily Exhaustion (>60s retry delay):** Apply ~10-minute cooldown and step down the fallback chain.
 - **Per-minute Throttling (<60s retry delay):** Exponential backoff and retry the same model.
-- **Crew Rail Logging:** All model fallbacks and retries must emit live log events to the Director stream.
+- **Crew Rail Logging:** All model fallbacks, retries, and ADC authentication events emit live log events to the Director stream.
 
 ---
 

@@ -29,13 +29,13 @@ export type PosterConcept = z.infer<typeof PosterConceptSchema>;
 
 export const PitchKitSchema = z.object({
   tagline: z.string().describe("Punchy market hook under 10 words"),
-  loglines: z.array(z.string()).length(3).describe("Exactly 3 calibrated loglines, sharpest first"),
+  loglines: z.array(z.string()).min(2).max(5).describe("Calibrated loglines, sharpest first"),
   whyNow: z.string().describe("Cultural, genre, or technological timing rationale"),
   audience: z.object({
     primary: z.string().describe("Primary demographic and psychographic audience"),
     secondary: z.string().describe("Adjacent expansion audience"),
   }),
-  festivalStrategy: z.array(FestivalTargetSchema).min(2).max(4),
+  festivalStrategy: z.array(FestivalTargetSchema).min(1).max(8),
   posterConcept: PosterConceptSchema,
   pitchParagraph: z.string().describe("3-5 sentence executive pitch paragraph explicitly citing coverage verdict and exact budget total"),
   marketEvidence: z.array(ParallelSourceCitationSchema).default([]).describe("Live market citations retrieved via Parallel Search API"),
