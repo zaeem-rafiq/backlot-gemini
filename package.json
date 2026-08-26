@@ -9,8 +9,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "vitest run",
-    "test:watch": "vitest"
+    "test": "vitest run --exclude 'evals/**'",
+    "test:watch": "vitest --exclude 'evals/**'",
+    "test:evals": "vitest run evals/",
+    "evals": "vitest run evals/"
   },
   "dependencies": {
     "@google/genai": "^2.19.0",

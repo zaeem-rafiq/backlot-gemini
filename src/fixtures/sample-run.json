@@ -1,0 +1,831 @@
+{
+  "id": "sample_run_frequency_zero",
+  "createdAt": "2026-08-26T00:00:00.000Z",
+  "title": "FREQUENCY ZERO",
+  "screenplayText": "TITLE: FREQUENCY ZERO\nFORMAT: Short Film (12 Pages)\nAUTHOR: Zaeem Khan\n\nSCENE 1\nINT. K-DESERT BROADCAST BOOTH - NIGHT [1 4/8 PAGES]\nA smoke-hazed 1970s radio studio lost in the Nevada expanse. Amber VU meters dance to silence. \nJACK (50s, bloodshot eyes, unlit cigarette behind his ear) leans into an RCA ribbon microphone.\nMAYA (20s, grease-smudged knuckles, headphones around her neck) watches through the glass from the master rack.\n\nJACK\n(into mic)\nThree-fourteen in the morning, high desert. You're on Frequency Zero. If anybody's breathing out past Mile Marker 80... you're not alone.\n\nJack drops a needle onto a battered acetate record. A strange HIGH-FREQUENCY WHINE pierces the monitor speakers.\n\nMAYA\nJack, cut the feed! That signal isn't coming from our relay tower.\n\nJACK\nWhere's it pulling from, Maya?\n\nMAYA\n(checking oscilloscope)\nIt's bouncing off the ionosphere... but the time-code header is stamped twenty-four hours ahead. Tomorrow night.",
+  "status": "complete",
+  "imagesEnabled": false,
+  "modelsUsed": [
+    "gemini-3.5-flash",
+    "gemini-3.1-flash-lite",
+    "parallel-search-api"
+  ],
+  "scriptParse": {
+    "title": "FREQUENCY ZERO",
+    "format": "short",
+    "logline": "When an isolated graveyard-shift desert radio DJ intercepts an impossible broadcast from 24 hours in the future predicting a fatal highway collapse, he must risk everything on live air to stop an oncoming night freight convoy.",
+    "scenes": [
+      {
+        "id": 1,
+        "slugline": "INT. K-DESERT BROADCAST BOOTH - NIGHT",
+        "intExt": "INT",
+        "location": "K-DESERT BROADCAST BOOTH",
+        "timeOfDay": "NIGHT",
+        "summary": "DJ Jack Mercer hosts his late-night broadcast when engineer Maya detects an impossible future-dated audio broadcast bouncing off the ionosphere.",
+        "characters": ["JACK", "MAYA"],
+        "pageEighths": 12
+      },
+      {
+        "id": 2,
+        "slugline": "INT. TRANSMITTER ROOM - NIGHT",
+        "intExt": "INT",
+        "location": "TRANSMITTER ROOM",
+        "timeOfDay": "NIGHT",
+        "summary": "Maya and Jack battle a sparking, smoking 50k-watt transmitter coil that threatens to ignite the station.",
+        "characters": ["JACK", "MAYA"],
+        "pageEighths": 6
+      },
+      {
+        "id": 3,
+        "slugline": "EXT. TRANSMITTER TOWER - NIGHT",
+        "intExt": "EXT",
+        "location": "TRANSMITTER TOWER",
+        "timeOfDay": "NIGHT",
+        "summary": "Jack steps beneath the tower in the howling wind and hears his own voice reporting his death on tomorrow's broadcast.",
+        "characters": ["JACK"],
+        "pageEighths": 4
+      },
+      {
+        "id": 4,
+        "slugline": "INT. K-DESERT BROADCAST BOOTH - DAWN",
+        "intExt": "INT",
+        "location": "K-DESERT BROADCAST BOOTH",
+        "timeOfDay": "DAWN",
+        "summary": "Jack and Maya explain the prophetic broadcast to a skeptical Deputy Reyes at first light.",
+        "characters": ["JACK", "MAYA", "DEPUTY REYES"],
+        "pageEighths": 4
+      },
+      {
+        "id": 5,
+        "slugline": "INT. K-DESERT BROADCAST BOOTH - DAY",
+        "intExt": "INT",
+        "location": "K-DESERT BROADCAST BOOTH",
+        "timeOfDay": "DAY",
+        "summary": "Maya rigs emergency transmitter frequencies while Jack plots the doomed freight truck's route on a map.",
+        "characters": ["JACK", "MAYA"],
+        "pageEighths": 10
+      },
+      {
+        "id": 6,
+        "slugline": "EXT. DESERT HIGHWAY 64 - DAY",
+        "intExt": "EXT",
+        "location": "DESERT HIGHWAY 64",
+        "timeOfDay": "DAY",
+        "summary": "Jack drives to the highway checkpoint and learns from road workers that bridge inspections were postponed.",
+        "characters": ["JACK"],
+        "pageEighths": 8
+      },
+      {
+        "id": 7,
+        "slugline": "EXT. CANYON OVERLOOK - DUSK",
+        "intExt": "EXT",
+        "location": "CANYON OVERLOOK",
+        "timeOfDay": "DUSK",
+        "summary": "At dusk, Jack discovers sheared structural rivets on the canyon bridge span and radios Maya as the storm hits.",
+        "characters": ["JACK"],
+        "pageEighths": 4
+      },
+      {
+        "id": 8,
+        "slugline": "EXT. CANYON BRIDGE - NIGHT",
+        "intExt": "EXT",
+        "location": "CANYON BRIDGE",
+        "timeOfDay": "NIGHT",
+        "summary": "In a raging rainstorm, Jack flags down the runaway freight truck with a flare and dives across the guardrail to survive the skid.",
+        "characters": ["JACK"],
+        "pageEighths": 14
+      },
+      {
+        "id": 9,
+        "slugline": "INT. K-DESERT BROADCAST BOOTH - NIGHT",
+        "intExt": "INT",
+        "location": "K-DESERT BROADCAST BOOTH",
+        "timeOfDay": "NIGHT",
+        "summary": "An injured, bandaged Jack returns to the microphone to close the broadcast as the future timeline resets.",
+        "characters": ["JACK", "MAYA"],
+        "pageEighths": 8
+      },
+      {
+        "id": 10,
+        "slugline": "EXT. RADIO STATION LOT - DAWN",
+        "intExt": "EXT",
+        "location": "RADIO STATION LOT",
+        "timeOfDay": "DAWN",
+        "summary": "Jack and Maya share coffee on the truck tailgate at sunrise as the station broadcasts into a peaceful new morning.",
+        "characters": ["JACK", "MAYA"],
+        "pageEighths": 4
+      }
+    ]
+  },
+  "coverage": {
+    "logline": "When an isolated graveyard-shift desert radio DJ intercepts an impossible broadcast from 24 hours in the future predicting a fatal highway collapse, he must risk everything on live air to stop an oncoming night freight convoy.",
+    "synopsis": "Set in a remote 1970s Nevada broadcast station, FREQUENCY ZERO opens on veteran night-shift DJ Jack Mercer and his sharp young engineer Maya detecting a rogue radio transmission stamped 24 hours in the future. As the future audio details a catastrophic gorge collapse claiming Jack's own life, Jack and Maya scramble to warn local authorities before embarking on a dangerous race against time. Jack reaches the canyon bridge during a violent desert storm, risking his life with a magnesium flare to stop an oncoming freight semi-truck from plummeting into the abyss, successfully altering the timeline before returning to sign off his final morning broadcast.",
+    "genre": ["Sci-Fi", "Thriller", "Neo-Noir"],
+    "tone": "Atmospheric, analog suspense with relentless ticking-clock dread",
+    "themes": ["Determinism vs Free Will", "Human Connection in Isolation", "Quiet Heroism"],
+    "comparables": [
+      {
+        "title": "The Vast of Night",
+        "year": 2019,
+        "why": "Atmospheric, radio-centric retro mystery with razor-sharp contained pacing."
+      },
+      {
+        "title": "Frequency",
+        "year": 2000,
+        "why": "Cross-time radio communications preventing impending real-world catastrophe."
+      }
+    ],
+    "strengths": [
+      "Auditory-driven high concept that maximizes low-budget indie production value",
+      "Compelling dynamic between weary DJ Jack and engineer Maya",
+      "Contained physical locations allowing high-craft lighting and acoustic design"
+    ],
+    "concerns": [
+      "Scene 8 night rain bridge sequence demands precise stunt and rain rig coordination"
+    ],
+    "pacingNotes": "Exemplary three-act escalation within 12 pages. The mystery hook is established in scene 1, investigative rising tension carries through scenes 2-7, and scene 8 delivers an explosive physical climax.",
+    "scores": {
+      "premise": 9,
+      "structure": 9,
+      "character": 8,
+      "dialogue": 8,
+      "marketability": 9
+    },
+    "verdict": "RECOMMEND",
+    "verdictRationale": "A masterclass in contained, high-concept narrative economy. FREQUENCY ZERO pairs an indelible sonic hook with airtight production pragmatism, making it an extraordinary festival contender and feature proof-of-concept.",
+    "pullQuote": "An electrifying masterclass in analog audio suspense."
+  },
+  "breakdown": {
+    "breakdowns": [
+      {
+        "sceneId": 1,
+        "cast": ["JACK", "MAYA"],
+        "background": [],
+        "props": ["ACETATE RECORD", "RCA RIBBON MICROPHONE", "OSCILLOSCOPE"],
+        "setDressing": ["VU METERS", "BROADCAST CONSOLE", "CARTRIDGE RACKS"],
+        "wardrobe": ["1970s CASUAL LINEN SHIRT", "DENIM WORK SHIRT"],
+        "makeupHair": ["TIRED EYES", "LIGHT SWEAT"],
+        "vehicles": [],
+        "sfx": [],
+        "vfx": [],
+        "stunts": [],
+        "animals": [],
+        "sound": ["HIGH FREQUENCY AUDIO WHINE", "STATIC BURST"],
+        "specialEquipment": ["VINTAGE AUDIO PROPS"],
+        "complexity": 2,
+        "complexityReason": "Studio dialogue scene with detailed practical audio dressing"
+      },
+      {
+        "sceneId": 2,
+        "cast": ["JACK", "MAYA"],
+        "background": [],
+        "props": ["FIRE EXTINGUISHER", "STEEL WRENCH"],
+        "setDressing": ["50KW TRANSMITTER CAGE", "GLOWING VACUUM TUBES"],
+        "wardrobe": [],
+        "makeupHair": ["GREASE SMUDGES"],
+        "vehicles": [],
+        "sfx": ["PRACTICAL ELECTRICAL SPARKS", "ACRID SMOKE PLUME"],
+        "vfx": ["VIOLET TUBE GLOW ENHANCEMENT"],
+        "stunts": [],
+        "animals": [],
+        "sound": ["TRANSFORMER OVERLOAD BUZZ"],
+        "specialEquipment": ["PRACTICAL SPARK RIG", "SMOKE MACHINE"],
+        "complexity": 3,
+        "complexityReason": "Practical electrical sparking and smoke effects on enclosed set"
+      },
+      {
+        "sceneId": 3,
+        "cast": ["JACK"],
+        "background": [],
+        "props": ["PORTABLE BATTERY RECEIVER"],
+        "setDressing": ["GRAVEL LOT", "300FT TOWER BASE"],
+        "wardrobe": ["WIND JACKET"],
+        "makeupHair": [],
+        "vehicles": [],
+        "sfx": ["WIND HOWL PRACTICAL FAN"],
+        "vfx": [],
+        "stunts": [],
+        "animals": [],
+        "sound": ["CRACKLING FUTURE RADIO V.O."],
+        "specialEquipment": [],
+        "complexity": 2,
+        "complexityReason": "Night exterior location with wind audio capture"
+      },
+      {
+        "sceneId": 4,
+        "cast": ["JACK", "MAYA", "DEPUTY REYES"],
+        "background": [],
+        "props": ["COFFEE MUG", "NOTEPAD"],
+        "setDressing": ["DUSTY VENETIAN BLINDS"],
+        "wardrobe": ["DUSTY COUNTY SHERIFF UNIFORM"],
+        "makeupHair": [],
+        "vehicles": [],
+        "sfx": [],
+        "vfx": [],
+        "stunts": [],
+        "animals": [],
+        "sound": [],
+        "specialEquipment": ["GOLDEN HOUR LIGHTING PACKAGE"],
+        "complexity": 2,
+        "complexityReason": "Multi-character dialogue scene with dawn lighting constraints"
+      },
+      {
+        "sceneId": 5,
+        "cast": ["JACK", "MAYA"],
+        "background": [],
+        "props": ["GREASE PENCIL", "SOLDERING IRON", "STATE TOPOGRAPHICAL MAP"],
+        "setDressing": ["WALL MAP", "MILITARY FREQUENCY TRANSCEIVER"],
+        "wardrobe": [],
+        "makeupHair": [],
+        "vehicles": [],
+        "sfx": [],
+        "vfx": [],
+        "stunts": [],
+        "animals": [],
+        "sound": [],
+        "specialEquipment": [],
+        "complexity": 2,
+        "complexityReason": "Standard interior studio day dialogue"
+      },
+      {
+        "sceneId": 6,
+        "cast": ["JACK"],
+        "background": ["2 HIGHWAY WORKERS"],
+        "props": ["DETOUR CONES", "CLIPBOARD"],
+        "setDressing": ["MILE MARKER 82 SIGN", "ASPHALT ROAD"],
+        "wardrobe": ["HIGH-VIS ORANGE VESTS", "HARD HATS"],
+        "makeupHair": ["SUNBURN / DUST"],
+        "vehicles": ["1978 CHEVY BLAZER", "COUNTY TRUCK"],
+        "sfx": ["DUST ROOSTER TAIL"],
+        "vfx": [],
+        "stunts": [],
+        "animals": [],
+        "sound": ["DISTANT HIGHWAY WINDS"],
+        "specialEquipment": ["CAMERA CAR MOUNT"],
+        "complexity": 3,
+        "complexityReason": "Day exterior road scene with picture vehicle, extras, and car mounts"
+      },
+      {
+        "sceneId": 7,
+        "cast": ["JACK"],
+        "background": [],
+        "props": ["HIGH-POWERED BINOCULARS", "TWO-WAY HANDHELD RADIO"],
+        "setDressing": ["CANYON OVERLOOK CLIFF", "WARNING SIGNS"],
+        "wardrobe": [],
+        "makeupHair": [],
+        "vehicles": [],
+        "sfx": [],
+        "vfx": ["SHEARED RIVET CLOSE-UP INSERT"],
+        "stunts": [],
+        "animals": [],
+        "sound": ["TWO-WAY RADIO STATIC"],
+        "specialEquipment": ["LONG TELEPHOTO LENS"],
+        "complexity": 3,
+        "complexityReason": "Dusk golden-hour exterior cliff shoot with telephoto camera work"
+      },
+      {
+        "sceneId": 8,
+        "cast": ["JACK"],
+        "background": [],
+        "props": ["RED MAGNESIUM FLARE", "BRIDGE RAILINGS"],
+        "setDressing": ["SEVERED BRIDGE ABYSS", "ROTTING TIMBERS"],
+        "wardrobe": ["SOAKED WINDBREAKER"],
+        "makeupHair": ["FOREHEAD GASH BLOOD FX", "RAIN-SOAKED HAIR"],
+        "vehicles": ["18-WHEELER FREIGHT RIG"],
+        "sfx": ["TORRENTIAL RAIN RIG", "SKIDDING BRAKES SOUND", "SPARKS"],
+        "vfx": ["DIGITAL MATTE CANYON EXTENSION"],
+        "stunts": ["GUARDRAIL DIVE & ROCKY BANK FALL"],
+        "animals": [],
+        "sound": ["THUNDERCLAPS", "AIR HORN"],
+        "specialEquipment": ["RAIN MACHINES", "STUNT CRASH MATS", "HAZER TRUCK"],
+        "complexity": 5,
+        "complexityReason": "Night exterior rain, precision picture truck, stunt dive, practical SFX, and digital matte extension"
+      },
+      {
+        "sceneId": 9,
+        "cast": ["JACK", "MAYA"],
+        "background": [],
+        "props": ["WHITE TEMPLE BANDAGE", "BROADCAST MIC"],
+        "setDressing": ["STEADY GREEN OSCILLOSCOPE"],
+        "wardrobe": ["SOAKED CLOTHING"],
+        "makeupHair": ["BLOOD DRIED ON TEMPLE"],
+        "vehicles": [],
+        "sfx": [],
+        "vfx": [],
+        "stunts": [],
+        "animals": [],
+        "sound": ["STEADY OSCILLOSCOPE TONE"],
+        "specialEquipment": [],
+        "complexity": 2,
+        "complexityReason": "Interior night dialogue with aftermath HMU"
+      },
+      {
+        "sceneId": 10,
+        "cast": ["JACK", "MAYA"],
+        "background": [],
+        "props": ["SHARED THERMOS", "TIN COFFEE CUPS"],
+        "setDressing": ["TRUCK TAILGATE", "STATION GRAVEL LOT"],
+        "wardrobe": [],
+        "makeupHair": ["MORNING LIGHT HMU REFRESH"],
+        "vehicles": ["1978 CHEVY BLAZER"],
+        "sfx": [],
+        "vfx": [],
+        "stunts": [],
+        "animals": [],
+        "sound": ["TRANSMITTER MORNING HUM"],
+        "specialEquipment": [],
+        "complexity": 2,
+        "complexityReason": "Exterior dawn golden-hour closing scene"
+      }
+    ]
+  },
+  "schedule": {
+    "days": [
+      {
+        "dayNumber": 1,
+        "shootType": "DAY",
+        "sceneIds": [4, 5, 10],
+        "locations": ["K-DESERT BROADCAST BOOTH", "RADIO STATION LOT"],
+        "totalEighths": 18,
+        "effectiveEighths": 24,
+        "castNeeded": ["JACK", "MAYA", "DEPUTY REYES"],
+        "notes": [
+          "Scene 4: Golden Hour (Dawn) shooting window required.",
+          "Scene 10: Golden Hour (Dawn) shooting window required."
+        ],
+        "companyMoves": 1
+      },
+      {
+        "dayNumber": 2,
+        "shootType": "DAY",
+        "sceneIds": [6, 7],
+        "locations": ["DESERT HIGHWAY 64", "CANYON OVERLOOK"],
+        "totalEighths": 12,
+        "effectiveEighths": 18.2,
+        "castNeeded": ["JACK"],
+        "notes": [
+          "Scene 7: Golden Hour (Dusk) shooting window required."
+        ],
+        "companyMoves": 1
+      },
+      {
+        "dayNumber": 3,
+        "shootType": "NIGHT",
+        "sceneIds": [1, 2, 3, 9],
+        "locations": ["K-DESERT BROADCAST BOOTH", "TRANSMITTER ROOM", "TRANSMITTER TOWER"],
+        "totalEighths": 30,
+        "effectiveEighths": 34.4,
+        "castNeeded": ["JACK", "MAYA"],
+        "notes": [
+          "Scene 2 SFX: SPARKS, SMOKE (Practical SFX Tech required)."
+        ],
+        "companyMoves": 2
+      },
+      {
+        "dayNumber": 4,
+        "shootType": "NIGHT",
+        "sceneIds": [8],
+        "locations": ["CANYON BRIDGE"],
+        "totalEighths": 14,
+        "effectiveEighths": 36.4,
+        "castNeeded": ["JACK"],
+        "notes": [
+          "Scene 8 Stunt: GUARDRAIL DIVE / FALL (Stunt Coordinator on set).",
+          "Scene 8 SFX: RAIN RIG, SMOKE (Practical SFX Tech required).",
+          "Scene 8 HMU: FOREHEAD GASH (Specialist HMU prep required)."
+        ],
+        "companyMoves": 0
+      }
+    ],
+    "stats": {
+      "shootDays": 4,
+      "nightShoots": 2,
+      "companyMoves": 4,
+      "totalPageEighths": 74,
+      "totalEffectiveEighths": 113,
+      "castDays": {
+        "JACK": 4,
+        "MAYA": 2,
+        "DEPUTY REYES": 1
+      }
+    },
+    "assumptions": [
+      "Base daily capacity: 36/8 pages (≈4.5 pages/day) for non-union indie short.",
+      "Scene setup/strike floor: minimum 3/8 page per scene applied before complexity multipliers.",
+      "Complexity multipliers applied: 1-2=1.0x, 3=1.4x, 4=1.9x, 5=2.6x.",
+      "Company moves inside a day incur a 6/8 page capacity deduction.",
+      "Turnaround protection: All DAY shoots scheduled before NIGHT shoots to prevent crew fatigue.",
+      "Golden hour windows (DAWN/DUSK) scheduled inside day blocks without incurring night crew premiums."
+    ]
+  },
+  "budget": {
+    "sections": [
+      {
+        "category": "Crew",
+        "subtotal": 13350,
+        "items": [
+          {
+            "category": "Crew",
+            "item": "Director of Photography",
+            "unit": "day",
+            "qty": 4,
+            "rate": 650,
+            "total": 2600,
+            "tracesTo": "Director of Photography booked for 4 shoot day(s)"
+          },
+          {
+            "category": "Crew",
+            "item": "1st Assistant Camera",
+            "unit": "day",
+            "qty": 4,
+            "rate": 350,
+            "total": 1400,
+            "tracesTo": "1st Assistant Camera booked for 4 shoot day(s)"
+          },
+          {
+            "category": "Crew",
+            "item": "Gaffer",
+            "unit": "day",
+            "qty": 4,
+            "rate": 400,
+            "total": 1600,
+            "tracesTo": "Gaffer booked for 4 shoot day(s)"
+          },
+          {
+            "category": "Crew",
+            "item": "Key Grip",
+            "unit": "day",
+            "qty": 4,
+            "rate": 300,
+            "total": 1200,
+            "tracesTo": "Key Grip booked for 4 shoot day(s)"
+          },
+          {
+            "category": "Crew",
+            "item": "Production Sound Mixer",
+            "unit": "day",
+            "qty": 4,
+            "rate": 450,
+            "total": 1800,
+            "tracesTo": "Location Sound Mixer booked for 4 shoot day(s)"
+          },
+          {
+            "category": "Crew",
+            "item": "1st Assistant Director",
+            "unit": "day",
+            "qty": 4,
+            "rate": 500,
+            "total": 2000,
+            "tracesTo": "1st Assistant Director booked for 4 shoot day(s)"
+          },
+          {
+            "category": "Crew",
+            "item": "Production Assistants",
+            "unit": "day",
+            "qty": 8,
+            "rate": 150,
+            "total": 1200,
+            "tracesTo": "2 Production Assistant(s) booked across 4 shoot day(s)"
+          },
+          {
+            "category": "Crew",
+            "item": "Stunt Coordinator",
+            "unit": "day",
+            "qty": 1,
+            "rate": 650,
+            "total": 650,
+            "tracesTo": "Stunt Coordinator booked for 1 day(s) ← stunts flagged in scene(s): 8"
+          },
+          {
+            "category": "Crew",
+            "item": "Practical SFX Technician",
+            "unit": "day",
+            "qty": 2,
+            "rate": 450,
+            "total": 900,
+            "tracesTo": "Practical SFX Tech booked for 2 day(s) ← practical SFX flagged in scene(s): 2, 8"
+          }
+        ]
+      },
+      {
+        "category": "Night Premium",
+        "subtotal": 1058,
+        "items": [
+          {
+            "category": "Night Premium",
+            "item": "Night Shoot Crew Labor Premium (15%)",
+            "unit": "percent",
+            "qty": 2,
+            "rate": 15,
+            "total": 1058,
+            "tracesTo": "15% night turnaround premium on $7,050 labor across 2 night shoot day(s)"
+          }
+        ]
+      },
+      {
+        "category": "Cast",
+        "subtotal": 2000,
+        "items": [
+          {
+            "category": "Cast",
+            "item": "Cast: JACK",
+            "unit": "day",
+            "qty": 4,
+            "rate": 250,
+            "total": 1000,
+            "tracesTo": "Principal cast booking for JACK across 4 scheduled shoot day(s)"
+          },
+          {
+            "category": "Cast",
+            "item": "Cast: MAYA",
+            "unit": "day",
+            "qty": 2,
+            "rate": 250,
+            "total": 500,
+            "tracesTo": "Principal cast booking for MAYA across 2 scheduled shoot day(s)"
+          },
+          {
+            "category": "Cast",
+            "item": "Cast: DEPUTY REYES",
+            "unit": "day",
+            "qty": 1,
+            "rate": 250,
+            "total": 250,
+            "tracesTo": "Principal cast booking for DEPUTY REYES across 1 scheduled shoot day(s)"
+          },
+          {
+            "category": "Cast",
+            "item": "Background Performers",
+            "unit": "per-person-day",
+            "qty": 2,
+            "rate": 125,
+            "total": 250,
+            "tracesTo": "2 background performer booking(s) across scene(s): 6"
+          }
+        ]
+      },
+      {
+        "category": "Equipment",
+        "subtotal": 3700,
+        "items": [
+          {
+            "category": "Equipment",
+            "item": "Camera Package (Cinema Body + Primes)",
+            "unit": "day",
+            "qty": 4,
+            "rate": 450,
+            "total": 1800,
+            "tracesTo": "Cinema camera and prime lens rental package for 4 shoot day(s)"
+          },
+          {
+            "category": "Equipment",
+            "item": "Lighting & Grip Truck Package",
+            "unit": "day",
+            "qty": 4,
+            "rate": 350,
+            "total": 1400,
+            "tracesTo": "Indie lighting & grip package for 4 shoot day(s)"
+          },
+          {
+            "category": "Equipment",
+            "item": "Field Audio Sound Package",
+            "unit": "day",
+            "qty": 4,
+            "rate": 125,
+            "total": 500,
+            "tracesTo": "Multi-track field recorder, boom, and wireless lav kit for 4 shoot day(s)"
+          }
+        ]
+      },
+      {
+        "category": "Locations & Logistics",
+        "subtotal": 5194,
+        "items": [
+          {
+            "category": "Locations & Logistics",
+            "item": "Location Permits & Site Fees",
+            "unit": "day",
+            "qty": 8,
+            "rate": 400,
+            "total": 3200,
+            "tracesTo": "Permit and site access fees for 8 location-day(s) across 4 shoot day(s)"
+          },
+          {
+            "category": "Locations & Logistics",
+            "item": "Catering & Craft Services",
+            "unit": "per-person-day",
+            "qty": 44,
+            "rate": 22,
+            "total": 968,
+            "tracesTo": "Daily hot meals and craft services ($22/person/day) for 44 total person-day(s)"
+          },
+          {
+            "category": "Locations & Logistics",
+            "item": "Company Move Transit & Fuel",
+            "unit": "flat",
+            "qty": 4,
+            "rate": 180,
+            "total": 720,
+            "tracesTo": "Equipment truck & crew shuttle transit allowance for 4 scheduled company move(s)"
+          },
+          {
+            "category": "Locations & Logistics",
+            "item": "Production General Liability & Gear Insurance",
+            "unit": "flat",
+            "qty": 1,
+            "rate": 650,
+            "total": 650,
+            "tracesTo": "Short film general liability, third-party property damage, & equipment float insurance policy"
+          }
+        ]
+      },
+      {
+        "category": "Post Production",
+        "subtotal": 3675,
+        "items": [
+          {
+            "category": "Post Production",
+            "item": "Picture Editor",
+            "unit": "flat",
+            "qty": 1,
+            "rate": 1500,
+            "total": 1500,
+            "tracesTo": "Picture edit assembly, rough cut revisions, and final picture lock (flat)"
+          },
+          {
+            "category": "Post Production",
+            "item": "Color Grading & Mastering",
+            "unit": "flat",
+            "qty": 1,
+            "rate": 600,
+            "total": 600,
+            "tracesTo": "Digital color grade, show LUT development, and conform mastering (flat)"
+          },
+          {
+            "category": "Post Production",
+            "item": "Sound Design, Foley & Mix",
+            "unit": "flat",
+            "qty": 1,
+            "rate": 650,
+            "total": 650,
+            "tracesTo": "Dialogue cleanup, custom sound design, Foley, and 5.1/stereo festival mix (flat)"
+          },
+          {
+            "category": "Post Production",
+            "item": "Score & Music Licensing",
+            "unit": "flat",
+            "qty": 1,
+            "rate": 400,
+            "total": 400,
+            "tracesTo": "Composer honorarium & indie festival sync/master rights licensing reserve (flat)"
+          },
+          {
+            "category": "Post Production",
+            "item": "Visual Effects (VFX) Compositing",
+            "unit": "per-shot",
+            "qty": 1,
+            "rate": 275,
+            "total": 275,
+            "tracesTo": "VFX cleanup & compositing ($275/shot) for 1 shot(s) in scene(s): 8"
+          }
+        ]
+      },
+      {
+        "category": "Contingency",
+        "subtotal": 2898,
+        "items": [
+          {
+            "category": "Contingency",
+            "item": "Production Contingency Reserve (10%)",
+            "unit": "percent",
+            "qty": 1,
+            "rate": 10,
+            "total": 2898,
+            "tracesTo": "10% standard production contingency reserve against unforeseen weather, overtime, or material overages"
+          }
+        ]
+      }
+    ],
+    "summary": {
+      "crewSubtotal": 13350,
+      "nightPremiumTotal": 1058,
+      "castSubtotal": 2000,
+      "equipmentSubtotal": 3700,
+      "locationsLogisticsSubtotal": 5194,
+      "postSubtotal": 3675,
+      "subtotalBeforeContingency": 28977,
+      "contingencyTotal": 2898,
+      "grandTotal": 31875
+    },
+    "rateCardName": "US Non-Union Indie Short (2026 Standard)",
+    "currency": "USD"
+  },
+  "boardPlan": {
+    "visualStyleStatement": "Warm vintage 1970s amber and tobacco studio interiors set against torrential cold blue night exteriors; anamorphic 2.39:1 framing with organic 35mm grain.",
+    "aspectRatio": "2.39:1",
+    "frames": [
+      {
+        "sceneId": 1,
+        "frameId": "1A",
+        "shotType": "CU",
+        "movement": "STATIC",
+        "lensMm": "50mm anamorphic",
+        "description": "Jack leans into the RCA ribbon mic, eyes fixed on the vibrating needle of an amber VU meter.",
+        "blocking": "Jack seated in foreground profile, background studio glass softly blurred.",
+        "lighting": "Warm 2800K tungsten desk lamp key, soft cool violet monitor fill.",
+        "imagePrompt": "Cinematic close-up portrait of a 50-year-old radio DJ speaking into a vintage 1970s ribbon microphone in a moody desert radio booth, amber practical lighting, 35mm film texture, anamorphic 2.39:1 widescreen."
+      },
+      {
+        "sceneId": 2,
+        "frameId": "2A",
+        "shotType": "MS",
+        "movement": "HANDHELD",
+        "lensMm": "35mm anamorphic",
+        "description": "Maya wrenches the transmitter cage door as violet electrical sparks erupt from the transformer coil.",
+        "blocking": "Maya stepping back, arm shielding face from smoke plume.",
+        "lighting": "Violent flickering electric purple spark bursts creating high-contrast rim light.",
+        "imagePrompt": "Medium shot of a young female broadcast engineer shielding her face from a violently sparking glowing vacuum tube transmitter cage in a dark mechanical room, electric purple sparks, dense smoke, 2.39:1 widescreen."
+      },
+      {
+        "sceneId": 8,
+        "frameId": "8A",
+        "shotType": "WS",
+        "movement": "STEADICAM",
+        "lensMm": "28mm anamorphic",
+        "description": "Jack stands on the wet canyon bridge waving a blazing red magnesium flare as freight truck high-beams roar toward him.",
+        "blocking": "Jack center frame holding flare high, massive truck grille bearing down from deep background.",
+        "lighting": "Intense blinding white truck headlights cutting through vertical torrential rain, crimson flare glow.",
+        "imagePrompt": "Extreme cinematic wide shot of a lone man on a rain-slicked desert bridge at night waving a glowing red emergency flare against blinding high-beam headlights of an oncoming semi-truck, torrential rain, 2.39:1 aspect ratio."
+      },
+      {
+        "sceneId": 8,
+        "frameId": "8B",
+        "shotType": "MCU",
+        "movement": "HANDHELD",
+        "lensMm": "40mm anamorphic",
+        "description": "Jack dives across the guardrail onto the rocky embankment as the truck tires skid to a halt six feet from the edge.",
+        "blocking": "Jack in mid-air dive across steel rail into dark gravel foreground.",
+        "lighting": "Harsh rim light from red truck brake lights reflecting off wet asphalt and puddles.",
+        "imagePrompt": "Dynamic action medium shot of a man diving over a highway guardrail into dark rocky gravel in heavy pouring rain at night, red brake light reflections, high tension, cinematic 35mm grain, 2.39:1."
+      }
+    ]
+  },
+  "pitchKit": {
+    "tagline": "Tomorrow's disaster is tonight's last broadcast.",
+    "loglines": [
+      "When an isolated graveyard-shift desert radio DJ intercepts an impossible broadcast from 24 hours in the future predicting a fatal highway collapse, he must risk everything on live air to stop an oncoming night freight convoy.",
+      "A late-night radio DJ hears his own fatal obituary broadcast twenty-four hours ahead of time.",
+      "One booth, one microphone, and a race against tomorrow's headline."
+    ],
+    "whyNow": "Audience demand for high-tension analog mystery and contained sci-fi thrillers (The Vast of Night, Leave the World Behind) has surged across festivals and streaming acquisitions.",
+    "audience": {
+      "primary": "Adults 18-34 fans of atmospheric sci-fi, Twilight Zone mystery, and contained indie thrillers.",
+      "secondary": "Genre festival programmers, A24/Neon cinephiles, and streaming episodic anthology buyers."
+    },
+    "festivalStrategy": [
+      {
+        "name": "Sundance Film Festival (Shorts)",
+        "tier": "Tier 1 / Oscar Qualifying",
+        "why": "Curatorial alignment with high-concept narrative shorts possessing distinctive sound design and airtight structural economy."
+      },
+      {
+        "name": "SXSW Midnighters (Shorts)",
+        "tier": "Genre Specialist",
+        "why": "High-octane midnight programming target seeking practical effects, intense tension, and retro analog aesthetic."
+      },
+      {
+        "name": "Tribeca Film Festival (Shorts)",
+        "tier": "Tier 1 / Oscar Qualifying",
+        "why": "Strong programmer track record for character-driven suspense and innovative sensory storytelling."
+      }
+    ],
+    "posterConcept": {
+      "description": "High-contrast one-sheet featuring a glowing vacuum tube transmitter silhouette over a stormy desert canyon bridge with bold typographic title.",
+      "imagePrompt": "Photorealistic movie poster for FREQUENCY ZERO, glowing vintage 1970s radio dial superimposed over a dark desert highway bridge in a lightning storm, striking red and amber color palette, official festival laurel branding, 2:3 vertical aspect ratio."
+    },
+    "pitchParagraph": "Carrying an Ink Story Analyst coverage verdict of RECOMMEND and an audited Ledger production budget of $31,875 across a 4-day shoot, FREQUENCY ZERO is an airtight, high-ROI proof-of-concept for theatrical and episodic sci-fi suspense. By grounding its supernatural temporal premise in tangible 1970s analog radio hardware and visceral physical stunts, the project delivers A-list festival production value with disciplined indie capital efficiency.",
+    "marketEvidence": [
+      {
+        "title": "Sundance Film Festival: Short Film Program Track Record",
+        "url": "https://www.sundance.org/festivals/short-film-program",
+        "snippet": "Narrative sci-fi and thriller shorts with tight structural containment have achieved top programmer selection rates (over 12,000 annual submissions).",
+        "query": "FREQUENCY ZERO Sci-Fi Thriller indie short film box office festival market comps",
+        "relevance": "Validates Tier 1 festival submission strategy and narrative short curatorial fit."
+      },
+      {
+        "title": "SXSW Midnighters & Narrative Shorts Selection Trends",
+        "url": "https://www.sxsw.com/film-festival/shorts",
+        "snippet": "High-concept thrillers with practical physical effects and period audio aesthetics rank among the highest audience engagement scores in short format showcases.",
+        "query": "Sundance SXSW narrative short film festival awards Sci-Fi audience reception",
+        "relevance": "Validates genre midnight programming interest for practical SFX and audio mystery."
+      },
+      {
+        "title": "The Vast of Night — Production & Festival Case Study",
+        "url": "https://variety.com/2019/film/reviews/the-vast-of-night-review-1203348630",
+        "snippet": "Andrew Patterson's 1950s radio-switchboard sci-fi thriller grossed critical acclaim after winning Slamdance Audience Award, demonstrating high ROI for audio-driven atmospheric thrillers.",
+        "query": "Indie short film distribution ROI box office comparable",
+        "relevance": "Primary artistic and budgetary benchmark for atmospheric radio thriller conversion."
+      }
+    ]
+  }
+}
