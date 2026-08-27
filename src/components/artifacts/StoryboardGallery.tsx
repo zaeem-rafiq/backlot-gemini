@@ -79,13 +79,13 @@ export function StoryboardGallery({ boardPlan }: StoryboardGalleryProps) {
             className="bg-[#0F121A] border-2 border-studio-800 hover:border-studio-700 transition rounded-xl overflow-hidden flex flex-col shadow-2xl group"
           >
             {/* 2.39:1 FRAMED LETTERBOX WITH VIEWFINDER GUIDES */}
-            <div className="aspect-[2.39/1] w-full bg-[#040508] relative border-b-2 border-studio-800 overflow-hidden flex items-center justify-center">
-              {/* Camera Rule-of-Thirds Grid Overlay */}
+            <div className="aspect-[2.39/1] w-full bg-[#020305] relative border-b-2 border-studio-800 overflow-hidden flex items-center justify-center">
+              {/* Director's Optical Viewfinder Reticle (Rule of Thirds & Crosshairs) */}
               <div className="absolute inset-0 pointer-events-none z-10">
-                {/* Vertical Thirds */}
+                {/* Vertical rule of thirds */}
                 <div className="absolute top-0 bottom-0 left-1/3 w-[1px] border-r border-dashed border-white/10" />
                 <div className="absolute top-0 bottom-0 left-2/3 w-[1px] border-r border-dashed border-white/10" />
-                {/* Horizontal Thirds */}
+                {/* Horizontal rule of thirds */}
                 <div className="absolute left-0 right-0 top-1/3 h-[1px] border-b border-dashed border-white/10" />
                 <div className="absolute left-0 right-0 top-2/3 h-[1px] border-b border-dashed border-white/10" />
 
@@ -99,14 +99,19 @@ export function StoryboardGallery({ boardPlan }: StoryboardGalleryProps) {
                 <div className="absolute top-2.5 right-2.5 w-3 h-3 border-t-2 border-r-2 border-amber-400/80" />
                 <div className="absolute bottom-2.5 left-2.5 w-3 h-3 border-b-2 border-l-2 border-amber-400/80" />
                 <div className="absolute bottom-2.5 right-2.5 w-3 h-3 border-b-2 border-r-2 border-amber-400/80" />
+
+                {/* Aspect Ratio Watermark */}
+                <span className="absolute bottom-2 right-4 text-[9px] font-mono tracking-widest text-white/30 font-bold">
+                  2.39:1 ANAMORPHIC SCOPE
+                </span>
               </div>
 
               {/* Frame Identification Badges */}
-              <div className="absolute top-2.5 left-6 px-2 py-0.5 rounded bg-black/90 backdrop-blur border border-white/15 text-[10px] font-mono text-amber-300 font-bold z-20">
+              <div className="absolute top-2.5 left-6 px-2 py-0.5 rounded bg-black/90 backdrop-blur border border-white/20 text-[10px] font-mono text-amber-300 font-extrabold z-20">
                 FRAME {frame.frameId} · SCENE {frame.sceneId}
               </div>
 
-              <div className="absolute top-2.5 right-6 px-2 py-0.5 rounded bg-black/90 backdrop-blur border border-white/15 text-[10px] font-mono text-studio-300 font-bold z-20 flex items-center gap-1">
+              <div className="absolute top-2.5 right-6 px-2 py-0.5 rounded bg-black/90 backdrop-blur border border-white/20 text-[10px] font-mono text-studio-200 font-bold z-20 flex items-center gap-1">
                 <Aperture className="w-3 h-3 text-amber-400" />
                 <span>{frame.lensMm}</span>
               </div>

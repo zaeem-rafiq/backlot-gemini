@@ -192,32 +192,32 @@ export function StripboardSchedule({ schedule, scriptParse }: StripboardSchedule
         </div>
 
         {/* Board Rails Container */}
-        <div className="bg-[#08090D] border-2 border-studio-800 rounded-xl p-3 md:p-4 flex flex-col gap-4 shadow-2xl">
+        <div className="bg-[#05070B] stripboard-rack-metal rounded-xl p-3.5 md:p-5 flex flex-col gap-4 shadow-2xl">
           {schedule.days.map((day) => {
             const isNight = day.shootType === "NIGHT";
             return (
-              <div key={day.dayNumber} className="flex flex-col gap-1.5">
-                {/* DAY BREAK HEADER STRIP */}
-                <div className="bg-[#1E293B] border-t-2 border-b-2 border-amber-500 rounded-md px-4 py-2.5 flex items-center justify-between flex-wrap gap-2 text-white font-mono shadow-md">
+              <div key={day.dayNumber} className="flex flex-col gap-1.5 bg-[#0B0E17]/60 p-2 rounded-lg border border-studio-800/80">
+                {/* DAY BREAK HEADER STRIP (Physical Day Divider) */}
+                <div className="bg-[#182032] border-t-2 border-b-2 border-amber-400 rounded px-4 py-2.5 flex items-center justify-between flex-wrap gap-2 text-white font-mono shadow-md">
                   <div className="flex items-center gap-3">
-                    <span className="px-2.5 py-0.5 rounded bg-amber-500 text-black font-extrabold text-xs">
+                    <span className="px-2.5 py-1 rounded bg-amber-400 text-black font-extrabold text-xs tracking-wider shadow-sm">
                       DAY {day.dayNumber}
                     </span>
-                    <span className="text-xs font-bold uppercase tracking-wider">
+                    <span className="text-xs font-bold uppercase tracking-wider text-amber-200">
                       {day.shootType} SHOOT · {day.locations.join(" & ")}
                     </span>
                     {day.companyMoves > 0 && (
-                      <span className="text-[10px] px-2 py-0.5 rounded bg-amber-900/60 border border-amber-500/50 text-amber-300 flex items-center gap-1 font-semibold">
-                        <Truck className="w-3 h-3" /> {day.companyMoves} Intra-day Move
+                      <span className="text-[10px] px-2 py-0.5 rounded bg-amber-950 border border-amber-500/60 text-amber-300 flex items-center gap-1 font-bold">
+                        <Truck className="w-3 h-3 text-amber-400" /> {day.companyMoves} Intra-day Move
                       </span>
                     )}
                   </div>
 
                   <div className="flex items-center gap-3 text-xs">
                     <span className="text-studio-300">
-                      Scenes: <strong className="text-white">{day.sceneIds.join(", ")}</strong>
+                      Scenes: <strong className="text-white font-mono font-bold">{day.sceneIds.join(", ")}</strong>
                     </span>
-                    <span className="px-2 py-0.5 rounded bg-black/40 border border-white/10 text-amber-300 font-bold">
+                    <span className="px-2.5 py-0.5 rounded bg-black/60 border border-white/20 text-amber-300 font-bold font-mono">
                       {formatEighths(day.totalEighths)} ({day.effectiveEighths}/8 eff)
                     </span>
                   </div>

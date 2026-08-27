@@ -109,27 +109,31 @@ export function AuditedBudget({ budget }: AuditedBudgetProps) {
           </div>
 
           {/* Grand Total Top Sheet Box */}
-          <div className="lg:col-span-5 bg-[#08090D] border border-studio-800 rounded-xl p-5 flex flex-col justify-between gap-2 shadow-md">
+          <div className="lg:col-span-5 bg-[#05070B] border border-studio-800 rounded-xl p-5 flex flex-col justify-between gap-2 shadow-md">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-mono uppercase text-studio-400 font-bold">
+              <span className="text-[10px] font-mono uppercase text-studio-400 font-bold tracking-wider">
                 Audited Production Total
               </span>
-              <span className="text-[10px] font-mono text-emerald-400">10% Contingency Incl.</span>
+              <span className="text-[10px] font-mono text-emerald-400 font-bold bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/30">
+                10% CONTINGENCY INCL.
+              </span>
             </div>
 
-            <div className="flex flex-col">
-              <span className="text-3xl md:text-4xl font-extrabold font-mono text-white font-mono-tabular tracking-tight">
-                ${budget.summary.grandTotal.toLocaleString("en-US", { minimumFractionDigits: 2 })}
-              </span>
-              <div className="flex items-center justify-between text-xs font-mono text-studio-400 pt-1.5 border-t border-studio-800 mt-2">
-                <span>Subtotal:</span>
-                <span className="text-studio-200 font-mono-tabular">
+            <div className="flex flex-col pt-1">
+              <div className="pb-1 mb-1 accounting-double-line">
+                <span className="text-3xl md:text-4xl font-extrabold font-mono text-emerald-400 font-mono-tabular tracking-tight">
+                  ${budget.summary.grandTotal.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                </span>
+              </div>
+              <div className="flex items-center justify-between text-xs font-mono text-studio-400 pt-1.5 border-t border-studio-800 mt-1">
+                <span>Direct Production Subtotal:</span>
+                <span className="text-studio-200 font-mono-tabular font-bold">
                   ${budget.summary.subtotalBeforeContingency.toLocaleString("en-US", { minimumFractionDigits: 2 })}
                 </span>
               </div>
               <div className="flex items-center justify-between text-xs font-mono text-studio-400">
-                <span>Contingency (10%):</span>
-                <span className="text-amber-300 font-mono-tabular">
+                <span>Production Contingency (10%):</span>
+                <span className="text-amber-300 font-mono-tabular font-bold">
                   +${budget.summary.contingencyTotal.toLocaleString("en-US", { minimumFractionDigits: 2 })}
                 </span>
               </div>
