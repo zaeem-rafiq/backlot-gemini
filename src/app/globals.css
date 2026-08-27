@@ -64,33 +64,61 @@ body {
   align-items: center;
   justify-content: center;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
-  font-weight: 800;
+  letter-spacing: 0.14em;
+  font-weight: 900;
   border-style: solid;
   border-width: 3px;
   position: relative;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  border-radius: 4px;
 }
 
 .stamp-recommend {
   border-color: #10b981;
   color: #34d399;
-  background-color: rgba(16, 185, 129, 0.12);
-  box-shadow: inset 0 0 0 1px rgba(16, 185, 129, 0.4), 0 4px 12px rgba(16, 185, 129, 0.15);
+  background-color: rgba(16, 185, 129, 0.14);
+  box-shadow: inset 0 0 0 1px rgba(16, 185, 129, 0.5), 0 4px 16px rgba(16, 185, 129, 0.2);
 }
 
 .stamp-consider {
   border-color: #f59e0b;
   color: #fbbf24;
-  background-color: rgba(245, 158, 11, 0.12);
-  box-shadow: inset 0 0 0 1px rgba(245, 158, 11, 0.4), 0 4px 12px rgba(245, 158, 11, 0.15);
+  background-color: rgba(245, 158, 11, 0.14);
+  box-shadow: inset 0 0 0 1px rgba(245, 158, 11, 0.5), 0 4px 16px rgba(245, 158, 11, 0.2);
 }
 
 .stamp-pass {
   border-color: #ef4444;
   color: #f87171;
-  background-color: rgba(239, 68, 68, 0.12);
-  box-shadow: inset 0 0 0 1px rgba(239, 68, 68, 0.4), 0 4px 12px rgba(239, 68, 68, 0.15);
+  background-color: rgba(239, 68, 68, 0.14);
+  box-shadow: inset 0 0 0 1px rgba(239, 68, 68, 0.5), 0 4px 16px rgba(239, 68, 68, 0.2);
+}
+
+/* Screenplay 3-Hole Punched Binder Cues */
+.screenplay-binder-paper {
+  background-color: #06070a;
+  background-image: radial-gradient(#151924 1px, transparent 1px);
+  background-size: 16px 16px;
+}
+
+/* Metal Stripboard Side Rack Channel */
+.stripboard-rack-metal {
+  background: linear-gradient(180deg, #161b28 0%, #0d1017 100%);
+  border-left: 2px solid #2a3348;
+  border-right: 2px solid #2a3348;
+}
+
+/* Tabular double accounting line */
+.accounting-double-line {
+  border-bottom: 3px double #10b981;
+}
+
+/* Precision Film Grid Hairline */
+.hairline-grid {
+  background-size: 24px 24px;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
 }
 
 /* Document Settle Animation */

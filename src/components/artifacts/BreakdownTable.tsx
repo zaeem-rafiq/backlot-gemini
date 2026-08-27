@@ -77,43 +77,47 @@ export function BreakdownTable({ breakdown, scriptParse }: BreakdownTableProps) 
           </div>
 
           {/* Filter Pills */}
-          <div className="flex items-center gap-1.5 bg-[#08090D] border border-studio-800 p-1 rounded-lg font-mono text-xs">
+          <div
+            role="group"
+            aria-label="Scene Breakdown Filters"
+            className="flex items-center gap-1.5 bg-[#08090D] border border-studio-800 p-1 rounded-lg font-mono text-xs overflow-x-auto scrollbar-none max-w-full"
+          >
             <button
               onClick={() => setFilter("ALL")}
-              className={`px-3 py-1.5 rounded text-[11px] font-bold transition ${
+              className={`px-3 py-2 rounded text-[11px] font-bold transition flex-shrink-0 focus-ring cursor-pointer min-h-[36px] ${
                 filter === "ALL"
                   ? "bg-amber-500 text-black shadow-md"
-                  : "text-studio-400 hover:text-white"
+                  : "text-studio-300 hover:text-white hover:bg-[#141824]"
               }`}
             >
               All Scenes ({breakdown.breakdowns.length})
             </button>
             <button
               onClick={() => setFilter("ACTION_SFX")}
-              className={`px-3 py-1.5 rounded text-[11px] font-bold transition flex items-center gap-1 ${
+              className={`px-3 py-2 rounded text-[11px] font-bold transition flex items-center gap-1 flex-shrink-0 focus-ring cursor-pointer min-h-[36px] ${
                 filter === "ACTION_SFX"
                   ? "bg-amber-500 text-black shadow-md"
-                  : "text-studio-400 hover:text-white"
+                  : "text-studio-300 hover:text-white hover:bg-[#141824]"
               }`}
             >
               <Flame className="w-3 h-3" /> Stunts & SFX
             </button>
             <button
               onClick={() => setFilter("CAST_EXTRAS")}
-              className={`px-3 py-1.5 rounded text-[11px] font-bold transition flex items-center gap-1 ${
+              className={`px-3 py-2 rounded text-[11px] font-bold transition flex items-center gap-1 flex-shrink-0 focus-ring cursor-pointer min-h-[36px] ${
                 filter === "CAST_EXTRAS"
                   ? "bg-amber-500 text-black shadow-md"
-                  : "text-studio-400 hover:text-white"
+                  : "text-studio-300 hover:text-white hover:bg-[#141824]"
               }`}
             >
               <Shield className="w-3 h-3" /> Cast & Extras
             </button>
             <button
               onClick={() => setFilter("VEHICLES_EQUIP")}
-              className={`px-3 py-1.5 rounded text-[11px] font-bold transition flex items-center gap-1 ${
+              className={`px-3 py-2 rounded text-[11px] font-bold transition flex items-center gap-1 flex-shrink-0 focus-ring cursor-pointer min-h-[36px] ${
                 filter === "VEHICLES_EQUIP"
                   ? "bg-amber-500 text-black shadow-md"
-                  : "text-studio-400 hover:text-white"
+                  : "text-studio-300 hover:text-white hover:bg-[#141824]"
               }`}
             >
               <Car className="w-3 h-3" /> Vehicles & Gear
