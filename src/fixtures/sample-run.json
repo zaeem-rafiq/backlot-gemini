@@ -733,7 +733,8 @@
         "description": "Jack leans into the RCA ribbon mic, eyes fixed on the vibrating needle of an amber VU meter.",
         "blocking": "Jack seated in foreground profile, background studio glass softly blurred.",
         "lighting": "Warm 2800K tungsten desk lamp key, soft cool violet monitor fill.",
-        "imagePrompt": "Cinematic close-up portrait of a 50-year-old radio DJ speaking into a vintage 1970s ribbon microphone in a moody desert radio booth, amber practical lighting, 35mm film texture, anamorphic 2.39:1 widescreen."
+        "imagePrompt": "Cinematic close-up portrait of a 50-year-old radio DJ speaking into a vintage 1970s ribbon microphone in a moody desert radio booth, amber practical lighting, 35mm film texture, anamorphic 2.39:1 widescreen.",
+        "imageUrl": "/renders/frame_1.png"
       },
       {
         "sceneId": 2,
@@ -744,7 +745,8 @@
         "description": "Maya wrenches the transmitter cage door as violet electrical sparks erupt from the transformer coil.",
         "blocking": "Maya stepping back, arm shielding face from smoke plume.",
         "lighting": "Violent flickering electric purple spark bursts creating high-contrast rim light.",
-        "imagePrompt": "Medium shot of a young female broadcast engineer shielding her face from a violently sparking glowing vacuum tube transmitter cage in a dark mechanical room, electric purple sparks, dense smoke, 2.39:1 widescreen."
+        "imagePrompt": "Medium shot of a young female broadcast engineer shielding her face from a violently sparking glowing vacuum tube transmitter cage in a dark mechanical room, electric purple sparks, dense smoke, 2.39:1 widescreen.",
+        "imageUrl": "/renders/frame_2.png"
       },
       {
         "sceneId": 8,
@@ -755,18 +757,20 @@
         "description": "Jack stands on the wet canyon bridge waving a blazing red magnesium flare as freight truck high-beams roar toward him.",
         "blocking": "Jack center frame holding flare high, massive truck grille bearing down from deep background.",
         "lighting": "Intense blinding white truck headlights cutting through vertical torrential rain, crimson flare glow.",
-        "imagePrompt": "Extreme cinematic wide shot of a lone man on a rain-slicked desert bridge at night waving a glowing red emergency flare against blinding high-beam headlights of an oncoming semi-truck, torrential rain, 2.39:1 aspect ratio."
+        "imagePrompt": "Extreme cinematic wide shot of a lone man on a rain-slicked desert bridge at night waving a glowing red emergency flare against blinding high-beam headlights of an oncoming semi-truck, torrential rain, 2.39:1 aspect ratio.",
+        "imageUrl": "/renders/frame_8.png"
       },
       {
-        "sceneId": 8,
-        "frameId": "8B",
+        "sceneId": 10,
+        "frameId": "10A",
         "shotType": "MCU",
-        "movement": "HANDHELD",
+        "movement": "STATIC",
         "lensMm": "40mm anamorphic",
-        "description": "Jack dives across the guardrail onto the rocky embankment as the truck tires skid to a halt six feet from the edge.",
-        "blocking": "Jack in mid-air dive across steel rail into dark gravel foreground.",
-        "lighting": "Harsh rim light from red truck brake lights reflecting off wet asphalt and puddles.",
-        "imagePrompt": "Dynamic action medium shot of a man diving over a highway guardrail into dark rocky gravel in heavy pouring rain at night, red brake light reflections, high tension, cinematic 35mm grain, 2.39:1."
+        "description": "Pale dawn light breaks across the studio desk as Jack lowers his headphones in the quiet broadcast booth.",
+        "blocking": "Jack seated in calm profile, golden desert sunrise illuminating dust in the studio.",
+        "lighting": "Golden hour dawn sunlight cutting through smoke haze, gentle amber ambient glow.",
+        "imagePrompt": "Photorealistic 2.39:1 widescreen cinematic storyboard keyframe: Pale golden dawn light breaking through smoke-stained glass windows into a quiet 1970s radio studio, dust motes floating in amber sunbeams.",
+        "imageUrl": "/renders/frame_10.png"
       }
     ]
   },
@@ -801,7 +805,8 @@
     ],
     "posterConcept": {
       "description": "High-contrast one-sheet featuring a glowing vacuum tube transmitter silhouette over a stormy desert canyon bridge with bold typographic title.",
-      "imagePrompt": "Photorealistic movie poster for FREQUENCY ZERO, glowing vintage 1970s radio dial superimposed over a dark desert highway bridge in a lightning storm, striking red and amber color palette, official festival laurel branding, 2:3 vertical aspect ratio."
+      "imagePrompt": "Photorealistic movie poster for FREQUENCY ZERO, glowing vintage 1970s radio dial superimposed over a dark desert highway bridge in a lightning storm, striking red and amber color palette, official festival laurel branding, 2:3 vertical aspect ratio.",
+      "posterUrl": "/renders/frequency-zero-poster.png"
     },
     "pitchParagraph": "Carrying an Ink Story Analyst coverage verdict of RECOMMEND and an audited Ledger production budget of $31,875 across a 4-day shoot, FREQUENCY ZERO is an airtight, high-ROI proof-of-concept for theatrical and episodic sci-fi suspense. By grounding its supernatural temporal premise in tangible 1970s analog radio hardware and visceral physical stunts, the project delivers A-list festival production value with disciplined indie capital efficiency.",
     "marketEvidence": [
