@@ -17,8 +17,12 @@ export async function POST(req: NextRequest) {
     const writer = stream.writable.getWriter();
 
     const sendEvent = async (event: StreamEvent) => {
-      const payload = `data: ${JSON.stringify(event)}\n\n`;
-      await writer.write(encoder.encode(payload));
+      try {
+        const payload = `data: ${JSON.stringify(event)}\n\n`;
+        await writer.write(encoder.encode(payload));
+      } catch {
+        // Client aborted or disconnected from SSE stream
+      }
     };
 
     // Run the pipeline in background while streaming
@@ -28,15 +32,17 @@ export async function POST(req: NextRequest) {
         await director.executeRun(screenplayText, {
           enableImages,
           onEvent: (event) => {
-            sendEvent(event).catch((e) => {
-              console.error("Error writing SSE stream event:", e);
-            });
+            sendEvent(event).catch(() => {});
           },
         });
       } catch (runErr) {
         console.error("Director run error:", runErr);
       } finally {
-        await writer.close();
+        try {
+          await writer.close();
+        } catch {
+          // Writer already closed or aborted
+        }
       }
     })();
 
