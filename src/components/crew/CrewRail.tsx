@@ -38,7 +38,7 @@ interface CrewRailProps {
   isRunning: boolean;
 }
 
-interface CrewDept {
+export interface CrewDept {
   id: AgentId;
   callsign: string;
   name: string;
@@ -48,7 +48,7 @@ interface CrewDept {
   defaultTask: string;
 }
 
-const CREW_DEPARTMENTS: CrewDept[] = [
+export const CREW_DEPARTMENTS: CrewDept[] = [
   {
     id: "director",
     callsign: "DIR",
