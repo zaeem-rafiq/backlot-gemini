@@ -181,19 +181,22 @@ export function StoryboardGallery({ boardPlan }: StoryboardGalleryProps) {
 
                 <button
                   onClick={() => handleCopyPrompt(frame.frameId, frame.imagePrompt)}
-                  className="px-3 py-1.5 rounded-lg bg-[#08090D] hover:bg-[#141824] border border-studio-700 text-[10px] font-mono text-studio-200 flex items-center gap-1.5 transition flex-shrink-0"
+                  aria-label={`Copy generation prompt for Frame ${frame.frameId}`}
+                  className="px-3 py-1.5 rounded-lg bg-[#08090D] hover:bg-[#141824] border border-studio-700 text-[10px] font-mono text-studio-200 flex items-center gap-1.5 transition flex-shrink-0 focus-ring cursor-pointer"
                 >
-                  {copiedFrameId === frame.frameId ? (
-                    <>
-                      <Check className="w-3 h-3 text-emerald-400" />
-                      <span className="text-emerald-400 font-bold">Copied</span>
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="w-3 h-3 text-amber-400" />
-                      <span>Copy Prompt</span>
-                    </>
-                  )}
+                  <span aria-live="polite" className="flex items-center gap-1.5">
+                    {copiedFrameId === frame.frameId ? (
+                      <>
+                        <Check className="w-3 h-3 text-emerald-400" />
+                        <span className="text-emerald-400 font-bold">Copied</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-3 h-3 text-amber-400" />
+                        <span>Copy Prompt</span>
+                      </>
+                    )}
+                  </span>
                 </button>
               </div>
             </div>

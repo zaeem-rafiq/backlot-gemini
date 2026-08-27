@@ -161,7 +161,14 @@ export function CoverageDossier({ coverage, title }: CoverageDossierProps) {
                   </div>
 
                   {/* Critic Discrete Score Track */}
-                  <div className="flex items-center gap-1.5 font-mono">
+                  <div
+                    role="meter"
+                    aria-label={`${dim.label} score ${dim.score} out of 10`}
+                    aria-valuenow={dim.score}
+                    aria-valuemin={1}
+                    aria-valuemax={10}
+                    className="flex items-center gap-1.5 font-mono"
+                  >
                     <span className="text-lg font-bold text-white font-mono-tabular">
                       {dim.score}
                       <span className="text-xs text-studio-400 font-normal">/10</span>
@@ -182,7 +189,7 @@ export function CoverageDossier({ coverage, title }: CoverageDossierProps) {
                     </div>
                   </div>
 
-                  <p className="text-[11px] text-studio-400 leading-snug">{dim.note}</p>
+                  <p className="text-[11px] text-studio-300 leading-snug">{dim.note}</p>
                 </div>
               );
             })}

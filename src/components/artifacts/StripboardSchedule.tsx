@@ -240,7 +240,7 @@ export function StripboardSchedule({ schedule, scriptParse }: StripboardSchedule
                             <div className="flex items-center gap-2">
                               <Truck className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
                               <span className="font-bold uppercase tracking-wider">
-                                🚚 COMPANY MOVE & GEAR PACK: RELOCATING TO NEXT SET
+                                COMPANY MOVE & GEAR PACK: RELOCATING TO NEXT SET
                               </span>
                             </div>
                             <span className="text-[10px] text-amber-300 font-bold bg-amber-900/80 px-2 py-0.5 rounded border border-amber-500/40">
@@ -274,13 +274,13 @@ export function StripboardSchedule({ schedule, scriptParse }: StripboardSchedule
                                 {scene?.slugline || `SCENE ${scId} — ${day.locations[0]}`}
                               </span>
                               {scene?.timeOfDay === "DAWN" && (
-                                <span className="text-[9px] px-1 rounded bg-amber-400 text-black font-bold uppercase">
-                                  🌅 Golden Hour
+                                <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-400 text-black font-bold uppercase flex items-center gap-1">
+                                  <Sun className="w-2.5 h-2.5" /> Golden Hour
                                 </span>
                               )}
                               {scene?.timeOfDay === "DUSK" && (
-                                <span className="text-[9px] px-1 rounded bg-orange-400 text-black font-bold uppercase">
-                                  🌇 Dusk Window
+                                <span className="text-[9px] px-1.5 py-0.5 rounded bg-orange-400 text-black font-bold uppercase flex items-center gap-1">
+                                  <Moon className="w-2.5 h-2.5" /> Dusk Window
                                 </span>
                               )}
                             </div>
@@ -351,14 +351,17 @@ export function StripboardSchedule({ schedule, scriptParse }: StripboardSchedule
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-xs text-left">
+          <table
+            className="w-full text-xs text-left"
+            aria-label="Cast Availability & SAG-AFTRA Day Rate Matrix"
+          >
             <thead>
               <tr className="border-b border-studio-800 text-studio-400 font-mono text-[10px] uppercase">
-                <th className="py-2.5 pr-4">Cast ID</th>
-                <th className="py-2.5 px-4">Character Role</th>
-                <th className="py-2.5 px-4">Shoot Days Booked</th>
-                <th className="py-2.5 px-4">Standard Day Rate</th>
-                <th className="py-2.5 pl-4 text-right">Cast Total</th>
+                <th scope="col" className="py-2.5 pr-4">Cast ID</th>
+                <th scope="col" className="py-2.5 px-4">Character Role</th>
+                <th scope="col" className="py-2.5 px-4">Shoot Days Booked</th>
+                <th scope="col" className="py-2.5 px-4">Standard Day Rate</th>
+                <th scope="col" className="py-2.5 pl-4 text-right">Cast Total</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-studio-800/60 font-mono">

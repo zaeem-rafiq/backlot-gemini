@@ -150,7 +150,7 @@ export function AuditedBudget({ budget }: AuditedBudgetProps) {
                 <span className="text-xs font-bold text-white uppercase">
                   Line Item Audit: {selectedTraceItem.item}
                 </span>
-                <span className="text-[10px] px-1.5 py-0.2 rounded bg-studio-800 text-studio-300 border border-studio-700">
+                <span className="text-[10px] px-1.5 py-0.5 rounded bg-studio-800 text-studio-300 border border-studio-700">
                   {selectedTraceItem.category}
                 </span>
               </div>
@@ -165,7 +165,8 @@ export function AuditedBudget({ budget }: AuditedBudgetProps) {
           </div>
           <button
             onClick={() => setSelectedTraceItem(null)}
-            className="text-xs text-studio-400 hover:text-white font-mono px-2.5 py-1 rounded bg-[#08090D] border border-studio-700 transition"
+            className="text-xs text-studio-400 hover:text-white font-mono px-2.5 py-1 rounded bg-[#08090D] border border-studio-700 transition focus-ring"
+            aria-label="Dismiss Line Item Inspector"
           >
             ✕ Dismiss
           </button>
@@ -195,7 +196,8 @@ export function AuditedBudget({ budget }: AuditedBudgetProps) {
               {/* Category Header Bar */}
               <button
                 onClick={() => toggleCategory(section.category)}
-                className="w-full px-5 py-3 bg-[#141824] hover:bg-[#1A2030] transition flex items-center justify-between border-b border-studio-800"
+                className="w-full px-5 py-3 bg-[#141824] hover:bg-[#1A2030] transition flex items-center justify-between border-b border-studio-800 focus-ring cursor-pointer"
+                aria-expanded={!isCollapsed}
               >
                 <div className="flex items-center gap-3">
                   {isCollapsed ? (
@@ -222,23 +224,35 @@ export function AuditedBudget({ budget }: AuditedBudgetProps) {
               {/* Items Table */}
               {!isCollapsed && (
                 <div className="overflow-x-auto">
-                  <table className="w-full text-xs text-left">
+                  <table
+                    className="w-full text-xs text-left"
+                    aria-label={`Account ${acctCode} ${section.category} ledger items`}
+                  >
                     <thead>
                       <tr className="border-b border-studio-800 text-studio-400 font-mono text-[10px] uppercase bg-[#08090D]">
-                        <th className="py-2.5 px-5">Line Item Description</th>
-                        <th className="py-2.5 px-3">Unit Type</th>
-                        <th className="py-2.5 px-3 text-right">Quantity</th>
-                        <th className="py-2.5 px-3 text-right">Unit Rate</th>
-                        <th className="py-2.5 px-4 text-right">Total Subtotal</th>
-                        <th className="py-2.5 px-5 text-left">Cross-Artifact Provenance (tracesTo)</th>
+                        <th scope="col" className="py-2.5 px-5">Line Item Description</th>
+                        <th scope="col" className="py-2.5 px-3">Unit Type</th>
+                        <th scope="col" className="py-2.5 px-3 text-right">Quantity</th>
+                        <th scope="col" className="py-2.5 px-3 text-right">Unit Rate</th>
+                        <th scope="col" className="py-2.5 px-4 text-right">Total Subtotal</th>
+                        <th scope="col" className="py-2.5 px-5 text-left">Cross-Artifact Provenance (tracesTo)</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-studio-800/60 font-mono">
                       {section.items.map((item, idx) => (
                         <tr
                           key={idx}
+                          tabIndex={0}
+                          role="button"
+                          aria-label={`Inspect provenance for ${item.item}`}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              e.preventDefault();
+                              setSelectedTraceItem(item);
+                            }
+                          }}
                           onClick={() => setSelectedTraceItem(item)}
-                          className="hover:bg-[#161B29] transition cursor-pointer group"
+                          className="hover:bg-[#161B29] transition cursor-pointer group focus-ring"
                         >
                           <td className="py-3 px-5 text-white font-medium flex items-center gap-2">
                             <span className="text-studio-500 group-hover:text-amber-400 transition font-bold">•</span>

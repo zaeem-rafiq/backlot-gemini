@@ -128,34 +128,44 @@ export function PitchKitView({ pitchKit, title }: PitchKitViewProps) {
 
           {pitchKit.marketEvidence && pitchKit.marketEvidence.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-              {pitchKit.marketEvidence.map((citation, idx) => (
-                <a
-                  key={idx}
-                  href={citation.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="bg-[#0F121A] border border-studio-800 hover:border-sky-500/50 p-4 rounded-xl flex flex-col justify-between gap-3 transition group"
-                >
-                  <div className="flex flex-col gap-1.5">
-                    <div className="flex items-start justify-between gap-2">
-                      <span className="text-xs font-bold text-white group-hover:text-sky-300 transition line-clamp-2">
-                        {citation.title}
-                      </span>
-                      <ExternalLink className="w-3.5 h-3.5 text-studio-500 group-hover:text-sky-400 flex-shrink-0 transition" />
-                    </div>
-                    <p className="text-[11px] text-studio-300 leading-relaxed line-clamp-3 font-sans">
-                      {citation.snippet}
-                    </p>
-                  </div>
+              {pitchKit.marketEvidence.map((citation, idx) => {
+                let hostname = "source";
+                try {
+                  hostname = new URL(citation.url).hostname;
+                } catch {
+                  hostname = citation.url.replace(/^https?:\/\//, "").split("/")[0] || "source";
+                }
 
-                  <div className="pt-2 border-t border-studio-800 flex items-center justify-between text-[10px] font-mono text-studio-400">
-                    <span className="truncate max-w-[160px] text-sky-300">
-                      {new URL(citation.url).hostname}
-                    </span>
-                    {citation.publishedDate && <span>{citation.publishedDate}</span>}
-                  </div>
-                </a>
-              ))}
+                return (
+                  <a
+                    key={idx}
+                    href={citation.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`Read market comp citation: ${citation.title} (opens in new tab)`}
+                    className="bg-[#0F121A] border border-studio-800 hover:border-sky-500/50 p-4 rounded-xl flex flex-col justify-between gap-3 transition group focus-ring cursor-pointer"
+                  >
+                    <div className="flex flex-col gap-1.5">
+                      <div className="flex items-start justify-between gap-2">
+                        <span className="text-xs font-bold text-white group-hover:text-sky-300 transition line-clamp-2">
+                          {citation.title}
+                        </span>
+                        <ExternalLink className="w-3.5 h-3.5 text-studio-500 group-hover:text-sky-400 flex-shrink-0 transition" />
+                      </div>
+                      <p className="text-[11px] text-studio-300 leading-relaxed line-clamp-3 font-sans">
+                        {citation.snippet}
+                      </p>
+                    </div>
+
+                    <div className="pt-2 border-t border-studio-800 flex items-center justify-between text-[10px] font-mono text-studio-400">
+                      <span className="truncate max-w-[160px] text-sky-300">
+                        {hostname}
+                      </span>
+                      {citation.publishedDate && <span>{citation.publishedDate}</span>}
+                    </div>
+                  </a>
+                );
+              })}
             </div>
           ) : (
             <div className="bg-[#0F121A] border border-studio-800 rounded-lg p-5 text-center flex flex-col items-center gap-2">
