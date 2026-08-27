@@ -183,15 +183,15 @@ export function CrewRail({ statuses, logs, isRunning }: CrewRailProps) {
   };
 
   return (
-    <div className="bg-[#0F121A] border border-studio-800 rounded-xl p-4 md:p-5 flex flex-col gap-4 shadow-2xl">
+    <div className="bg-[#0F121A] border border-studio-800 rounded-xl p-3.5 sm:p-4 md:p-5 flex flex-col gap-4 shadow-2xl">
       {/* Call Sheet Header */}
-      <div className="flex items-center justify-between border-b border-studio-800 pb-3">
-        <div className="flex items-center gap-3">
-          <div className="h-8 w-8 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
+      <div className="flex items-start sm:items-center justify-between border-b border-studio-800 pb-3 flex-wrap gap-2.5">
+        <div className="flex items-center gap-2.5 sm:gap-3">
+          <div className="h-8 w-8 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 flex-shrink-0">
             <Users className="w-4 h-4" />
           </div>
           <div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <h2 className="text-xs font-mono font-bold uppercase tracking-wider text-white">
                 Studio Call Sheet & Crew Roster
               </h2>
@@ -205,15 +205,15 @@ export function CrewRail({ statuses, logs, isRunning }: CrewRailProps) {
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-shrink-0">
           {isRunning ? (
-            <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/40 text-amber-300 font-mono text-[11px]">
-              <span className="h-2 w-2 rounded-full bg-amber-400 animate-ping" />
+            <div className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/40 text-amber-300 font-mono text-[10px] sm:text-[11px] whitespace-nowrap">
+              <span className="h-2 w-2 rounded-full bg-amber-400 animate-ping flex-shrink-0" />
               <span>CREW DISPATCH LIVE</span>
             </div>
           ) : (
-            <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-mono text-[11px]">
-              <span className="h-2 w-2 rounded-full bg-emerald-400" />
+            <div className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-mono text-[10px] sm:text-[11px] whitespace-nowrap">
+              <span className="h-2 w-2 rounded-full bg-emerald-400 flex-shrink-0" />
               <span>CREW CALL READY</span>
             </div>
           )}
@@ -221,7 +221,7 @@ export function CrewRail({ statuses, logs, isRunning }: CrewRailProps) {
       </div>
 
       {/* 6 Department Cards (Personified Film Units) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-2.5">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-2.5">
         {CREW_DEPARTMENTS.map((member) => {
           const currentStatus = statuses[member.id] || "idle";
           const badge = getStatusBadge(currentStatus);
@@ -230,11 +230,11 @@ export function CrewRail({ statuses, logs, isRunning }: CrewRailProps) {
           return (
             <div
               key={member.id}
-              className={`p-3 rounded-lg border transition-all flex flex-col justify-between gap-2.5 ${badge.cardBorder}`}
+              className={`p-2.5 sm:p-3 rounded-lg border transition-all flex flex-col justify-between gap-2 sm:gap-2.5 ${badge.cardBorder}`}
             >
               {/* Department Header */}
               <div className="flex flex-col gap-1">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between gap-1">
                   <span
                     className={`text-[9px] font-mono font-bold px-1.5 py-0.5 rounded border uppercase tracking-wider ${getCallsignTag(
                       member.id
@@ -242,13 +242,13 @@ export function CrewRail({ statuses, logs, isRunning }: CrewRailProps) {
                   >
                     {member.callsign}
                   </span>
-                  <span className="text-[9px] font-mono text-studio-400 truncate max-w-[80px]">
+                  <span className="text-[9px] font-mono text-studio-400 truncate max-w-[70px] sm:max-w-[80px]">
                     {member.department}
                   </span>
                 </div>
 
                 <div className="pt-1">
-                  <span className="text-xs font-mono font-bold text-white block">
+                  <span className="text-xs font-mono font-bold text-white block truncate">
                     {member.name}
                   </span>
                   <span className="text-[10px] text-studio-300 font-medium block truncate">
@@ -258,7 +258,7 @@ export function CrewRail({ statuses, logs, isRunning }: CrewRailProps) {
               </div>
 
               {/* Dynamic Task or Emitted Output */}
-              <div className="bg-[#08090D] border border-studio-800/80 rounded p-2 text-[10px] font-mono min-h-[46px] flex flex-col justify-center">
+              <div className="bg-[#08090D] border border-studio-800/80 rounded p-1.5 sm:p-2 text-[10px] font-mono min-h-[42px] sm:min-h-[46px] flex flex-col justify-center">
                 {currentStatus === "working" ? (
                   <span className="text-amber-300 leading-snug flex items-center gap-1.5">
                     <Radio className="w-2.5 h-2.5 text-amber-400 animate-spin flex-shrink-0" />
@@ -269,20 +269,20 @@ export function CrewRail({ statuses, logs, isRunning }: CrewRailProps) {
                     {latestMsg}
                   </span>
                 ) : (
-                  <span className="text-studio-500 italic line-clamp-2 leading-snug">
+                  <span className="text-studio-400 italic line-clamp-2 leading-snug">
                     {member.defaultTask}
                   </span>
                 )}
               </div>
 
               {/* Footer: Model & Status Badge */}
-              <div className="flex items-center justify-between pt-1 border-t border-studio-800/60">
-                <div className="flex items-center gap-1 text-[9px] font-mono text-studio-400 truncate" title={member.model}>
+              <div className="flex items-center justify-between pt-1 border-t border-studio-800/60 gap-1">
+                <div className="flex items-center gap-1 text-[9px] font-mono text-studio-400 truncate min-w-0" title={member.model}>
                   <Cpu className="w-2.5 h-2.5 text-studio-400 flex-shrink-0" />
                   <span className="truncate">{member.model.split("/")[0]}</span>
                 </div>
                 <div
-                  className={`flex items-center gap-1 px-1.5 py-0.5 rounded border text-[9px] font-mono font-bold ${badge.badgeClass}`}
+                  className={`flex items-center gap-1 px-1.5 py-0.5 rounded border text-[9px] font-mono font-bold flex-shrink-0 ${badge.badgeClass}`}
                 >
                   {badge.icon}
                   <span>{badge.label}</span>
