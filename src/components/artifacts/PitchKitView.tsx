@@ -255,25 +255,64 @@ export function PitchKitView({ pitchKit, title }: PitchKitViewProps) {
           </div>
         </div>
 
-        {/* Key Art & Poster Direction */}
-        <div className="bg-[#06080C] border border-studio-800/80 rounded-2xl p-6 flex flex-col gap-4 shadow-sm">
-          <h4 className="text-xs font-mono uppercase tracking-wider text-white font-bold flex items-center gap-2 border-b border-studio-800/80 pb-3">
-            <ImageIcon className="w-4 h-4 text-amber-400" /> Key Art & Poster Concept Direction
-          </h4>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono">
-            <div className="bg-[#0B0D14] border border-studio-800 rounded-xl p-4 flex flex-col gap-1.5">
-              <span className="text-[10px] text-studio-400 uppercase font-bold tracking-wider">
-                Visual Composition (2:3 One-Sheet)
-              </span>
-              <p className="text-studio-200 font-sans leading-relaxed">{pitchKit.posterConcept.description}</p>
+        {/* Key Art & One-Sheet Poster */}
+        <div className="bg-[#06080C] border border-studio-800/80 rounded-2xl p-6 sm:p-8 flex flex-col gap-6 shadow-sm">
+          <div className="flex items-center justify-between border-b border-studio-800/80 pb-3 flex-wrap gap-2">
+            <h4 className="text-xs font-mono uppercase tracking-wider text-white font-bold flex items-center gap-2">
+              <ImageIcon className="w-4 h-4 text-amber-400" /> Key Art & One-Sheet Key Visual
+            </h4>
+            <span className="text-[10px] font-mono text-studio-400">
+              Format: 2:3 Vertical Theatrical One-Sheet
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+            {/* Left: Poster Render or Previz */}
+            <div className="md:col-span-5 flex justify-center">
+              {pitchKit.posterConcept.posterUrl ? (
+                <div className="relative rounded-xl overflow-hidden border-2 border-studio-700 bg-[#020305] aspect-[2/3] w-full max-w-[320px] shadow-2xl group">
+                  <img
+                    src={pitchKit.posterConcept.posterUrl}
+                    alt={`Theatrical poster for ${title}`}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-4 flex flex-col justify-end">
+                    <span className="text-xs font-mono font-bold text-white uppercase">{title}</span>
+                    <span className="text-[10px] font-mono text-amber-300 italic">&ldquo;{pitchKit.tagline}&rdquo;</span>
+                  </div>
+                </div>
+              ) : (
+                <div className="aspect-[2/3] w-full max-w-[320px] bg-[#0B0D14] border-2 border-dashed border-studio-800 rounded-xl p-6 flex flex-col items-center justify-center text-center gap-3">
+                  <Film className="w-8 h-8 text-amber-400/60" />
+                  <span className="text-xs font-mono font-bold uppercase text-white">
+                    Key Art Previz
+                  </span>
+                  <p className="text-[11px] text-studio-400 font-sans">
+                    Image generation offline. Previz prompt blueprint ready for render.
+                  </p>
+                </div>
+              )}
             </div>
-            <div className="bg-[#0B0D14] border border-studio-800 rounded-xl p-4 flex flex-col gap-1.5">
-              <span className="text-[10px] text-studio-400 uppercase font-bold tracking-wider">
-                Prompt Blueprint Specification
-              </span>
-              <p className="text-amber-300 font-mono text-[11px] line-clamp-3 leading-relaxed">
-                {pitchKit.posterConcept.imagePrompt}
-              </p>
+
+            {/* Right: Composition Notes & Prompt Blueprint */}
+            <div className="md:col-span-7 flex flex-col gap-4 text-xs font-mono">
+              <div className="bg-[#0B0D14] border border-studio-800 rounded-xl p-5 flex flex-col gap-2">
+                <span className="text-[10px] text-amber-400 uppercase font-bold tracking-wider">
+                  Visual Composition & Framing
+                </span>
+                <p className="text-studio-200 font-sans leading-relaxed text-xs sm:text-sm">
+                  {pitchKit.posterConcept.description}
+                </p>
+              </div>
+
+              <div className="bg-[#0B0D14] border border-studio-800 rounded-xl p-5 flex flex-col gap-2">
+                <span className="text-[10px] text-studio-400 uppercase font-bold tracking-wider">
+                  Prompt Blueprint Specification
+                </span>
+                <p className="text-amber-300 font-mono text-[11px] leading-relaxed select-all">
+                  {pitchKit.posterConcept.imagePrompt}
+                </p>
+              </div>
             </div>
           </div>
         </div>

@@ -9,17 +9,26 @@ export const dynamic = "force-dynamic";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json().catch(() => ({}));
-    const rawText = (body.screenplayText as string) || "";
-    const screenplayText = rawText.trim() || FREQUENCY_ZERO_SCRIPT;
+    const rawText = typeof body.screenplayText === "string" ? body.screenplayText : "";
     const enableImages = Boolean(body.enableImages);
 
-    // Pre-flight validation: must contain some text and standard slugline markers if custom
-    if (rawText && (rawText.trim().length < 30 || !/INT\.|EXT\./i.test(rawText))) {
-      return new Response(
-        JSON.stringify({ error: "Screenplay must contain at least one standard scene slugline (INT. or EXT.)." }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
-      );
+    // Pre-flight validation: validate explicit empty text or non-screenplay text
+    if (typeof body.screenplayText === "string") {
+      const trimmed = rawText.trim();
+      if (trimmed.length === 0) {
+        return new Response(
+          JSON.stringify({ error: "Screenplay text cannot be empty. Please provide screenplay content with standard scene sluglines (INT. or EXT.)." }),
+          { status: 400, headers: { "Content-Type": "application/json" } }
+        );
+      }
+      if (trimmed.length < 30 || !/INT\.|EXT\./i.test(trimmed)) {
+        return new Response(
+          JSON.stringify({ error: "Screenplay must contain at least one standard scene slugline (INT. or EXT.)." }),
+          { status: 400, headers: { "Content-Type": "application/json" } }
+        );
+      }
     }
+    const screenplayText = rawText.trim() || FREQUENCY_ZERO_SCRIPT;
 
     const encoder = new TextEncoder();
     const stream = new TransformStream();

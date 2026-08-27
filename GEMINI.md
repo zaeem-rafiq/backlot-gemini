@@ -13,6 +13,9 @@ This file defines the project-level rules, architecture invariants, and testing 
 5. **Cross-Artifact Provenance:** Every single budget line item must carry an explicit `tracesTo` provenance string linking it directly to the specific scene element from the script breakdown that triggered it.
 6. **Calibrated Sourced Statistics:** Never add industry statistics without a checkable authoritative source (e.g. WGA West, Filmustage, StoryboardArt.org, Entertainment Partners, Short Movie Club).
 7. **Graceful Degradation & Zero-Quota Bake:** The studio suite must support previz cards and prompt-only fallbacks when image generation quota is unavailable, and ship with a verified baked sample run fixture (`sample-run.json`) so the hosted application is fully demonstrable at zero API quota.
+8. **Prohibition of Fabricated Visual Evidence:** Never present generated imagery or synthetic mockups as evidence of application state. Screenshots must be captured directly from the running application in a real browser. If a visual verification cannot be performed (e.g., lack of automated browser capture tools), report that it cannot be performed honestly as `NOT RUN` / `Unverified`. Fabricated verification evidence is strictly forbidden.
+9. **Deployed URL Verification Required:** Any "fixed" claim on a UI, schema, or runtime behavior is only officially closed when verified directly against the live deployed Cloud Run URL (`https://backlot-studio-112519007745.us-central1.run.app`), not merely in local dev. Local tests are necessary but insufficient for closure.
+10. **Daily Deployment Cadence:** Any commit or change that modifies UI, styles, or runtime behavior must be deployed to Cloud Run on the same day to ensure the hosted submission URL never drifts from codebase truth.
 
 ---
 

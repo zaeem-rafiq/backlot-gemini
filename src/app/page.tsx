@@ -246,6 +246,22 @@ export default function BacklotStudioPage() {
         signal: controller.signal,
       });
 
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: `HTTP ${response.status}: ${response.statusText}` }));
+        const errorMessage = errorData.error || `HTTP ${response.status} error`;
+        enqueueLog({
+          agent: "director",
+          level: "error",
+          message: `Studio run rejected: ${errorMessage}`,
+          timestamp: new Date().toISOString(),
+        });
+        flushLogs();
+        setRunState((prev) => (prev ? { ...prev, status: "error", error: errorMessage } : null));
+        setAgentStatuses((prev) => ({ ...prev, director: "error" }));
+        setIsRunning(false);
+        return;
+      }
+
       if (!response.body) {
         throw new Error("No SSE response stream received");
       }
@@ -705,6 +721,7 @@ export default function BacklotStudioPage() {
                     role="tab"
                     aria-selected={isActive}
                     aria-controls={`panel-${tab.id}`}
+                    aria-label={`${tab.label} deliverable tab`}
                     onClick={() => setActiveTab(tab.id)}
                     className={`px-3 py-2 rounded-lg text-xs font-mono flex items-center gap-2 transition flex-shrink-0 focus-ring cursor-pointer ${
                       isActive
@@ -747,6 +764,7 @@ export default function BacklotStudioPage() {
                     label="Studio Story Coverage"
                     description="Ink (Story Analyst) is evaluating narrative premise, pacing, and calibrated reader scores."
                     isRunning={isRunning}
+                    error={runState?.status === "error" ? runState.error : undefined}
                     onLoadSample={handleLoadSample}
                     onDispatch={handleStartRun}
                   />
@@ -761,6 +779,7 @@ export default function BacklotStudioPage() {
                     label="1st AD Breakdown Sheet"
                     description="Slate (1st AD) is cataloging 13 physical element categories across all scenes."
                     isRunning={isRunning}
+                    error={runState?.status === "error" ? runState.error : undefined}
                     onLoadSample={handleLoadSample}
                     onDispatch={handleStartRun}
                   />
@@ -775,6 +794,7 @@ export default function BacklotStudioPage() {
                     label="Stripboard Schedule"
                     description="Ledger is clustering location blocks, applying setup floors, and bin-packing shooting days."
                     isRunning={isRunning}
+                    error={runState?.status === "error" ? runState.error : undefined}
                     onLoadSample={handleLoadSample}
                     onDispatch={handleStartRun}
                   />
@@ -789,6 +809,7 @@ export default function BacklotStudioPage() {
                     label="Audited Top Sheet Budget"
                     description="Ledger is computing pure mathematical line items with 100% cross-artifact provenance."
                     isRunning={isRunning}
+                    error={runState?.status === "error" ? runState.error : undefined}
                     onLoadSample={handleLoadSample}
                     onDispatch={handleStartRun}
                   />
@@ -806,6 +827,7 @@ export default function BacklotStudioPage() {
                     label="Storyboard Previz Deck"
                     description="Easel (Storyboard Artist) is designing 2.39:1 camera focal lengths, blocking, and keyframe prompt plans."
                     isRunning={isRunning}
+                    error={runState?.status === "error" ? runState.error : undefined}
                     onLoadSample={handleLoadSample}
                     onDispatch={handleStartRun}
                   />
@@ -820,6 +842,7 @@ export default function BacklotStudioPage() {
                     label="Pitch Kit & Parallel Citations"
                     description="Marquee is querying live Parallel Search API market data and quoting coverage & budget totals."
                     isRunning={isRunning}
+                    error={runState?.status === "error" ? runState.error : undefined}
                     onLoadSample={handleLoadSample}
                     onDispatch={handleStartRun}
                   />
@@ -932,15 +955,64 @@ function EmptyArtifactPlaceholder({
   label,
   description,
   isRunning,
+  error,
   onLoadSample,
   onDispatch,
 }: {
   label: string;
   description: string;
   isRunning: boolean;
+  error?: string;
   onLoadSample?: () => void;
   onDispatch?: () => void;
-  }) {
+}) {
+  if (error) {
+    return (
+      <div className="bg-[#120D0E] border border-red-900/60 rounded-xl flex flex-col items-center justify-center min-h-[460px] gap-5 text-center p-8 sm:p-12 shadow-2xl hairline-grid relative overflow-hidden animate-document-land">
+        <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-red-950/80 to-[#120D0E] border border-red-800/80 flex items-center justify-center text-red-400 shadow-xl">
+          <AlertCircle className="w-7 h-7 text-red-400" />
+        </div>
+        <div className="flex flex-col gap-2 max-w-lg">
+          <span className="text-[10px] font-mono font-bold tracking-widest text-red-400 uppercase">
+            STUDIO CREW EXECUTION NOTICE
+          </span>
+          <h3 className="text-base font-mono font-bold text-white uppercase tracking-wider">
+            {label} Unavailable
+          </h3>
+          <div className="p-3 bg-black/60 border border-red-900/40 rounded-lg text-left">
+            <p className="text-xs text-red-200 font-mono leading-relaxed break-words">
+              {error}
+            </p>
+          </div>
+          <p className="text-xs text-studio-400 font-sans mt-1">
+            Ensure screenplay text includes standard scene sluglines (e.g. <code className="text-amber-300">INT. ROOM - NIGHT</code>) or load the verified sample production package.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-3 pt-2 flex-wrap justify-center">
+          {onLoadSample && (
+            <button
+              onClick={onLoadSample}
+              className="px-4 py-2 rounded-lg bg-[#151924] hover:bg-studio-700 border border-studio-700 text-xs font-mono font-bold text-studio-200 flex items-center gap-2 transition focus-ring cursor-pointer shadow-sm"
+            >
+              <RefreshCw className="w-3.5 h-3.5 text-amber-400" />
+              Load Verified Sample Run
+            </button>
+          )}
+          {onDispatch && (
+            <button
+              onClick={onDispatch}
+              className="px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-black font-extrabold font-mono text-xs flex items-center gap-2 transition shadow-lg shadow-amber-500/20 focus-ring cursor-pointer"
+            >
+              <Play className="w-3.5 h-3.5 fill-current" />
+              Retry Dispatch
+            </button>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-[#0D1017] border border-studio-800/90 rounded-xl flex flex-col items-center justify-center min-h-[460px] gap-5 text-center p-8 sm:p-12 shadow-2xl hairline-grid relative overflow-hidden">
       <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-[#161B26] to-[#08090D] border border-studio-700/80 flex items-center justify-center text-amber-400 shadow-xl">
