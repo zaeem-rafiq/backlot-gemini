@@ -9,8 +9,17 @@ export const dynamic = "force-dynamic";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json().catch(() => ({}));
-    const screenplayText = (body.screenplayText as string) || FREQUENCY_ZERO_SCRIPT;
+    const rawText = (body.screenplayText as string) || "";
+    const screenplayText = rawText.trim() || FREQUENCY_ZERO_SCRIPT;
     const enableImages = Boolean(body.enableImages);
+
+    // Pre-flight validation: must contain some text and standard slugline markers if custom
+    if (rawText && (rawText.trim().length < 30 || !/INT\.|EXT\./i.test(rawText))) {
+      return new Response(
+        JSON.stringify({ error: "Screenplay must contain at least one standard scene slugline (INT. or EXT.)." }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
+      );
+    }
 
     const encoder = new TextEncoder();
     const stream = new TransformStream();
@@ -31,6 +40,7 @@ export async function POST(req: NextRequest) {
       try {
         await director.executeRun(screenplayText, {
           enableImages,
+          signal: req.signal,
           onEvent: (event) => {
             sendEvent(event).catch(() => {});
           },

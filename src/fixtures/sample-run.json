@@ -22,7 +22,10 @@
         "location": "K-DESERT BROADCAST BOOTH",
         "timeOfDay": "NIGHT",
         "summary": "DJ Jack Mercer hosts his late-night broadcast when engineer Maya detects an impossible future-dated audio broadcast bouncing off the ionosphere.",
-        "characters": ["JACK", "MAYA"],
+        "characters": [
+          "JACK",
+          "MAYA"
+        ],
         "pageEighths": 12
       },
       {
@@ -32,7 +35,10 @@
         "location": "TRANSMITTER ROOM",
         "timeOfDay": "NIGHT",
         "summary": "Maya and Jack battle a sparking, smoking 50k-watt transmitter coil that threatens to ignite the station.",
-        "characters": ["JACK", "MAYA"],
+        "characters": [
+          "JACK",
+          "MAYA"
+        ],
         "pageEighths": 6
       },
       {
@@ -42,7 +48,9 @@
         "location": "TRANSMITTER TOWER",
         "timeOfDay": "NIGHT",
         "summary": "Jack steps beneath the tower in the howling wind and hears his own voice reporting his death on tomorrow's broadcast.",
-        "characters": ["JACK"],
+        "characters": [
+          "JACK"
+        ],
         "pageEighths": 4
       },
       {
@@ -52,7 +60,11 @@
         "location": "K-DESERT BROADCAST BOOTH",
         "timeOfDay": "DAWN",
         "summary": "Jack and Maya explain the prophetic broadcast to a skeptical Deputy Reyes at first light.",
-        "characters": ["JACK", "MAYA", "DEPUTY REYES"],
+        "characters": [
+          "JACK",
+          "MAYA",
+          "DEPUTY REYES"
+        ],
         "pageEighths": 4
       },
       {
@@ -62,7 +74,10 @@
         "location": "K-DESERT BROADCAST BOOTH",
         "timeOfDay": "DAY",
         "summary": "Maya rigs emergency transmitter frequencies while Jack plots the doomed freight truck's route on a map.",
-        "characters": ["JACK", "MAYA"],
+        "characters": [
+          "JACK",
+          "MAYA"
+        ],
         "pageEighths": 10
       },
       {
@@ -72,7 +87,9 @@
         "location": "DESERT HIGHWAY 64",
         "timeOfDay": "DAY",
         "summary": "Jack drives to the highway checkpoint and learns from road workers that bridge inspections were postponed.",
-        "characters": ["JACK"],
+        "characters": [
+          "JACK"
+        ],
         "pageEighths": 8
       },
       {
@@ -82,7 +99,9 @@
         "location": "CANYON OVERLOOK",
         "timeOfDay": "DUSK",
         "summary": "At dusk, Jack discovers sheared structural rivets on the canyon bridge span and radios Maya as the storm hits.",
-        "characters": ["JACK"],
+        "characters": [
+          "JACK"
+        ],
         "pageEighths": 4
       },
       {
@@ -92,7 +111,9 @@
         "location": "CANYON BRIDGE",
         "timeOfDay": "NIGHT",
         "summary": "In a raging rainstorm, Jack flags down the runaway freight truck with a flare and dives across the guardrail to survive the skid.",
-        "characters": ["JACK"],
+        "characters": [
+          "JACK"
+        ],
         "pageEighths": 14
       },
       {
@@ -102,7 +123,10 @@
         "location": "K-DESERT BROADCAST BOOTH",
         "timeOfDay": "NIGHT",
         "summary": "An injured, bandaged Jack returns to the microphone to close the broadcast as the future timeline resets.",
-        "characters": ["JACK", "MAYA"],
+        "characters": [
+          "JACK",
+          "MAYA"
+        ],
         "pageEighths": 8
       },
       {
@@ -112,7 +136,10 @@
         "location": "RADIO STATION LOT",
         "timeOfDay": "DAWN",
         "summary": "Jack and Maya share coffee on the truck tailgate at sunrise as the station broadcasts into a peaceful new morning.",
-        "characters": ["JACK", "MAYA"],
+        "characters": [
+          "JACK",
+          "MAYA"
+        ],
         "pageEighths": 4
       }
     ]
@@ -120,9 +147,17 @@
   "coverage": {
     "logline": "When an isolated graveyard-shift desert radio DJ intercepts an impossible broadcast from 24 hours in the future predicting a fatal highway collapse, he must risk everything on live air to stop an oncoming night freight convoy.",
     "synopsis": "Set in a remote 1970s Nevada broadcast station, FREQUENCY ZERO opens on veteran night-shift DJ Jack Mercer and his sharp young engineer Maya detecting a rogue radio transmission stamped 24 hours in the future. As the future audio details a catastrophic gorge collapse claiming Jack's own life, Jack and Maya scramble to warn local authorities before embarking on a dangerous race against time. Jack reaches the canyon bridge during a violent desert storm, risking his life with a magnesium flare to stop an oncoming freight semi-truck from plummeting into the abyss, successfully altering the timeline before returning to sign off his final morning broadcast.",
-    "genre": ["Sci-Fi", "Thriller", "Neo-Noir"],
+    "genre": [
+      "Sci-Fi",
+      "Thriller",
+      "Neo-Noir"
+    ],
     "tone": "Atmospheric, analog suspense with relentless ticking-clock dread",
-    "themes": ["Determinism vs Free Will", "Human Connection in Isolation", "Quiet Heroism"],
+    "themes": [
+      "Determinism vs Free Will",
+      "Human Connection in Isolation",
+      "Quiet Heroism"
+    ],
     "comparables": [
       {
         "title": "The Vast of Night",
@@ -159,65 +194,132 @@
     "breakdowns": [
       {
         "sceneId": 1,
-        "cast": ["JACK", "MAYA"],
+        "cast": [
+          "JACK",
+          "MAYA"
+        ],
         "background": [],
-        "props": ["ACETATE RECORD", "RCA RIBBON MICROPHONE", "OSCILLOSCOPE"],
-        "setDressing": ["VU METERS", "BROADCAST CONSOLE", "CARTRIDGE RACKS"],
-        "wardrobe": ["1970s CASUAL LINEN SHIRT", "DENIM WORK SHIRT"],
-        "makeupHair": ["TIRED EYES", "LIGHT SWEAT"],
+        "props": [
+          "ACETATE RECORD",
+          "RCA RIBBON MICROPHONE",
+          "OSCILLOSCOPE"
+        ],
+        "setDressing": [
+          "VU METERS",
+          "BROADCAST CONSOLE",
+          "CARTRIDGE RACKS"
+        ],
+        "wardrobe": [
+          "1970s CASUAL LINEN SHIRT",
+          "DENIM WORK SHIRT"
+        ],
+        "makeupHair": [
+          "TIRED EYES",
+          "LIGHT SWEAT"
+        ],
         "vehicles": [],
         "sfx": [],
         "vfx": [],
         "stunts": [],
         "animals": [],
-        "sound": ["HIGH FREQUENCY AUDIO WHINE", "STATIC BURST"],
-        "specialEquipment": ["VINTAGE AUDIO PROPS"],
+        "sound": [
+          "HIGH FREQUENCY AUDIO WHINE",
+          "STATIC BURST"
+        ],
+        "specialEquipment": [
+          "VINTAGE AUDIO PROPS"
+        ],
         "complexity": 2,
         "complexityReason": "Studio dialogue scene with detailed practical audio dressing"
       },
       {
         "sceneId": 2,
-        "cast": ["JACK", "MAYA"],
+        "cast": [
+          "JACK",
+          "MAYA"
+        ],
         "background": [],
-        "props": ["FIRE EXTINGUISHER", "STEEL WRENCH"],
-        "setDressing": ["50KW TRANSMITTER CAGE", "GLOWING VACUUM TUBES"],
+        "props": [
+          "FIRE EXTINGUISHER",
+          "STEEL WRENCH"
+        ],
+        "setDressing": [
+          "50KW TRANSMITTER CAGE",
+          "GLOWING VACUUM TUBES"
+        ],
         "wardrobe": [],
-        "makeupHair": ["GREASE SMUDGES"],
+        "makeupHair": [
+          "GREASE SMUDGES"
+        ],
         "vehicles": [],
-        "sfx": ["PRACTICAL ELECTRICAL SPARKS", "ACRID SMOKE PLUME"],
-        "vfx": ["VIOLET TUBE GLOW ENHANCEMENT"],
+        "sfx": [
+          "PRACTICAL ELECTRICAL SPARKS",
+          "ACRID SMOKE PLUME"
+        ],
+        "vfx": [
+          "VIOLET TUBE GLOW ENHANCEMENT"
+        ],
         "stunts": [],
         "animals": [],
-        "sound": ["TRANSFORMER OVERLOAD BUZZ"],
-        "specialEquipment": ["PRACTICAL SPARK RIG", "SMOKE MACHINE"],
+        "sound": [
+          "TRANSFORMER OVERLOAD BUZZ"
+        ],
+        "specialEquipment": [
+          "PRACTICAL SPARK RIG",
+          "SMOKE MACHINE"
+        ],
         "complexity": 3,
         "complexityReason": "Practical electrical sparking and smoke effects on enclosed set"
       },
       {
         "sceneId": 3,
-        "cast": ["JACK"],
+        "cast": [
+          "JACK"
+        ],
         "background": [],
-        "props": ["PORTABLE BATTERY RECEIVER"],
-        "setDressing": ["GRAVEL LOT", "300FT TOWER BASE"],
-        "wardrobe": ["WIND JACKET"],
+        "props": [
+          "PORTABLE BATTERY RECEIVER"
+        ],
+        "setDressing": [
+          "GRAVEL LOT",
+          "300FT TOWER BASE"
+        ],
+        "wardrobe": [
+          "WIND JACKET"
+        ],
         "makeupHair": [],
         "vehicles": [],
-        "sfx": ["WIND HOWL PRACTICAL FAN"],
+        "sfx": [
+          "WIND HOWL PRACTICAL FAN"
+        ],
         "vfx": [],
         "stunts": [],
         "animals": [],
-        "sound": ["CRACKLING FUTURE RADIO V.O."],
+        "sound": [
+          "CRACKLING FUTURE RADIO V.O."
+        ],
         "specialEquipment": [],
         "complexity": 2,
         "complexityReason": "Night exterior location with wind audio capture"
       },
       {
         "sceneId": 4,
-        "cast": ["JACK", "MAYA", "DEPUTY REYES"],
+        "cast": [
+          "JACK",
+          "MAYA",
+          "DEPUTY REYES"
+        ],
         "background": [],
-        "props": ["COFFEE MUG", "NOTEPAD"],
-        "setDressing": ["DUSTY VENETIAN BLINDS"],
-        "wardrobe": ["DUSTY COUNTY SHERIFF UNIFORM"],
+        "props": [
+          "COFFEE MUG",
+          "NOTEPAD"
+        ],
+        "setDressing": [
+          "DUSTY VENETIAN BLINDS"
+        ],
+        "wardrobe": [
+          "DUSTY COUNTY SHERIFF UNIFORM"
+        ],
         "makeupHair": [],
         "vehicles": [],
         "sfx": [],
@@ -225,16 +327,28 @@
         "stunts": [],
         "animals": [],
         "sound": [],
-        "specialEquipment": ["GOLDEN HOUR LIGHTING PACKAGE"],
+        "specialEquipment": [
+          "GOLDEN HOUR LIGHTING PACKAGE"
+        ],
         "complexity": 2,
         "complexityReason": "Multi-character dialogue scene with dawn lighting constraints"
       },
       {
         "sceneId": 5,
-        "cast": ["JACK", "MAYA"],
+        "cast": [
+          "JACK",
+          "MAYA"
+        ],
         "background": [],
-        "props": ["GREASE PENCIL", "SOLDERING IRON", "STATE TOPOGRAPHICAL MAP"],
-        "setDressing": ["WALL MAP", "MILITARY FREQUENCY TRANSCEIVER"],
+        "props": [
+          "GREASE PENCIL",
+          "SOLDERING IRON",
+          "STATE TOPOGRAPHICAL MAP"
+        ],
+        "setDressing": [
+          "WALL MAP",
+          "MILITARY FREQUENCY TRANSCEIVER"
+        ],
         "wardrobe": [],
         "makeupHair": [],
         "vehicles": [],
@@ -249,90 +363,187 @@
       },
       {
         "sceneId": 6,
-        "cast": ["JACK"],
-        "background": ["2 HIGHWAY WORKERS"],
-        "props": ["DETOUR CONES", "CLIPBOARD"],
-        "setDressing": ["MILE MARKER 82 SIGN", "ASPHALT ROAD"],
-        "wardrobe": ["HIGH-VIS ORANGE VESTS", "HARD HATS"],
-        "makeupHair": ["SUNBURN / DUST"],
-        "vehicles": ["1978 CHEVY BLAZER", "COUNTY TRUCK"],
-        "sfx": ["DUST ROOSTER TAIL"],
+        "cast": [
+          "JACK"
+        ],
+        "background": [
+          "2 HIGHWAY WORKERS"
+        ],
+        "props": [
+          "DETOUR CONES",
+          "CLIPBOARD"
+        ],
+        "setDressing": [
+          "MILE MARKER 82 SIGN",
+          "ASPHALT ROAD"
+        ],
+        "wardrobe": [
+          "HIGH-VIS ORANGE VESTS",
+          "HARD HATS"
+        ],
+        "makeupHair": [
+          "SUNBURN / DUST"
+        ],
+        "vehicles": [
+          "1978 CHEVY BLAZER",
+          "COUNTY TRUCK"
+        ],
+        "sfx": [
+          "DUST ROOSTER TAIL"
+        ],
         "vfx": [],
         "stunts": [],
         "animals": [],
-        "sound": ["DISTANT HIGHWAY WINDS"],
-        "specialEquipment": ["CAMERA CAR MOUNT"],
+        "sound": [
+          "DISTANT HIGHWAY WINDS"
+        ],
+        "specialEquipment": [
+          "CAMERA CAR MOUNT"
+        ],
         "complexity": 3,
         "complexityReason": "Day exterior road scene with picture vehicle, extras, and car mounts"
       },
       {
         "sceneId": 7,
-        "cast": ["JACK"],
+        "cast": [
+          "JACK"
+        ],
         "background": [],
-        "props": ["HIGH-POWERED BINOCULARS", "TWO-WAY HANDHELD RADIO"],
-        "setDressing": ["CANYON OVERLOOK CLIFF", "WARNING SIGNS"],
+        "props": [
+          "HIGH-POWERED BINOCULARS",
+          "TWO-WAY HANDHELD RADIO"
+        ],
+        "setDressing": [
+          "CANYON OVERLOOK CLIFF",
+          "WARNING SIGNS"
+        ],
         "wardrobe": [],
         "makeupHair": [],
         "vehicles": [],
         "sfx": [],
-        "vfx": ["SHEARED RIVET CLOSE-UP INSERT"],
+        "vfx": [
+          "SHEARED RIVET CLOSE-UP INSERT"
+        ],
         "stunts": [],
         "animals": [],
-        "sound": ["TWO-WAY RADIO STATIC"],
-        "specialEquipment": ["LONG TELEPHOTO LENS"],
+        "sound": [
+          "TWO-WAY RADIO STATIC"
+        ],
+        "specialEquipment": [
+          "LONG TELEPHOTO LENS"
+        ],
         "complexity": 3,
         "complexityReason": "Dusk golden-hour exterior cliff shoot with telephoto camera work"
       },
       {
         "sceneId": 8,
-        "cast": ["JACK"],
+        "cast": [
+          "JACK"
+        ],
         "background": [],
-        "props": ["RED MAGNESIUM FLARE", "BRIDGE RAILINGS"],
-        "setDressing": ["SEVERED BRIDGE ABYSS", "ROTTING TIMBERS"],
-        "wardrobe": ["SOAKED WINDBREAKER"],
-        "makeupHair": ["FOREHEAD GASH BLOOD FX", "RAIN-SOAKED HAIR"],
-        "vehicles": ["18-WHEELER FREIGHT RIG"],
-        "sfx": ["TORRENTIAL RAIN RIG", "SKIDDING BRAKES SOUND", "SPARKS"],
-        "vfx": ["DIGITAL MATTE CANYON EXTENSION"],
-        "stunts": ["GUARDRAIL DIVE & ROCKY BANK FALL"],
+        "props": [
+          "RED MAGNESIUM FLARE",
+          "BRIDGE RAILINGS"
+        ],
+        "setDressing": [
+          "SEVERED BRIDGE ABYSS",
+          "ROTTING TIMBERS"
+        ],
+        "wardrobe": [
+          "SOAKED WINDBREAKER"
+        ],
+        "makeupHair": [
+          "FOREHEAD GASH BLOOD FX",
+          "RAIN-SOAKED HAIR"
+        ],
+        "vehicles": [
+          "18-WHEELER FREIGHT RIG"
+        ],
+        "sfx": [
+          "TORRENTIAL RAIN RIG",
+          "SKIDDING BRAKES SOUND",
+          "SPARKS"
+        ],
+        "vfx": [
+          "DIGITAL MATTE CANYON EXTENSION"
+        ],
+        "stunts": [
+          "GUARDRAIL DIVE & ROCKY BANK FALL"
+        ],
         "animals": [],
-        "sound": ["THUNDERCLAPS", "AIR HORN"],
-        "specialEquipment": ["RAIN MACHINES", "STUNT CRASH MATS", "HAZER TRUCK"],
+        "sound": [
+          "THUNDERCLAPS",
+          "AIR HORN"
+        ],
+        "specialEquipment": [
+          "RAIN MACHINES",
+          "STUNT CRASH MATS",
+          "HAZER TRUCK"
+        ],
         "complexity": 5,
         "complexityReason": "Night exterior rain, precision picture truck, stunt dive, practical SFX, and digital matte extension"
       },
       {
         "sceneId": 9,
-        "cast": ["JACK", "MAYA"],
+        "cast": [
+          "JACK",
+          "MAYA"
+        ],
         "background": [],
-        "props": ["WHITE TEMPLE BANDAGE", "BROADCAST MIC"],
-        "setDressing": ["STEADY GREEN OSCILLOSCOPE"],
-        "wardrobe": ["SOAKED CLOTHING"],
-        "makeupHair": ["BLOOD DRIED ON TEMPLE"],
+        "props": [
+          "WHITE TEMPLE BANDAGE",
+          "BROADCAST MIC"
+        ],
+        "setDressing": [
+          "STEADY GREEN OSCILLOSCOPE"
+        ],
+        "wardrobe": [
+          "SOAKED CLOTHING"
+        ],
+        "makeupHair": [
+          "BLOOD DRIED ON TEMPLE"
+        ],
         "vehicles": [],
         "sfx": [],
         "vfx": [],
         "stunts": [],
         "animals": [],
-        "sound": ["STEADY OSCILLOSCOPE TONE"],
+        "sound": [
+          "STEADY OSCILLOSCOPE TONE"
+        ],
         "specialEquipment": [],
         "complexity": 2,
         "complexityReason": "Interior night dialogue with aftermath HMU"
       },
       {
         "sceneId": 10,
-        "cast": ["JACK", "MAYA"],
+        "cast": [
+          "JACK",
+          "MAYA"
+        ],
         "background": [],
-        "props": ["SHARED THERMOS", "TIN COFFEE CUPS"],
-        "setDressing": ["TRUCK TAILGATE", "STATION GRAVEL LOT"],
+        "props": [
+          "SHARED THERMOS",
+          "TIN COFFEE CUPS"
+        ],
+        "setDressing": [
+          "TRUCK TAILGATE",
+          "STATION GRAVEL LOT"
+        ],
         "wardrobe": [],
-        "makeupHair": ["MORNING LIGHT HMU REFRESH"],
-        "vehicles": ["1978 CHEVY BLAZER"],
+        "makeupHair": [
+          "MORNING LIGHT HMU REFRESH"
+        ],
+        "vehicles": [
+          "1978 CHEVY BLAZER"
+        ],
         "sfx": [],
         "vfx": [],
         "stunts": [],
         "animals": [],
-        "sound": ["TRANSMITTER MORNING HUM"],
+        "sound": [
+          "TRANSMITTER MORNING HUM"
+        ],
         "specialEquipment": [],
         "complexity": 2,
         "complexityReason": "Exterior dawn golden-hour closing scene"
@@ -344,11 +555,22 @@
       {
         "dayNumber": 1,
         "shootType": "DAY",
-        "sceneIds": [4, 5, 10],
-        "locations": ["K-DESERT BROADCAST BOOTH", "RADIO STATION LOT"],
+        "sceneIds": [
+          4,
+          5,
+          10
+        ],
+        "locations": [
+          "K-DESERT BROADCAST BOOTH",
+          "RADIO STATION LOT"
+        ],
         "totalEighths": 18,
         "effectiveEighths": 24,
-        "castNeeded": ["JACK", "MAYA", "DEPUTY REYES"],
+        "castNeeded": [
+          "JACK",
+          "MAYA",
+          "DEPUTY REYES"
+        ],
         "notes": [
           "Scene 4: Golden Hour (Dawn) shooting window required.",
           "Scene 10: Golden Hour (Dawn) shooting window required."
@@ -358,11 +580,19 @@
       {
         "dayNumber": 2,
         "shootType": "DAY",
-        "sceneIds": [6, 7],
-        "locations": ["DESERT HIGHWAY 64", "CANYON OVERLOOK"],
+        "sceneIds": [
+          6,
+          7
+        ],
+        "locations": [
+          "DESERT HIGHWAY 64",
+          "CANYON OVERLOOK"
+        ],
         "totalEighths": 12,
         "effectiveEighths": 18.2,
-        "castNeeded": ["JACK"],
+        "castNeeded": [
+          "JACK"
+        ],
         "notes": [
           "Scene 7: Golden Hour (Dusk) shooting window required."
         ],
@@ -371,11 +601,23 @@
       {
         "dayNumber": 3,
         "shootType": "NIGHT",
-        "sceneIds": [1, 2, 3, 9],
-        "locations": ["K-DESERT BROADCAST BOOTH", "TRANSMITTER ROOM", "TRANSMITTER TOWER"],
+        "sceneIds": [
+          1,
+          2,
+          3,
+          9
+        ],
+        "locations": [
+          "K-DESERT BROADCAST BOOTH",
+          "TRANSMITTER ROOM",
+          "TRANSMITTER TOWER"
+        ],
         "totalEighths": 30,
         "effectiveEighths": 34.4,
-        "castNeeded": ["JACK", "MAYA"],
+        "castNeeded": [
+          "JACK",
+          "MAYA"
+        ],
         "notes": [
           "Scene 2 SFX: SPARKS, SMOKE (Practical SFX Tech required)."
         ],
@@ -384,11 +626,17 @@
       {
         "dayNumber": 4,
         "shootType": "NIGHT",
-        "sceneIds": [8],
-        "locations": ["CANYON BRIDGE"],
+        "sceneIds": [
+          8
+        ],
+        "locations": [
+          "CANYON BRIDGE"
+        ],
         "totalEighths": 14,
         "effectiveEighths": 36.4,
-        "castNeeded": ["JACK"],
+        "castNeeded": [
+          "JACK"
+        ],
         "notes": [
           "Scene 8 Stunt: GUARDRAIL DIVE / FALL (Stunt Coordinator on set).",
           "Scene 8 SFX: RAIN RIG, SMOKE (Practical SFX Tech required).",
@@ -833,5 +1081,702 @@
         "relevance": "Critical reception benchmark for contained single-night narrative"
       }
     ]
+  },
+  "revision": {
+    "scriptDiff": {
+      "scenesDiff": [
+        {
+          "sceneId": 1,
+          "changeType": "unchanged",
+          "originalScene": {
+            "id": 1,
+            "slugline": "INT. K-DESERT BROADCAST BOOTH - NIGHT",
+            "intExt": "INT",
+            "location": "K-DESERT BROADCAST BOOTH",
+            "timeOfDay": "NIGHT",
+            "summary": "DJ Jack Mercer hosts his late-night broadcast when engineer Maya detects an impossible future-dated audio broadcast bouncing off the ionosphere.",
+            "characters": [
+              "JACK",
+              "MAYA"
+            ],
+            "pageEighths": 12
+          },
+          "revisedScene": {
+            "id": 1,
+            "slugline": "INT. K-DESERT BROADCAST BOOTH - NIGHT",
+            "intExt": "INT",
+            "location": "K-DESERT BROADCAST BOOTH",
+            "timeOfDay": "NIGHT",
+            "summary": "DJ Jack Mercer hosts his late-night broadcast when engineer Maya detects an impossible future-dated audio broadcast bouncing off the ionosphere.",
+            "characters": [
+              "JACK",
+              "MAYA"
+            ],
+            "pageEighths": 12
+          },
+          "changes": [],
+          "castAdded": [],
+          "castRemoved": [],
+          "timeOfDayChanged": false,
+          "locationChanged": false,
+          "pageEighthsDelta": 0
+        },
+        {
+          "sceneId": 2,
+          "changeType": "unchanged",
+          "originalScene": {
+            "id": 2,
+            "slugline": "INT. TRANSMITTER ROOM - NIGHT",
+            "intExt": "INT",
+            "location": "TRANSMITTER ROOM",
+            "timeOfDay": "NIGHT",
+            "summary": "Maya and Jack battle a sparking, smoking 50k-watt transmitter coil that threatens to ignite the station.",
+            "characters": [
+              "JACK",
+              "MAYA"
+            ],
+            "pageEighths": 6
+          },
+          "revisedScene": {
+            "id": 2,
+            "slugline": "INT. TRANSMITTER ROOM - NIGHT",
+            "intExt": "INT",
+            "location": "TRANSMITTER ROOM",
+            "timeOfDay": "NIGHT",
+            "summary": "Maya and Jack battle a sparking, smoking 50k-watt transmitter coil that threatens to ignite the station.",
+            "characters": [
+              "JACK",
+              "MAYA"
+            ],
+            "pageEighths": 6
+          },
+          "changes": [],
+          "castAdded": [],
+          "castRemoved": [],
+          "timeOfDayChanged": false,
+          "locationChanged": false,
+          "pageEighthsDelta": 0
+        },
+        {
+          "sceneId": 3,
+          "changeType": "unchanged",
+          "originalScene": {
+            "id": 3,
+            "slugline": "EXT. TRANSMITTER TOWER - NIGHT",
+            "intExt": "EXT",
+            "location": "TRANSMITTER TOWER",
+            "timeOfDay": "NIGHT",
+            "summary": "Jack steps beneath the tower in the howling wind and hears his own voice reporting his death on tomorrow's broadcast.",
+            "characters": [
+              "JACK"
+            ],
+            "pageEighths": 4
+          },
+          "revisedScene": {
+            "id": 3,
+            "slugline": "EXT. TRANSMITTER TOWER - NIGHT",
+            "intExt": "EXT",
+            "location": "TRANSMITTER TOWER",
+            "timeOfDay": "NIGHT",
+            "summary": "Jack steps beneath the tower in the howling wind and hears his own voice reporting his death on tomorrow's broadcast.",
+            "characters": [
+              "JACK"
+            ],
+            "pageEighths": 4
+          },
+          "changes": [],
+          "castAdded": [],
+          "castRemoved": [],
+          "timeOfDayChanged": false,
+          "locationChanged": false,
+          "pageEighthsDelta": 0
+        },
+        {
+          "sceneId": 4,
+          "changeType": "unchanged",
+          "originalScene": {
+            "id": 4,
+            "slugline": "INT. K-DESERT BROADCAST BOOTH - DAWN",
+            "intExt": "INT",
+            "location": "K-DESERT BROADCAST BOOTH",
+            "timeOfDay": "DAWN",
+            "summary": "Jack and Maya explain the prophetic broadcast to a skeptical Deputy Reyes at first light.",
+            "characters": [
+              "JACK",
+              "MAYA",
+              "DEPUTY REYES"
+            ],
+            "pageEighths": 4
+          },
+          "revisedScene": {
+            "id": 4,
+            "slugline": "INT. K-DESERT BROADCAST BOOTH - DAWN",
+            "intExt": "INT",
+            "location": "K-DESERT BROADCAST BOOTH",
+            "timeOfDay": "DAWN",
+            "summary": "Jack and Maya explain the prophetic broadcast to a skeptical Deputy Reyes at first light.",
+            "characters": [
+              "JACK",
+              "MAYA",
+              "DEPUTY REYES"
+            ],
+            "pageEighths": 4
+          },
+          "changes": [],
+          "castAdded": [],
+          "castRemoved": [],
+          "timeOfDayChanged": false,
+          "locationChanged": false,
+          "pageEighthsDelta": 0
+        },
+        {
+          "sceneId": 5,
+          "changeType": "unchanged",
+          "originalScene": {
+            "id": 5,
+            "slugline": "INT. K-DESERT BROADCAST BOOTH - DAY",
+            "intExt": "INT",
+            "location": "K-DESERT BROADCAST BOOTH",
+            "timeOfDay": "DAY",
+            "summary": "Maya rigs emergency transmitter frequencies while Jack plots the doomed freight truck's route on a map.",
+            "characters": [
+              "JACK",
+              "MAYA"
+            ],
+            "pageEighths": 10
+          },
+          "revisedScene": {
+            "id": 5,
+            "slugline": "INT. K-DESERT BROADCAST BOOTH - DAY",
+            "intExt": "INT",
+            "location": "K-DESERT BROADCAST BOOTH",
+            "timeOfDay": "DAY",
+            "summary": "Maya rigs emergency transmitter frequencies while Jack plots the doomed freight truck's route on a map.",
+            "characters": [
+              "JACK",
+              "MAYA"
+            ],
+            "pageEighths": 10
+          },
+          "changes": [],
+          "castAdded": [],
+          "castRemoved": [],
+          "timeOfDayChanged": false,
+          "locationChanged": false,
+          "pageEighthsDelta": 0
+        },
+        {
+          "sceneId": 6,
+          "changeType": "unchanged",
+          "originalScene": {
+            "id": 6,
+            "slugline": "EXT. DESERT HIGHWAY 64 - DAY",
+            "intExt": "EXT",
+            "location": "DESERT HIGHWAY 64",
+            "timeOfDay": "DAY",
+            "summary": "Jack drives to the highway checkpoint and learns from road workers that bridge inspections were postponed.",
+            "characters": [
+              "JACK"
+            ],
+            "pageEighths": 8
+          },
+          "revisedScene": {
+            "id": 6,
+            "slugline": "EXT. DESERT HIGHWAY 64 - DAY",
+            "intExt": "EXT",
+            "location": "DESERT HIGHWAY 64",
+            "timeOfDay": "DAY",
+            "summary": "Jack drives to the highway checkpoint and learns from road workers that bridge inspections were postponed.",
+            "characters": [
+              "JACK"
+            ],
+            "pageEighths": 8
+          },
+          "changes": [],
+          "castAdded": [],
+          "castRemoved": [],
+          "timeOfDayChanged": false,
+          "locationChanged": false,
+          "pageEighthsDelta": 0
+        },
+        {
+          "sceneId": 7,
+          "changeType": "unchanged",
+          "originalScene": {
+            "id": 7,
+            "slugline": "EXT. CANYON OVERLOOK - DUSK",
+            "intExt": "EXT",
+            "location": "CANYON OVERLOOK",
+            "timeOfDay": "DUSK",
+            "summary": "At dusk, Jack discovers sheared structural rivets on the canyon bridge span and radios Maya as the storm hits.",
+            "characters": [
+              "JACK"
+            ],
+            "pageEighths": 4
+          },
+          "revisedScene": {
+            "id": 7,
+            "slugline": "EXT. CANYON OVERLOOK - DUSK",
+            "intExt": "EXT",
+            "location": "CANYON OVERLOOK",
+            "timeOfDay": "DUSK",
+            "summary": "At dusk, Jack discovers sheared structural rivets on the canyon bridge span and radios Maya as the storm hits.",
+            "characters": [
+              "JACK"
+            ],
+            "pageEighths": 4
+          },
+          "changes": [],
+          "castAdded": [],
+          "castRemoved": [],
+          "timeOfDayChanged": false,
+          "locationChanged": false,
+          "pageEighthsDelta": 0
+        },
+        {
+          "sceneId": 8,
+          "changeType": "modified",
+          "originalScene": {
+            "id": 8,
+            "slugline": "EXT. CANYON BRIDGE - NIGHT",
+            "intExt": "EXT",
+            "location": "CANYON BRIDGE",
+            "timeOfDay": "NIGHT",
+            "summary": "In a raging rainstorm, Jack flags down the runaway freight truck with a flare and dives across the guardrail to survive the skid.",
+            "characters": [
+              "JACK"
+            ],
+            "pageEighths": 14
+          },
+          "revisedScene": {
+            "id": 8,
+            "slugline": "EXT. CANYON BRIDGE - NIGHT",
+            "intExt": "EXT",
+            "location": "CANYON BRIDGE",
+            "timeOfDay": "NIGHT",
+            "summary": "Torrential desert rain hammers the rotting timbers. High-beam headlights of an eighteen-wheeler roar toward the bridge. Jack runs onto the approach waving an emergency flare, signaling the driver to brake safely.",
+            "characters": [
+              "JACK"
+            ],
+            "pageEighths": 14
+          },
+          "changes": [
+            "Action and dramatic summary revised"
+          ],
+          "castAdded": [],
+          "castRemoved": [],
+          "timeOfDayChanged": false,
+          "locationChanged": false,
+          "pageEighthsDelta": 0
+        },
+        {
+          "sceneId": 9,
+          "changeType": "unchanged",
+          "originalScene": {
+            "id": 9,
+            "slugline": "INT. K-DESERT BROADCAST BOOTH - NIGHT",
+            "intExt": "INT",
+            "location": "K-DESERT BROADCAST BOOTH",
+            "timeOfDay": "NIGHT",
+            "summary": "An injured, bandaged Jack returns to the microphone to close the broadcast as the future timeline resets.",
+            "characters": [
+              "JACK",
+              "MAYA"
+            ],
+            "pageEighths": 8
+          },
+          "revisedScene": {
+            "id": 9,
+            "slugline": "INT. K-DESERT BROADCAST BOOTH - NIGHT",
+            "intExt": "INT",
+            "location": "K-DESERT BROADCAST BOOTH",
+            "timeOfDay": "NIGHT",
+            "summary": "An injured, bandaged Jack returns to the microphone to close the broadcast as the future timeline resets.",
+            "characters": [
+              "JACK",
+              "MAYA"
+            ],
+            "pageEighths": 8
+          },
+          "changes": [],
+          "castAdded": [],
+          "castRemoved": [],
+          "timeOfDayChanged": false,
+          "locationChanged": false,
+          "pageEighthsDelta": 0
+        },
+        {
+          "sceneId": 10,
+          "changeType": "unchanged",
+          "originalScene": {
+            "id": 10,
+            "slugline": "EXT. RADIO STATION LOT - DAWN",
+            "intExt": "EXT",
+            "location": "RADIO STATION LOT",
+            "timeOfDay": "DAWN",
+            "summary": "Jack and Maya share coffee on the truck tailgate at sunrise as the station broadcasts into a peaceful new morning.",
+            "characters": [
+              "JACK",
+              "MAYA"
+            ],
+            "pageEighths": 4
+          },
+          "revisedScene": {
+            "id": 10,
+            "slugline": "EXT. RADIO STATION LOT - DAWN",
+            "intExt": "EXT",
+            "location": "RADIO STATION LOT",
+            "timeOfDay": "DAWN",
+            "summary": "Jack and Maya share coffee on the truck tailgate at sunrise as the station broadcasts into a peaceful new morning.",
+            "characters": [
+              "JACK",
+              "MAYA"
+            ],
+            "pageEighths": 4
+          },
+          "changes": [],
+          "castAdded": [],
+          "castRemoved": [],
+          "timeOfDayChanged": false,
+          "locationChanged": false,
+          "pageEighthsDelta": 0
+        }
+      ],
+      "addedSceneIds": [],
+      "removedSceneIds": [],
+      "modifiedSceneIds": [
+        8
+      ],
+      "unchangedSceneIds": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        9,
+        10
+      ],
+      "totalPagesDeltaEighths": 0,
+      "castChanges": {
+        "added": [],
+        "removed": []
+      },
+      "locationChanges": {
+        "added": [],
+        "removed": []
+      }
+    },
+    "scheduleDelta": {
+      "originalShootDays": 5,
+      "revisedShootDays": 4,
+      "shootDaysDelta": -1,
+      "originalCompanyMoves": 3,
+      "revisedCompanyMoves": 4,
+      "companyMovesDelta": 1,
+      "originalNightDays": 3,
+      "revisedNightDays": 2,
+      "nightDaysDelta": -1,
+      "impactSummary": [
+        "-1 Shooting Day(s) (Total: 4 days)",
+        "+1 Company Move(s) (Total: 4 moves)",
+        "-1 Night Shoot Day(s) (Total: 2 night calls)"
+      ]
+    },
+    "budgetDelta": {
+      "originalGrandTotal": 40671,
+      "revisedGrandTotal": 34187,
+      "grandTotalDelta": -6484,
+      "percentChange": -15.9,
+      "categoryDeltas": {
+        "Crew": -4050,
+        "Night Premium": -608,
+        "Cast": -250,
+        "Equipment": -925,
+        "Locations & Logistics": -62,
+        "Post Production": 0,
+        "Contingency": -589
+      },
+      "lineItemDiffs": [
+        {
+          "category": "Crew",
+          "item": "Director of Photography",
+          "originalTotal": 3250,
+          "revisedTotal": 2600,
+          "deltaTotal": -650,
+          "tracesTo": "Director of Photography booked for 4 shoot day(s)",
+          "status": "decreased"
+        },
+        {
+          "category": "Crew",
+          "item": "1st Assistant Camera",
+          "originalTotal": 1750,
+          "revisedTotal": 1400,
+          "deltaTotal": -350,
+          "tracesTo": "1st Assistant Camera booked for 4 shoot day(s)",
+          "status": "decreased"
+        },
+        {
+          "category": "Crew",
+          "item": "Gaffer",
+          "originalTotal": 2000,
+          "revisedTotal": 1600,
+          "deltaTotal": -400,
+          "tracesTo": "Gaffer booked for 4 shoot day(s)",
+          "status": "decreased"
+        },
+        {
+          "category": "Crew",
+          "item": "Key Grip",
+          "originalTotal": 1500,
+          "revisedTotal": 1200,
+          "deltaTotal": -300,
+          "tracesTo": "Key Grip booked for 4 shoot day(s)",
+          "status": "decreased"
+        },
+        {
+          "category": "Crew",
+          "item": "Production Sound Mixer",
+          "originalTotal": 2250,
+          "revisedTotal": 1800,
+          "deltaTotal": -450,
+          "tracesTo": "Location Sound Mixer booked for 4 shoot day(s)",
+          "status": "decreased"
+        },
+        {
+          "category": "Crew",
+          "item": "1st Assistant Director",
+          "originalTotal": 2500,
+          "revisedTotal": 2000,
+          "deltaTotal": -500,
+          "tracesTo": "1st Assistant Director booked for 4 shoot day(s)",
+          "status": "decreased"
+        },
+        {
+          "category": "Crew",
+          "item": "Production Assistants",
+          "originalTotal": 1500,
+          "revisedTotal": 1200,
+          "deltaTotal": -300,
+          "tracesTo": "2 Production Assistant(s) booked across 4 shoot day(s)",
+          "status": "decreased"
+        },
+        {
+          "category": "Crew",
+          "item": "Practical SFX Technician",
+          "originalTotal": 1800,
+          "revisedTotal": 1350,
+          "deltaTotal": -450,
+          "tracesTo": "Practical SFX Tech booked for 3 day(s) ← practical SFX flagged in scene(s): 2, 3, 6, 8",
+          "status": "decreased"
+        },
+        {
+          "category": "Crew",
+          "item": "Key Hair & Makeup Artist",
+          "originalTotal": 1400,
+          "revisedTotal": 1400,
+          "deltaTotal": 0,
+          "tracesTo": "Specialist HMU booked for 4 day(s) ← special makeup/hair flagged in scene(s): 1, 2, 6, 8, 9, 10",
+          "status": "unchanged"
+        },
+        {
+          "category": "Night Premium",
+          "item": "Night Shoot Crew Labor Premium (15%)",
+          "originalTotal": 1733,
+          "revisedTotal": 1125,
+          "deltaTotal": -608,
+          "tracesTo": "15% night turnaround premium on $7,500 labor across 2 night shoot day(s)",
+          "status": "decreased"
+        },
+        {
+          "category": "Cast",
+          "item": "Cast: JACK",
+          "originalTotal": 1250,
+          "revisedTotal": 1000,
+          "deltaTotal": -250,
+          "tracesTo": "Principal cast booking for JACK across 4 scheduled shoot day(s)",
+          "status": "decreased"
+        },
+        {
+          "category": "Cast",
+          "item": "Cast: MAYA",
+          "originalTotal": 750,
+          "revisedTotal": 750,
+          "deltaTotal": 0,
+          "tracesTo": "Principal cast booking for MAYA across 3 scheduled shoot day(s)",
+          "status": "unchanged"
+        },
+        {
+          "category": "Cast",
+          "item": "Cast: DEPUTY REYES",
+          "originalTotal": 250,
+          "revisedTotal": 250,
+          "deltaTotal": 0,
+          "tracesTo": "Principal cast booking for DEPUTY REYES across 1 scheduled shoot day(s)",
+          "status": "unchanged"
+        },
+        {
+          "category": "Cast",
+          "item": "Background Performers",
+          "originalTotal": 125,
+          "revisedTotal": 125,
+          "deltaTotal": 0,
+          "tracesTo": "1 background performer booking(s) across scene(s): 6",
+          "status": "unchanged"
+        },
+        {
+          "category": "Equipment",
+          "item": "Camera Package (Cinema Body + Primes)",
+          "originalTotal": 2250,
+          "revisedTotal": 1800,
+          "deltaTotal": -450,
+          "tracesTo": "Cinema camera and prime lens rental package for 4 shoot day(s)",
+          "status": "decreased"
+        },
+        {
+          "category": "Equipment",
+          "item": "Lighting & Grip Truck Package",
+          "originalTotal": 1750,
+          "revisedTotal": 1400,
+          "deltaTotal": -350,
+          "tracesTo": "Indie lighting & grip package for 4 shoot day(s)",
+          "status": "decreased"
+        },
+        {
+          "category": "Equipment",
+          "item": "Field Audio Sound Package",
+          "originalTotal": 625,
+          "revisedTotal": 500,
+          "deltaTotal": -125,
+          "tracesTo": "Multi-track field recorder, boom, and wireless lav kit for 4 shoot day(s)",
+          "status": "decreased"
+        },
+        {
+          "category": "Locations & Logistics",
+          "item": "Location Permits & Site Fees",
+          "originalTotal": 3200,
+          "revisedTotal": 3200,
+          "deltaTotal": 0,
+          "tracesTo": "Permit and site access fees for 8 location-day(s) across 4 shoot day(s)",
+          "status": "unchanged"
+        },
+        {
+          "category": "Locations & Logistics",
+          "item": "Catering & Craft Services",
+          "originalTotal": 1276,
+          "revisedTotal": 1034,
+          "deltaTotal": -242,
+          "tracesTo": "Daily hot meals and craft services ($22/person/day) for 47 total person-day(s)",
+          "status": "decreased"
+        },
+        {
+          "category": "Locations & Logistics",
+          "item": "Company Move Transit & Fuel",
+          "originalTotal": 540,
+          "revisedTotal": 720,
+          "deltaTotal": 180,
+          "tracesTo": "Equipment truck & crew shuttle transit allowance for 4 scheduled company move(s)",
+          "status": "increased"
+        },
+        {
+          "category": "Locations & Logistics",
+          "item": "Production General Liability & Gear Insurance",
+          "originalTotal": 650,
+          "revisedTotal": 650,
+          "deltaTotal": 0,
+          "tracesTo": "Short film general liability, third-party property damage, & equipment float insurance policy",
+          "status": "unchanged"
+        },
+        {
+          "category": "Post Production",
+          "item": "Picture Editor",
+          "originalTotal": 1500,
+          "revisedTotal": 1500,
+          "deltaTotal": 0,
+          "tracesTo": "Picture edit assembly, rough cut revisions, and final picture lock (flat)",
+          "status": "unchanged"
+        },
+        {
+          "category": "Post Production",
+          "item": "Color Grading & Mastering",
+          "originalTotal": 600,
+          "revisedTotal": 600,
+          "deltaTotal": 0,
+          "tracesTo": "Digital color grade, show LUT development, and conform mastering (flat)",
+          "status": "unchanged"
+        },
+        {
+          "category": "Post Production",
+          "item": "Sound Design, Foley & Mix",
+          "originalTotal": 650,
+          "revisedTotal": 650,
+          "deltaTotal": 0,
+          "tracesTo": "Dialogue cleanup, custom sound design, Foley, and 5.1/stereo festival mix (flat)",
+          "status": "unchanged"
+        },
+        {
+          "category": "Post Production",
+          "item": "Score & Music Licensing",
+          "originalTotal": 400,
+          "revisedTotal": 400,
+          "deltaTotal": 0,
+          "tracesTo": "Composer honorarium & indie festival sync/master rights licensing reserve (flat)",
+          "status": "unchanged"
+        },
+        {
+          "category": "Post Production",
+          "item": "Visual Effects (VFX) Compositing",
+          "originalTotal": 825,
+          "revisedTotal": 825,
+          "deltaTotal": 0,
+          "tracesTo": "VFX cleanup & compositing ($275/shot) for 3 shot(s) in scene(s): 2, 7, 8",
+          "status": "unchanged"
+        },
+        {
+          "category": "Contingency",
+          "item": "Production Contingency Reserve (10%)",
+          "originalTotal": 3697,
+          "revisedTotal": 3108,
+          "deltaTotal": -589,
+          "tracesTo": "10% standard production contingency reserve against unforeseen weather, overtime, or material overages",
+          "status": "decreased"
+        },
+        {
+          "category": "Crew",
+          "item": "Stunt Coordinator",
+          "originalTotal": 650,
+          "revisedTotal": 0,
+          "deltaTotal": -650,
+          "tracesTo": "Stunt Coordinator booked for 1 day(s) ← stunts flagged in scene(s): 8",
+          "status": "removed"
+        }
+      ],
+      "primaryDrivers": [
+        "Crew variance: -$4,050",
+        "Night Premium variance: -$608",
+        "Cast variance: -$250",
+        "Equipment variance: -$925",
+        "Locations & Logistics variance: -$62",
+        "Contingency variance: -$589"
+      ]
+    },
+    "invalidationManifest": {
+      "staleSceneIds": [
+        8
+      ],
+      "staleFrameIds": [
+        "8A"
+      ],
+      "reusableFrameIds": [
+        "1A",
+        "2A",
+        "10A"
+      ],
+      "reasonBySceneId": {
+        "8": "Action and dramatic summary revised"
+      }
+    },
+    "timestamp": "2026-08-27T04:52:41.280Z"
   }
 }

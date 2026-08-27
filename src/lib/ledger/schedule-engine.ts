@@ -72,16 +72,16 @@ export function buildSchedule(
     }
 
     if (bd) {
-      if (bd.stunts.length > 0) {
+      if (bd.stunts?.length && bd.stunts.length > 0) {
         notes.push(`Scene ${scene.id} Stunt: ${bd.stunts.join(", ")} (Stunt Coordinator on set).`);
       }
-      if (bd.sfx.length > 0) {
+      if (bd.sfx?.length && bd.sfx.length > 0) {
         notes.push(`Scene ${scene.id} SFX: ${bd.sfx.join(", ")} (Practical SFX Tech required).`);
       }
-      if (bd.animals.length > 0) {
+      if (bd.animals?.length && bd.animals.length > 0) {
         notes.push(`Scene ${scene.id} Animals: ${bd.animals.join(", ")} (Animal Wrangler required).`);
       }
-      if (bd.makeupHair.length > 0) {
+      if (bd.makeupHair?.length && bd.makeupHair.length > 0) {
         notes.push(`Scene ${scene.id} HMU: ${bd.makeupHair.join(", ")} (Special HMU prep required).`);
       }
     }

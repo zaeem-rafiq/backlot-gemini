@@ -9,16 +9,16 @@
 
 ## 1. Executive Summary & Problem Statement
 
-In traditional motion picture and independent film production, **pre-production is an expensive, fragmented 4-to-6 week gauntlet**. A single 12-page dramatic short or proof-of-concept proof typically consumes:
+In traditional motion picture and independent film production, **pre-production is an expensive, fragmented 4-to-6 week gauntlet**. A single 12-page dramatic short or proof-of-concept typically consumes:
 - **48–72 hours** of agency story analyst reading time for script coverage ($150–$400/report) *[Source: WGA West & Studio Reader Analytics]*.
 - **4–8 hours** of manual 1st AD labor cataloging scene elements with an average **15–20% omission rate** for background extras, stunts, and special equipment on initial manual passes *[Source: Filmustage Industry Benchmark Report]*.
 - **3–5 business days** and **$3,000–$6,000/week** for professional storyboard artists ($50–$100/frame) *[Source: StoryboardArt.org & IATSE Local 790]*.
-- Over **12,000+ annual submissions** competing for <1.5% acceptance rates at Tier 1 festivals (Sundance, SXSW, Tribeca) *[Source: Sundance Film Festival Official Submission Data & Short Movie Club]*.
+- Over **12,000+ annual submissions** competing for **<1.5% acceptance rates** at Tier 1 festivals (Sundance, SXSW, Tribeca) *[Source: Sundance Film Festival Official Submission Data & Short Movie Club]*.
 - Unstructured spreadsheet budgeting suffering from an average **8–12% formula error rate** and orphaned line items lacking script-traceable provenance *[Source: Entertainment Partners Financial Audits]*.
 
-**BACKLOT transforms this entire pre-production lifecycle into a 60-second, deterministic, multi-agent studio session.**
-
-Given a raw screenplay, Backlot dispatches an autonomous crew of 6 specialized AI agents running on the **Gemini Enterprise Agent Platform** with Google Cloud Application Default Credentials (ADC) and the **Parallel Search API**, generating an audited, production-grade greenlight package.
+**BACKLOT collapses this entire 4-to-6 week pre-production gauntlet into an instant, deterministic, multi-agent studio session:**
+- **Zero-Quota Instant Evaluation:** Loads a verified 7-artifact production package in **<250ms** via pre-baked sample-run fixtures at zero API cost.
+- **Live Multi-Agent Streaming Execution:** Dispatches an autonomous crew of 6 specialized AI agents running on the **Gemini Enterprise Agent Platform** with Google Cloud Application Default Credentials (ADC) and the **Parallel Search API**, generating an audited, production-grade greenlight package in **~7–12 seconds**.
 
 ---
 

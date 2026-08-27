@@ -2,10 +2,10 @@ import { z } from "zod";
 
 export const ParallelSourceCitationSchema = z.object({
   title: z.string().describe("Headline or title of retrieved market source"),
-  url: z.string().url().describe("Live verifiable URL to source"),
+  url: z.string().min(1).describe("Live verifiable URL to source"),
   snippet: z.string().describe("Direct relevant excerpt supporting comparable or festival strategy"),
   query: z.string().describe("Search query that yielded this finding"),
-  publishedDate: z.string().optional(),
+  publishedDate: z.string().nullish(),
   relevance: z.string().describe("How this market data grounds the pitch"),
 });
 
@@ -22,7 +22,7 @@ export type FestivalTarget = z.infer<typeof FestivalTargetSchema>;
 export const PosterConceptSchema = z.object({
   description: z.string().describe("Art direction and composition of one-sheet key art"),
   imagePrompt: z.string().describe("Self-contained vertical 2:3 key art generation prompt"),
-  posterUrl: z.string().optional().describe("Rendered poster key art URL"),
+  posterUrl: z.string().nullish().describe("Rendered poster key art URL"),
 });
 
 export type PosterConcept = z.infer<typeof PosterConceptSchema>;

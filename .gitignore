@@ -25,3 +25,9 @@ coverage/
 .vscode/
 *.tsbuildinfo
 next-env.d.ts
+
+# Local scratch & analysis tooling
+graphify-out/
+.graphify/
+scratch/
+.scratch/

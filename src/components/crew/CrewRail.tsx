@@ -55,7 +55,7 @@ export const CREW_DEPARTMENTS: CrewDept[] = [
     name: "Director",
     department: "Executive Office",
     role: "Studio Orchestrator",
-    model: "gemini-2.5-flash",
+    model: "gemini-3.5-flash",
     defaultTask: "Supervising multi-agent execution pipeline",
   },
   {
@@ -64,7 +64,7 @@ export const CREW_DEPARTMENTS: CrewDept[] = [
     name: "Ink",
     department: "Story Dept",
     role: "Story Analyst",
-    model: "gemini-2.5-flash",
+    model: "gemini-3.5-flash",
     defaultTask: "Evaluating narrative premise & coverage rubric",
   },
   {
@@ -73,7 +73,7 @@ export const CREW_DEPARTMENTS: CrewDept[] = [
     name: "Slate",
     department: "Production Office",
     role: "1st Assistant Director",
-    model: "gemini-2.5-flash",
+    model: "gemini-3.5-flash",
     defaultTask: "Cataloging 13-category scene elements",
   },
   {
@@ -82,7 +82,7 @@ export const CREW_DEPARTMENTS: CrewDept[] = [
     name: "Ledger",
     department: "Production Accounting",
     role: "Line Producer",
-    model: "deterministic-pure-math",
+    model: "deterministic-ledger-math",
     defaultTask: "Calculating stripboard & audited top sheet",
   },
   {
@@ -91,7 +91,7 @@ export const CREW_DEPARTMENTS: CrewDept[] = [
     name: "Easel",
     department: "Camera & Previz",
     role: "Storyboard Artist",
-    model: "gemini-2.5-flash / previz",
+    model: "gemini-3.1-flash-image / previz",
     defaultTask: "Designing 2.39:1 shot blocking & lenses",
   },
   {
@@ -100,7 +100,7 @@ export const CREW_DEPARTMENTS: CrewDept[] = [
     name: "Marquee",
     department: "Sales & Packaging",
     role: "Market & Distribution",
-    model: "parallel-search-api",
+    model: "parallel-search + gemini-3.1-flash-lite",
     defaultTask: "Querying live festival & box-office comps",
   },
 ];
@@ -192,46 +192,46 @@ export function CrewRail({ statuses, logs, isRunning }: CrewRailProps) {
   };
 
   return (
-    <div className="bg-[#0B0D14] border border-studio-800 rounded-xl p-3.5 sm:p-4 md:p-5 flex flex-col gap-4 shadow-2xl hairline-grid">
+    <div className="bg-[#0B0D14] border border-studio-800/90 rounded-2xl p-4 sm:p-6 flex flex-col gap-5 shadow-2xl hairline-grid">
       {/* Studio Rack Control Header */}
-      <div className="flex items-start sm:items-center justify-between border-b border-studio-800 pb-3 flex-wrap gap-2.5">
-        <div className="flex items-center gap-2.5 sm:gap-3">
-          <div className="h-8 w-8 rounded bg-[#151924] border border-studio-700 flex items-center justify-center text-amber-400 flex-shrink-0 shadow-inner">
+      <div className="flex items-start sm:items-center justify-between border-b border-studio-800/80 pb-4 flex-wrap gap-3">
+        <div className="flex items-center gap-3">
+          <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-amber-500/20 to-amber-600/5 border border-amber-500/40 flex items-center justify-center text-amber-400 flex-shrink-0 shadow-inner">
             <Users className="w-4 h-4" />
           </div>
           <div>
             <div className="flex items-center gap-2 flex-wrap">
               <h2 className="text-xs font-mono font-extrabold uppercase tracking-wider text-white flex items-center gap-2">
                 <span>Cinema Production Deck</span>
-                <span className="text-[10px] text-amber-400 font-normal">/ 6 Channel Strips</span>
+                <span className="text-[10px] text-amber-400 font-bold">/ 6 Channel Strips</span>
               </h2>
-              <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-studio-850 text-studio-300 border border-studio-700 font-bold uppercase">
-                Parallel Multi-Agent Mesh
+              <span className="text-[9px] font-mono px-2 py-0.5 rounded-full bg-studio-850 text-studio-300 border border-studio-700 font-bold uppercase tracking-wider">
+                Multi-Agent Mesh
               </span>
             </div>
-            <p className="text-[11px] text-studio-400">
+            <p className="text-[11px] text-studio-400 font-sans mt-0.5">
               Supervised multi-agent department execution with live cross-stream telemetry
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 flex-shrink-0">
+        <div className="flex items-center gap-2 flex-shrink-0 font-mono">
           {isRunning ? (
-            <div className="flex items-center gap-2 px-2.5 py-1 rounded bg-amber-500/15 border border-amber-500/50 text-amber-300 font-mono text-[10px] sm:text-[11px] whitespace-nowrap shadow-sm">
+            <div className="flex items-center gap-2 px-3 py-1 rounded-lg bg-amber-500/15 border border-amber-500/50 text-amber-300 text-[10px] sm:text-[11px] whitespace-nowrap shadow-sm">
               <span className="h-2 w-2 rounded-full bg-amber-400 animate-ping flex-shrink-0" />
-              <span className="font-extrabold tracking-wide">ON AIR · DISPATCH LIVE</span>
+              <span className="font-extrabold tracking-wider">ON AIR · DISPATCH LIVE</span>
             </div>
           ) : (
-            <div className="flex items-center gap-2 px-2.5 py-1 rounded bg-[#101522] border border-emerald-500/30 text-emerald-400 font-mono text-[10px] sm:text-[11px] whitespace-nowrap">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 flex-shrink-0" />
-              <span className="font-bold tracking-wide">ALL UNITS STANDBY</span>
+            <div className="flex items-center gap-2 px-3 py-1 rounded-lg bg-[#06080C] border border-emerald-500/30 text-emerald-300 text-[10px] sm:text-[11px] whitespace-nowrap">
+              <span className="h-2 w-2 rounded-full bg-emerald-400 flex-shrink-0" />
+              <span className="font-bold tracking-wider">ALL UNITS READY</span>
             </div>
           )}
         </div>
       </div>
 
       {/* 6 Hardware-Grade Department Channel Strips */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-2.5">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
         {CREW_DEPARTMENTS.map((member, idx) => {
           const currentStatus = statuses[member.id] || "idle";
           const badge = getStatusBadge(currentStatus);

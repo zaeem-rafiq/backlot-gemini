@@ -4,6 +4,7 @@ import { EaselAgent } from "./easel";
 import { MarqueeAgent } from "./marquee";
 import { buildSchedule } from "../ledger/schedule-engine";
 import { buildBudget } from "../ledger/budget-engine";
+import { analyzeScriptRevision, pinUnchangedScenes } from "../ledger/revision-engine";
 import { StreamEvent, AgentId, ArtifactKind, RunState } from "../types/events";
 import { ScriptParse } from "../types/screenplay";
 import { Coverage } from "../types/coverage";
@@ -12,10 +13,12 @@ import { Schedule } from "../types/schedule";
 import { Budget } from "../types/budget";
 import { BoardPlan } from "../types/storyboard";
 import { PitchKit } from "../types/pitch";
+import { RevisionAnalysis } from "../types/revision";
 
 export interface DirectorRunOptions {
   runId?: string;
   enableImages?: boolean;
+  signal?: AbortSignal;
   onEvent: (event: StreamEvent) => void;
   // Optional pre-instantiated agents or overrides for testing
   inkAgent?: InkAgent;
@@ -162,70 +165,80 @@ export class DirectorOrchestrator {
         `Budget audited: $${budget.summary.grandTotal.toLocaleString()} across ${budget.sections.length} categories.`
       );
 
-      // STAGE 4: Easel (Storyboard Artist)
-      setStatus("easel", "working", "Designing camera blocking, lens specs, and storyboard frames...");
-      try {
-        let easelResult: { boardPlan: BoardPlan; modelUsed: string };
-        if (options.easelRunner) {
-          easelResult = await options.easelRunner(
-            parseResult.scriptParse,
-            breakdownResult.scriptBreakdown,
-            (lvl, msg) => log("easel", lvl, msg)
-          );
-        } else {
-          const easel = options.easelAgent || this.easel;
-          easelResult = await easel.generateBoardPlan(
-            parseResult.scriptParse,
-            breakdownResult.scriptBreakdown,
-            {
-              enableImages: options.enableImages,
-              onLog: (lvl, msg) => log("easel", lvl, msg),
-              onFrameImage: (fId, url) => emit({ type: "frame_image", frameId: fId, imageUrl: url }),
-            }
-          );
-        }
-        modelsUsedSet.add(easelResult.modelUsed);
-        runState.boardPlan = easelResult.boardPlan;
-        emitArtifact("boardPlan", easelResult.boardPlan);
-        setStatus("easel", "done", `Storyboard plan generated: ${easelResult.boardPlan.frames.length} key frames.`);
-      } catch (easelErr) {
-        log("easel", "warn", `Easel encountered error, degrading gracefully: ${String(easelErr)}`);
-        setStatus("easel", "degraded", "Degraded to visual prompt previz mode.");
-      }
+      // STAGE 4 & 5 IN PARALLEL: Easel (Storyboard Artist) & Marquee (Marketing & Packaging)
+      if (options.signal?.aborted) throw new Error("Studio run aborted by client");
 
-      // STAGE 5: Marquee (Marketer & Pitch Kit with Parallel Grounding)
+      setStatus("easel", "working", "Designing camera blocking, lens specs, and storyboard frames...");
       setStatus("marquee", "working", "Synthesizing pitch kit and querying live market comparables...");
-      try {
-        let marqueeResult: { pitchKit: PitchKit; modelUsed: string };
-        if (options.marqueeRunner) {
-          marqueeResult = await options.marqueeRunner(
-            parseResult.scriptParse,
-            coverageResult.coverage,
-            budget,
-            breakdownResult.scriptBreakdown,
-            (lvl, msg) => log("marquee", lvl, msg)
-          );
-        } else {
-          const marquee = options.marqueeAgent || this.marquee;
-          marqueeResult = await marquee.generatePitchKit(
-            parseResult.scriptParse,
-            coverageResult.coverage,
-            budget,
-            breakdownResult.scriptBreakdown,
-            {
-              onLog: (lvl, msg) => log("marquee", lvl, msg),
-              onPosterImage: (url) => emit({ type: "poster_image", posterUrl: url }),
-            }
-          );
+
+      const easelPromise = (async () => {
+        try {
+          if (options.signal?.aborted) return;
+          let easelResult: { boardPlan: BoardPlan; modelUsed: string };
+          if (options.easelRunner) {
+            easelResult = await options.easelRunner(
+              parseResult.scriptParse,
+              breakdownResult.scriptBreakdown,
+              (lvl, msg) => log("easel", lvl, msg)
+            );
+          } else {
+            const easel = options.easelAgent || this.easel;
+            easelResult = await easel.generateBoardPlan(
+              parseResult.scriptParse,
+              breakdownResult.scriptBreakdown,
+              {
+                enableImages: options.enableImages,
+                onLog: (lvl, msg) => log("easel", lvl, msg),
+                onFrameImage: (fId, url) => emit({ type: "frame_image", frameId: fId, imageUrl: url }),
+              }
+            );
+          }
+          modelsUsedSet.add(easelResult.modelUsed);
+          runState.boardPlan = easelResult.boardPlan;
+          emitArtifact("boardPlan", easelResult.boardPlan);
+          setStatus("easel", "done", `Storyboard plan generated: ${easelResult.boardPlan.frames.length} key frames.`);
+        } catch (easelErr) {
+          log("easel", "warn", `Easel encountered error, degrading gracefully: ${String(easelErr)}`);
+          setStatus("easel", "degraded", "Degraded to visual prompt previz mode.");
         }
-        modelsUsedSet.add(marqueeResult.modelUsed);
-        runState.pitchKit = marqueeResult.pitchKit;
-        emitArtifact("pitchKit", marqueeResult.pitchKit);
-        setStatus("marquee", "done", "Pitch kit synthesized with grounded Parallel market evidence.");
-      } catch (marqueeErr) {
-        log("marquee", "warn", `Marquee encountered error, degrading gracefully: ${String(marqueeErr)}`);
-        setStatus("marquee", "degraded", "Degraded pitch kit without live market queries.");
-      }
+      })();
+
+      const marqueePromise = (async () => {
+        try {
+          if (options.signal?.aborted) return;
+          let marqueeResult: { pitchKit: PitchKit; modelUsed: string };
+          if (options.marqueeRunner) {
+            marqueeResult = await options.marqueeRunner(
+              parseResult.scriptParse,
+              coverageResult.coverage,
+              budget,
+              breakdownResult.scriptBreakdown,
+              (lvl, msg) => log("marquee", lvl, msg)
+            );
+          } else {
+            const marquee = options.marqueeAgent || this.marquee;
+            marqueeResult = await marquee.generatePitchKit(
+              parseResult.scriptParse,
+              coverageResult.coverage,
+              budget,
+              breakdownResult.scriptBreakdown,
+              {
+                onLog: (lvl, msg) => log("marquee", lvl, msg),
+                onPosterImage: (url) => emit({ type: "poster_image", posterUrl: url }),
+              }
+            );
+          }
+          modelsUsedSet.add(marqueeResult.modelUsed);
+          runState.pitchKit = marqueeResult.pitchKit;
+          emitArtifact("pitchKit", marqueeResult.pitchKit);
+          setStatus("marquee", "done", "Pitch kit synthesized with grounded Parallel market evidence.");
+        } catch (marqueeErr) {
+          log("marquee", "warn", `Marquee encountered error, degrading gracefully: ${String(marqueeErr)}`);
+          setStatus("marquee", "degraded", "Degraded pitch kit without live market queries.");
+        }
+      })();
+
+      await Promise.all([easelPromise, marqueePromise]);
 
       // STAGE 6: Complete
       const totalDuration = Date.now() - startTime;
@@ -243,6 +256,165 @@ export class DirectorOrchestrator {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : String(err);
       log("director", "error", `Fatal run failure: ${errorMessage}`);
+      setStatus("director", "error", errorMessage);
+      runState.status = "error";
+      runState.error = errorMessage;
+
+      emit({
+        type: "error",
+        message: errorMessage,
+        fatal: true,
+      });
+
+      throw err;
+    }
+  }
+
+  public async executeRevisionRun(
+    originalRun: RunState,
+    revisedScreenplayText: string,
+    options: DirectorRunOptions
+  ): Promise<RunState> {
+    const startTime = Date.now();
+    const runId = options.runId || `rev_${Date.now()}`;
+    const modelsUsedSet = new Set<string>(originalRun.modelsUsed || []);
+
+    const emit = options.onEvent;
+
+    const log = (agent: AgentId, level: "info" | "warn" | "error", message: string) => {
+      emit({
+        type: "agent_log",
+        agent,
+        level,
+        message,
+        timestamp: new Date().toISOString(),
+      });
+    };
+
+    const setStatus = (
+      agent: AgentId,
+      status: "idle" | "working" | "done" | "degraded" | "error",
+      message?: string
+    ) => {
+      emit({
+        type: "agent_status",
+        agent,
+        status,
+        message,
+      });
+    };
+
+    const emitArtifact = (kind: ArtifactKind, data: any) => {
+      emit({
+        type: "artifact",
+        kind,
+        data,
+      });
+    };
+
+    const runState: RunState = {
+      ...originalRun,
+      id: runId,
+      createdAt: new Date().toISOString(),
+      screenplayText: revisedScreenplayText,
+      status: "running",
+      error: undefined,
+    };
+
+    try {
+      setStatus("director", "working", "Analyzing script revision & calculating cascade invalidations...");
+      log("director", "info", `Executing revision pipeline for "${originalRun.title}"...`);
+
+      // STAGE 1: Ink parses revised screenplay
+      const ink = options.inkAgent || this.ink;
+      setStatus("ink", "working", "Parsing revised screenplay structure...");
+
+      const parseResult = await ink.parseScript(revisedScreenplayText, (lvl, msg) => log("ink", lvl, msg));
+      modelsUsedSet.add(parseResult.modelUsed);
+
+      // STAGE 2: Slate updates physical scene breakdown
+      const slate = options.slateAgent || this.slate;
+      setStatus("slate", "working", "Updating 13-element physical breakdown for revised scenes...");
+      const breakdownResult = await slate.breakdownScript(parseResult.scriptParse, revisedScreenplayText, (lvl, msg) => log("slate", lvl, msg));
+      modelsUsedSet.add(breakdownResult.modelUsed);
+
+      // STAGE 3: Deterministic Scene Pinning (Carries forward untouched scenes verbatim)
+      let finalParse = parseResult.scriptParse;
+      let finalBreakdown = breakdownResult.scriptBreakdown;
+
+      if (originalRun.scriptParse) {
+        const pinning = pinUnchangedScenes(
+          originalRun.screenplayText,
+          revisedScreenplayText,
+          originalRun.scriptParse,
+          originalRun.breakdown,
+          parseResult.scriptParse,
+          breakdownResult.scriptBreakdown
+        );
+        finalParse = pinning.pinnedParse;
+        finalBreakdown = pinning.pinnedBreakdown || breakdownResult.scriptBreakdown;
+
+        log(
+          "director",
+          "info",
+          `Scene Pinning: ${pinning.pinnedSceneIds.length} scene(s) pinned verbatim from baseline. ${pinning.editedSceneIds.length} scene(s) re-analyzed.`
+        );
+      }
+
+      runState.scriptParse = finalParse;
+      runState.breakdown = finalBreakdown;
+      emitArtifact("scriptParse", finalParse);
+      emitArtifact("breakdown", finalBreakdown);
+      setStatus("ink", "done", `Revision parsed: ${finalParse.scenes.length} scene(s) processed.`);
+      setStatus("slate", "done", `Physical breakdown updated.`);
+
+      // STAGE 4: Ledger recalculates Schedule & Budget on pinned verified parses
+      setStatus("ledger", "working", "Recalculating shooting schedule and auditing budget variances...");
+      const revisedSchedule = buildSchedule(finalParse, finalBreakdown);
+      runState.schedule = revisedSchedule;
+      emitArtifact("schedule", revisedSchedule);
+
+      const revisedBudget = buildBudget(revisedSchedule, finalBreakdown);
+      runState.budget = revisedBudget;
+      emitArtifact("budget", revisedBudget);
+
+      // STAGE 5: Compute Revision Analysis & Invalidation Manifest
+      if (originalRun.scriptParse && originalRun.schedule && originalRun.budget) {
+        log("director", "info", "Computing deterministic cascade invalidation and variance ledger...");
+        const revisionAnalysis = analyzeScriptRevision(
+          originalRun.scriptParse,
+          finalParse,
+          originalRun.schedule,
+          revisedSchedule,
+          originalRun.budget,
+          revisedBudget,
+          originalRun.boardPlan
+        );
+        runState.revision = revisionAnalysis;
+        emitArtifact("revision", revisionAnalysis);
+        log(
+          "director",
+          "info",
+          `Revision analyzed: ${revisionAnalysis.scriptDiff.modifiedSceneIds.length} scene(s) modified, ${revisionAnalysis.invalidationManifest.staleFrameIds.length} previz frame(s) flagged stale.`
+        );
+      }
+      setStatus("ledger", "done", `Budget & schedule variances recalculated.`);
+
+      const totalDuration = Date.now() - startTime;
+      runState.status = "complete";
+      runState.modelsUsed = Array.from(modelsUsedSet);
+
+      setStatus("director", "done", `Revision pipeline completed in ${(totalDuration / 1000).toFixed(1)}s.`);
+      emit({
+        type: "done",
+        runId,
+        durationMs: totalDuration,
+      });
+
+      return runState;
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      log("director", "error", `Fatal revision pipeline failure: ${errorMessage}`);
       setStatus("director", "error", errorMessage);
       runState.status = "error";
       runState.error = errorMessage;

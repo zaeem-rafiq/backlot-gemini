@@ -37,7 +37,7 @@ export const FrameSchema = z.object({
   blocking: z.string().describe("Actor staging, eyelines, and character movement"),
   lighting: z.string().describe("Lighting setup, color temperature, practicals, atmosphere"),
   imagePrompt: z.string().describe("Self-contained photorealistic visual generation prompt (no screenplay jargon)"),
-  imageUrl: z.string().optional().describe("Rendered image URL or base64 data URI when image generation is enabled"),
+  imageUrl: z.string().nullish().describe("Rendered image URL or base64 data URI when image generation is enabled"),
 });
 
 export type Frame = z.infer<typeof FrameSchema>;

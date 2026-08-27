@@ -26,6 +26,7 @@ export function buildBudget(
   // 1. Helper to find shoot days containing scenes with specific elements
   function getDaysWithScenesMatching(predicate: (b: SceneBreakdown) => boolean): {
     matchingDaysCount: number;
+    matchingSceneSet: Set<number>;
     matchingSceneIds: number[];
   } {
     const matchingSceneIds: number[] = [];
@@ -37,16 +38,18 @@ export function buildBudget(
       }
     }
 
+    const matchingSceneSet = new Set(matchingSceneIds);
     if (matchingSceneIds.length === 0) {
-      return { matchingDaysCount: 0, matchingSceneIds: [] };
+      return { matchingDaysCount: 0, matchingSceneSet, matchingSceneIds: [] };
     }
 
     const matchingDays = schedule.days.filter((day) =>
-      day.sceneIds.some((id) => matchingSceneIds.includes(id))
+      day.sceneIds.some((id) => matchingSceneSet.has(id))
     );
 
     return {
       matchingDaysCount: matchingDays.length,
+      matchingSceneSet,
       matchingSceneIds,
     };
   }
@@ -202,16 +205,16 @@ export function buildBudget(
 
     for (const nDay of nightDays) {
       let dayLabor = baseDailyCrewCost;
-      if (stuntCheck.matchingSceneIds.some((id) => nDay.sceneIds.includes(id))) {
+      if (nDay.sceneIds.some((id) => stuntCheck.matchingSceneSet.has(id))) {
         dayLabor += rateCard.crewDaily.stuntCoordinator;
       }
-      if (sfxCheck.matchingSceneIds.some((id) => nDay.sceneIds.includes(id))) {
+      if (nDay.sceneIds.some((id) => sfxCheck.matchingSceneSet.has(id))) {
         dayLabor += rateCard.crewDaily.sfxTech;
       }
-      if (animalCheck.matchingSceneIds.some((id) => nDay.sceneIds.includes(id))) {
+      if (nDay.sceneIds.some((id) => animalCheck.matchingSceneSet.has(id))) {
         dayLabor += rateCard.crewDaily.animalWrangler;
       }
-      if (hmuCheck.matchingSceneIds.some((id) => nDay.sceneIds.includes(id))) {
+      if (nDay.sceneIds.some((id) => hmuCheck.matchingSceneSet.has(id))) {
         dayLabor += rateCard.crewDaily.hairMakeup;
       }
       totalNightLaborBase += dayLabor;
@@ -320,10 +323,10 @@ export function buildBudget(
   const coreCrewSize = 8; // DP, AC, Gaffer, Grip, Sound, AD, 2 PAs
   for (const day of schedule.days) {
     let dayCrew = coreCrewSize;
-    if (stuntCheck.matchingSceneIds.some((id) => day.sceneIds.includes(id))) dayCrew++;
-    if (sfxCheck.matchingSceneIds.some((id) => day.sceneIds.includes(id))) dayCrew++;
-    if (animalCheck.matchingSceneIds.some((id) => day.sceneIds.includes(id))) dayCrew++;
-    if (hmuCheck.matchingSceneIds.some((id) => day.sceneIds.includes(id))) dayCrew++;
+    if (stuntCheck.matchingSceneSet && day.sceneIds.some((id) => stuntCheck.matchingSceneSet.has(id))) dayCrew++;
+    if (sfxCheck.matchingSceneSet && day.sceneIds.some((id) => sfxCheck.matchingSceneSet.has(id))) dayCrew++;
+    if (animalCheck.matchingSceneSet && day.sceneIds.some((id) => animalCheck.matchingSceneSet.has(id))) dayCrew++;
+    if (hmuCheck.matchingSceneSet && day.sceneIds.some((id) => hmuCheck.matchingSceneSet.has(id))) dayCrew++;
 
     const dayCast = day.castNeeded.length;
     totalPersonDays += dayCrew + dayCast;

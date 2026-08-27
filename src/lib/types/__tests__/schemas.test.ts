@@ -84,5 +84,57 @@ describe("Typed Contracts & Schemas", () => {
       timestamp: new Date().toISOString(),
     };
     expect(StreamEventSchema.safeParse(logEvent).success).toBe(true);
+
+    const frameImageEvent = {
+      type: "frame_image",
+      frameId: "1A",
+      imageUrl: "data:image/png;base64,mock",
+    };
+    expect(StreamEventSchema.safeParse(frameImageEvent).success).toBe(true);
+  });
+
+  it("safely accepts null values for optional fields emitted by Gemini structured outputs", () => {
+    const coverageWithNullYear = {
+      logline: "Test logline",
+      synopsis: "Test synopsis",
+      genre: ["Drama"],
+      tone: "Atmospheric",
+      themes: ["Memory"],
+      comparables: [
+        {
+          title: "Pi",
+          year: null, // Gemini frequently returns null for unstated years
+          why: "Mathematical intensity.",
+        },
+      ],
+      strengths: ["Tight focus"],
+      concerns: ["Budget"],
+      pacingNotes: "Even pacing.",
+      scores: { premise: 8, structure: 7, character: 8, dialogue: 8, marketability: 7 },
+      verdict: "CONSIDER",
+      verdictRationale: "Solid script.",
+      pullQuote: "Intriguing premise.",
+    };
+    expect(CoverageSchema.safeParse(coverageWithNullYear).success).toBe(true);
+
+    const frameWithNullImage = {
+      visualStyleStatement: "Bleak anamorphic neo-noir",
+      aspectRatio: "2.39:1",
+      frames: [
+        {
+          sceneId: 1,
+          frameId: "1A",
+          shotType: "WS",
+          movement: "STATIC",
+          lensMm: "35mm anamorphic",
+          description: "A shadowy figure in a broadcast booth.",
+          blocking: "Stationary at microphone.",
+          lighting: "Amber desk lamp.",
+          imagePrompt: "Photorealistic broadcast booth.",
+          imageUrl: null, // null when images are disabled or unrendered
+        },
+      ],
+    };
+    expect(BoardPlanSchema.safeParse(frameWithNullImage).success).toBe(true);
   });
 });

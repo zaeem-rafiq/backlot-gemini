@@ -6,6 +6,7 @@ import { ScheduleSchema } from "./schedule";
 import { BudgetSchema } from "./budget";
 import { BoardPlanSchema } from "./storyboard";
 import { PitchKitSchema } from "./pitch";
+import { RevisionAnalysisSchema } from "./revision";
 
 export const AgentIdSchema = z.enum(["director", "ink", "slate", "ledger", "easel", "marquee"]);
 export type AgentId = z.infer<typeof AgentIdSchema>;
@@ -38,6 +39,7 @@ export const ArtifactKindSchema = z.enum([
   "budget",
   "boardPlan",
   "pitchKit",
+  "revision",
 ]);
 export type ArtifactKind = z.infer<typeof ArtifactKindSchema>;
 
@@ -52,6 +54,7 @@ export const ArtifactEventSchema = z.object({
     BudgetSchema,
     BoardPlanSchema,
     PitchKitSchema,
+    RevisionAnalysisSchema,
   ]),
 });
 export type ArtifactEvent = z.infer<typeof ArtifactEventSchema>;
@@ -110,6 +113,7 @@ export const RunStateSchema = z.object({
   budget: BudgetSchema.optional(),
   boardPlan: BoardPlanSchema.optional(),
   pitchKit: PitchKitSchema.optional(),
+  revision: RevisionAnalysisSchema.optional(),
   error: z.string().optional(),
 });
 export type RunState = z.infer<typeof RunStateSchema>;

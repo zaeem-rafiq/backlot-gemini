@@ -5,7 +5,7 @@ export type Verdict = z.infer<typeof VerdictSchema>;
 
 export const ComparableSchema = z.object({
   title: z.string().describe("Title of comparable film/TV project"),
-  year: z.number().optional().describe("Release year"),
+  year: z.number().nullish().describe("Release year"),
   why: z.string().describe("Specific artistic, thematic, or budgetary parallel"),
 });
 export type Comparable = z.infer<typeof ComparableSchema>;

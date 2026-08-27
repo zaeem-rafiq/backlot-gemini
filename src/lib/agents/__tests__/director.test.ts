@@ -203,4 +203,92 @@ describe("Director Orchestrator Pipeline", () => {
     const kinds = artifacts.map((a: any) => a.kind);
     expect(kinds).toEqual(["scriptParse", "coverage", "breakdown", "schedule", "budget", "boardPlan", "pitchKit"]);
   });
+
+  it("orchestrates incremental revision runs and emits revision diff analysis", async () => {
+    const mockInk = {
+      parseScript: vi.fn().mockResolvedValue({
+        scriptParse: {
+          ...FREQUENCY_ZERO_PARSED,
+          scenes: FREQUENCY_ZERO_PARSED.scenes.map((s) => (s.id === 1 ? { ...s, pageEighths: 20 } : s)),
+        },
+        modelUsed: "gemini-3.5-flash",
+      }),
+    } as unknown as InkAgent;
+
+    const mockSlate = {
+      breakdownScript: vi.fn().mockResolvedValue({
+        scriptBreakdown: {
+          breakdowns: [
+            {
+              sceneId: 1,
+              cast: ["JACK", "MAYA"],
+              background: [],
+              props: [],
+              setDressing: [],
+              wardrobe: [],
+              makeupHair: [],
+              vehicles: [],
+              sfx: [],
+              vfx: [],
+              stunts: [],
+              animals: [],
+              sound: [],
+              specialEquipment: [],
+              complexity: 2,
+              complexityReason: "Studio dialogue",
+            },
+          ],
+        },
+        modelUsed: "gemini-3.5-flash",
+      }),
+    } as unknown as SlateAgent;
+
+    const director = new DirectorOrchestrator(mockInk, mockSlate);
+
+    const initialSchedule = {
+      days: [],
+      stats: { shootDays: 3, nightShoots: 2, companyMoves: 1, totalPageEighths: 48, totalEffectiveEighths: 48, castDays: {} },
+      assumptions: [],
+    };
+    const initialBudget = {
+      sections: [],
+      summary: {
+        crewSubtotal: 10000,
+        nightPremiumTotal: 2000,
+        castSubtotal: 5000,
+        equipmentSubtotal: 4000,
+        locationsLogisticsSubtotal: 3000,
+        postSubtotal: 4000,
+        subtotalBeforeContingency: 28000,
+        contingencyTotal: 2800,
+        grandTotal: 30800,
+      },
+      rateCardName: "Indie Tier 1",
+      currency: "USD" as const,
+    };
+
+    const initialRunState = {
+      id: "run_test_1",
+      createdAt: new Date().toISOString(),
+      title: "FREQUENCY ZERO",
+      screenplayText: FREQUENCY_ZERO_SCRIPT,
+      status: "complete" as const,
+      imagesEnabled: false,
+      modelsUsed: ["gemini-3.5-flash"],
+      scriptParse: FREQUENCY_ZERO_PARSED,
+      schedule: initialSchedule,
+      budget: initialBudget,
+    };
+
+    const emittedEvents: StreamEvent[] = [];
+    const revisedRun = await director.executeRevisionRun(initialRunState, "REVISED SCRIPT TEXT", {
+      onEvent: (event) => emittedEvents.push(event),
+      inkAgent: mockInk,
+    });
+
+    expect(revisedRun.status).toBe("complete");
+    expect(revisedRun.revision).toBeDefined();
+    expect(revisedRun.revision?.scriptDiff.modifiedSceneIds).toEqual([1]);
+    expect(emittedEvents.some((e) => e.type === "artifact" && e.kind === "revision")).toBe(true);
+  });
 });

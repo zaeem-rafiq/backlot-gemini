@@ -44,18 +44,20 @@ export class GeminiStudioClient {
     options: { vertexai?: boolean; project?: string; location?: string } = {}
   ) {
     this.apiKey = apiKey || process.env.GEMINI_API_KEY;
-    this.project =
+    const explicitProject =
       options.project ||
       process.env.GCP_PROJECT ||
       process.env.GOOGLE_CLOUD_PROJECT ||
-      process.env.PROJECT_ID ||
-      "polygraph-hackathon";
+      process.env.PROJECT_ID;
+
+    this.project = explicitProject || (options.vertexai || process.env.USE_VERTEX === "true" || !this.apiKey ? "polygraph-hackathon" : undefined);
     this.location = options.location || process.env.GCP_LOCATION || "global";
 
     this.isVertex = Boolean(
       options.vertexai ||
         process.env.USE_VERTEX === "true" ||
-        (this.project && this.project.trim().length > 0)
+        explicitProject ||
+        (!this.apiKey && this.project)
     );
 
     const chains = this.isVertex ? AGENT_PLATFORM_GLOBAL_CHAINS : DEVELOPER_API_CHAINS;

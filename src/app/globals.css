@@ -187,6 +187,49 @@ body {
   outline-offset: 2px;
 }
 
+/* Cinematic Previz LUT Color Profiles */
+.lut-kodak {
+  filter: sepia(0.22) contrast(1.12) saturate(1.18) brightness(0.96);
+}
+
+.lut-arri {
+  filter: contrast(1.05) saturate(1.02);
+}
+
+.lut-neon {
+  filter: contrast(1.28) saturate(1.38) hue-rotate(-12deg);
+}
+
+.lut-bw {
+  filter: grayscale(1) contrast(1.32) brightness(0.94);
+}
+
+/* Studio Binder PDF & Print Layout */
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #09090b !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
+  }
+  .bg-[#0B0D14], .bg-[#06080C], .bg-[#08090D], .bg-[#0F1420] {
+    background: #ffffff !important;
+    color: #000000 !important;
+    border-color: #e2e8f0 !important;
+    box-shadow: none !important;
+  }
+  .text-white, .text-studio-200, .text-studio-300, .text-studio-400 {
+    color: #0f172a !important;
+  }
+  .border-studio-800, .border-studio-700 {
+    border-color: #cbd5e1 !important;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
