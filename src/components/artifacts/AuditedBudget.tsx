@@ -45,6 +45,16 @@ export function AuditedBudget({ budget, recommendedItemName }: AuditedBudgetProp
       }
     }
   }, [recommendedItemName, budget.sections]);
+
+  // Scroll to provenance drawer when an item is selected
+  useEffect(() => {
+    if (selectedTraceItem) {
+      const drawer = document.getElementById("line-item-audit-drawer");
+      if (drawer) {
+        drawer.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }
+  }, [selectedTraceItem]);
   const totalLineItems = budget.sections.reduce((acc, s) => acc + s.items.length, 0);
 
   // Direct deterministic ledger metrics from audited budget
@@ -169,7 +179,7 @@ export function AuditedBudget({ budget, recommendedItemName }: AuditedBudgetProp
 
       {/* Selected Provenance Inspector Drawer / Banner */}
       {selectedTraceItem && (
-        <div className="bg-[#121724] border-2 border-amber-500/60 rounded-2xl p-5 flex items-start justify-between gap-4 shadow-2xl animate-document-land">
+        <div id="line-item-audit-drawer" className="bg-[#121724] border-2 border-amber-500/60 rounded-2xl p-5 flex items-start justify-between gap-4 shadow-2xl animate-document-land">
           <div className="flex items-start gap-3.5">
             <div className="h-10 w-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center flex-shrink-0 text-amber-400">
               <Link2 className="w-5 h-5" />
@@ -191,9 +201,9 @@ export function AuditedBudget({ budget, recommendedItemName }: AuditedBudgetProp
                 <div className="text-xs text-sky-300 bg-sky-950/30 border border-sky-500/30 rounded-lg p-2.5 mt-1 flex items-start gap-2">
                   <Search className="w-3.5 h-3.5 text-sky-400 flex-shrink-0 mt-0.5" />
                   <div>
-                    <span className="text-sky-300 uppercase text-[10px] block font-extrabold tracking-wider">Parallel Market Comp Grounding:</span>
+                    <span className="text-sky-300 uppercase text-[10px] block font-extrabold tracking-wider">Parallel Market Comp Reference:</span>
                     <span className="text-[11px] text-studio-200">
-                      Validated by live Parallel Search comps. The Market Strategist recommends maintaining this audio design allocation to preserve festival acquisition value.
+                      Grounded in retrieved Parallel Search comps. Backlot Studio infers maintaining this audio design allocation to preserve festival acquisition value.
                     </span>
                   </div>
                 </div>

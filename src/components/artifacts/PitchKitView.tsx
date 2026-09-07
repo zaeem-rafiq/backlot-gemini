@@ -272,7 +272,7 @@ export function PitchKitView({ pitchKit, title, onNavigateTab, onInspectArtifact
               {/* Supporting Source Anchor */}
               <div className="pt-2 border-t border-studio-800/80 flex items-center justify-between flex-wrap gap-2 text-[10px] font-mono">
                 <span className="text-studio-400 flex items-center gap-1">
-                  Supported by verified Parallel finding:
+                  Referenced Parallel search finding:
                   <a
                     href={pitchKit.productionRecommendation.sourceCitation.url}
                     target="_blank"
@@ -294,7 +294,7 @@ export function PitchKitView({ pitchKit, title, onNavigateTab, onInspectArtifact
                   Production Recommendation Withheld
                 </span>
                 <p className="text-[11px] text-studio-400 font-sans leading-relaxed">
-                  Live Parallel Search API evidence is currently offline or returned zero verified citations. Backlot strictly requires verified real-world source citations before issuing production decisions.
+                  Recommendations are withheld when no source evidence is returned. Live Parallel Search API evidence is currently offline or returned zero verified citations.
                 </p>
               </div>
             </div>
