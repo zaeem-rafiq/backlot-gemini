@@ -137,4 +137,106 @@ describe("Typed Contracts & Schemas", () => {
     };
     expect(BoardPlanSchema.safeParse(frameWithNullImage).success).toBe(true);
   });
+
+  it("validates PitchKitSchema with grounded production recommendation", () => {
+    const validPitchKit = {
+      tagline: "Tomorrow's disaster is tonight's broadcast.",
+      loglines: [
+        "A late night DJ hears a future broadcast predicting tragedy.",
+        "One DJ must decide whether to believe tomorrow's death notice.",
+        "The signal is coming from 24 hours ahead.",
+      ],
+      whyNow: "High audience appetite for contained analog thrillers.",
+      audience: {
+        primary: "Indie sci-fi fans",
+        secondary: "Festival programmers",
+      },
+      festivalStrategy: [
+        {
+          name: "Sundance Shorts",
+          tier: "Tier 1 / Oscar Qualifying",
+          why: "Airtight structural economy.",
+        },
+      ],
+      posterConcept: {
+        description: "Atmospheric neon radio booth.",
+        imagePrompt: "Neon radio booth with microphone.",
+      },
+      pitchParagraph: "Carrying a RECOMMEND verdict and an audited budget of $34,735.",
+      marketEvidence: [
+        {
+          title: "The Vast of Night - Rotten Tomatoes",
+          url: "https://www.rottentomatoes.com/m/the_vast_of_night",
+          snippet: "92% Certified Fresh praising audio direction.",
+          query: "The Vast of Night box office festival",
+          relevance: "Audio-driven indie comp",
+        },
+      ],
+      productionRecommendation: {
+        title: "Prioritize Acoustic Environment & Sound Design Allocation",
+        category: "BUDGET_ALLOCATION",
+        factualFinding: "The Vast of Night achieved 92% RT critical consensus driven by innovative audio direction.",
+        inferredAdvice: "Protect the $650 Sound Design line item against budget trimming and schedule booth foley capture.",
+        actionableDecision: "Protect the $650 'Sound Design, Foley & Mix' line item against budget trimming.",
+        tradeoffRationale: "Comparable comp proved sound design drove festival acquisition.",
+        affectedArtifact: {
+          kind: "budget_line_item",
+          identifier: "Sound Design, Foley & Mix",
+          label: "Account 6000: Post Production / Sound Design, Foley & Mix ($650.00)",
+          tabTarget: "BUDGET",
+        },
+        sourceCitation: {
+          title: "The Vast of Night - Rotten Tomatoes",
+          url: "https://www.rottentomatoes.com/m/the_vast_of_night",
+          snippet: "92% Certified Fresh praising audio direction.",
+          query: "The Vast of Night box office festival",
+          relevance: "Audio-driven indie comp",
+        },
+      },
+    };
+
+    const parsed = PitchKitSchema.safeParse(validPitchKit);
+    expect(parsed.success).toBe(true);
+    if (parsed.success) {
+      expect(parsed.data.productionRecommendation?.category).toBe("BUDGET_ALLOCATION");
+      expect(parsed.data.productionRecommendation?.affectedArtifact.tabTarget).toBe("BUDGET");
+    }
+  });
+
+  it("validates PitchKitSchema with null production recommendation (offline evidence state)", () => {
+    const pitchKitOffline = {
+      tagline: "Tomorrow's disaster is tonight's broadcast.",
+      loglines: [
+        "A late night DJ hears a future broadcast predicting tragedy.",
+        "One DJ must decide whether to believe tomorrow's death notice.",
+        "The signal is coming from 24 hours ahead.",
+      ],
+      whyNow: "High audience appetite for contained analog thrillers.",
+      audience: {
+        primary: "Indie sci-fi fans",
+        secondary: "Festival programmers",
+      },
+      festivalStrategy: [
+        {
+          name: "Sundance Shorts",
+          tier: "Tier 1 / Oscar Qualifying",
+          why: "Airtight structural economy.",
+        },
+      ],
+      posterConcept: {
+        description: "Atmospheric neon radio booth.",
+        imagePrompt: "Neon radio booth with microphone.",
+      },
+      pitchParagraph: "Carrying a RECOMMEND verdict and an audited budget of $34,735.",
+      marketEvidence: [],
+      productionRecommendation: null,
+    };
+
+    const parsed = PitchKitSchema.safeParse(pitchKitOffline);
+    expect(parsed.success).toBe(true);
+    if (parsed.success) {
+      expect(parsed.data.productionRecommendation).toBeNull();
+    }
+  });
 });
+

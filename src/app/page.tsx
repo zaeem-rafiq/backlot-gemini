@@ -49,6 +49,14 @@ export default function BacklotStudioPage() {
   const [runState, setRunState] = useState<RunState | null>(sampleRunData as unknown as RunState);
   const [runSource, setRunSource] = useState<"sample" | "live">("sample");
   const [activeTab, setActiveTab] = useState<ActiveTab>("COVERAGE");
+  const [highlightedBudgetItem, setHighlightedBudgetItem] = useState<string | null>(null);
+
+  const handleInspectArtifact = (tab: "COVERAGE" | "BREAKDOWN" | "SCHEDULE" | "BUDGET", identifier?: string) => {
+    if (identifier && tab === "BUDGET") {
+      setHighlightedBudgetItem(identifier);
+    }
+    setActiveTab(tab);
+  };
   const [isRunning, setIsRunning] = useState<boolean>(false);
   const [enableImages, setEnableImages] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -861,7 +869,15 @@ export default function BacklotStudioPage() {
 
               {activeTab === "BUDGET" && (
                 runState?.budget ? (
-                  <AuditedBudget budget={runState.budget} />
+                  <AuditedBudget
+                    budget={runState.budget}
+                    recommendedItemName={
+                      highlightedBudgetItem ??
+                      (runState.pitchKit?.productionRecommendation?.affectedArtifact?.kind === "budget_line_item"
+                        ? runState.pitchKit.productionRecommendation.affectedArtifact.identifier
+                        : undefined)
+                    }
+                  />
                 ) : (
                   <EmptyArtifactPlaceholder
                     label="Audited Top Sheet Budget"
@@ -894,7 +910,12 @@ export default function BacklotStudioPage() {
 
               {activeTab === "PITCH_KIT" && (
                 runState?.pitchKit ? (
-                  <PitchKitView pitchKit={runState.pitchKit} title={runState.title} />
+                  <PitchKitView
+                    pitchKit={runState.pitchKit}
+                    title={runState.title}
+                    onNavigateTab={(tab) => setActiveTab(tab)}
+                    onInspectArtifact={handleInspectArtifact}
+                  />
                 ) : (
                   <EmptyArtifactPlaceholder
                     label="Pitch Kit & Parallel Citations"

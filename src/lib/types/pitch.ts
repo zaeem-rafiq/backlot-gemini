@@ -27,6 +27,33 @@ export const PosterConceptSchema = z.object({
 
 export type PosterConcept = z.infer<typeof PosterConceptSchema>;
 
+export const AffectedArtifactSchema = z.object({
+  kind: z.enum(["scene", "schedule_day", "budget_line_item", "coverage_risk"]).describe("Category of affected production artifact"),
+  identifier: z.string().describe("Exact identifier or reference: e.g., 'Shoot Day 1', 'Scene 8', 'Line Item 24: Sound Design & Foley'"),
+  label: z.string().describe("Human-readable label for cross-referencing"),
+  tabTarget: z.enum(["COVERAGE", "BREAKDOWN", "SCHEDULE", "BUDGET"]).describe("Tab where this artifact is primarily located"),
+});
+
+export type AffectedArtifact = z.infer<typeof AffectedArtifactSchema>;
+
+export const ProductionRecommendationSchema = z.object({
+  title: z.string().describe("Executive title of the production recommendation"),
+  category: z.enum([
+    "FESTIVAL_WINDOW",
+    "BUDGET_ALLOCATION",
+    "SCHEDULE_PACING",
+    "DISTRIBUTION_STRATEGY",
+  ]).describe("Strategic operational category"),
+  factualFinding: z.string().describe("Factual market benchmark or distribution precedent directly established by the source"),
+  inferredAdvice: z.string().describe("Strategic recommendation inferred by Backlot Studio for this specific production"),
+  actionableDecision: z.string().describe("Concrete producer action informed by evidence"),
+  tradeoffRationale: z.string().describe("Why this decision optimizes the production package"),
+  affectedArtifact: AffectedArtifactSchema,
+  sourceCitation: ParallelSourceCitationSchema.describe("The specific Parallel search citation that supports this decision"),
+});
+
+export type ProductionRecommendation = z.infer<typeof ProductionRecommendationSchema>;
+
 export const PitchKitSchema = z.object({
   tagline: z.string().describe("Punchy market hook under 10 words"),
   loglines: z.array(z.string()).min(2).max(5).describe("Calibrated loglines, sharpest first"),
@@ -39,6 +66,8 @@ export const PitchKitSchema = z.object({
   posterConcept: PosterConceptSchema,
   pitchParagraph: z.string().describe("3-5 sentence executive pitch paragraph explicitly citing coverage verdict and exact budget total"),
   marketEvidence: z.array(ParallelSourceCitationSchema).default([]).describe("Live market citations retrieved via Parallel Search API"),
+  productionRecommendation: ProductionRecommendationSchema.nullish().describe("Source-backed producer decision grounded in real Parallel search evidence and referencing current run artifacts"),
 });
 
 export type PitchKit = z.infer<typeof PitchKitSchema>;
+

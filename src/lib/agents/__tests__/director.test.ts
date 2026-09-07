@@ -138,6 +138,27 @@ describe("Director Orchestrator Pipeline", () => {
           relevance: "Validates festival selection strategy.",
         },
       ],
+      productionRecommendation: {
+        title: "Prioritize Acoustic Environment & Sound Design Allocation",
+        category: "BUDGET_ALLOCATION",
+        factualFinding: "Narrative sci-fi and thriller shorts with tight structural containment achieve top programmer conversion.",
+        inferredAdvice: "Protect the $650 Sound Design line item against budget trimming and schedule booth foley capture.",
+        actionableDecision: "Protect the $650 'Sound Design, Foley & Mix' line item against budget trimming.",
+        tradeoffRationale: "Validates festival selection strategy and audio-centric breakout ROI.",
+        affectedArtifact: {
+          kind: "budget_line_item",
+          identifier: "Sound Design, Foley & Mix",
+          label: "Account 6000: Post Production / Sound Design, Foley & Mix ($650.00)",
+          tabTarget: "BUDGET",
+        },
+        sourceCitation: {
+          title: "Sundance Short Film Track Record",
+          url: "https://www.sundance.org/festivals/short-film-program",
+          snippet: "Narrative sci-fi and thriller shorts with tight structural containment achieve top programmer conversion.",
+          query: "Sundance short film festival market comps",
+          relevance: "Validates festival selection strategy.",
+        },
+      },
     };
 
     const mockInk = {
@@ -197,6 +218,9 @@ describe("Director Orchestrator Pipeline", () => {
     expect(runState.pitchKit?.pitchParagraph).toContain("RECOMMEND");
     expect(runState.pitchKit?.pitchParagraph).toContain("$");
     expect(runState.pitchKit?.marketEvidence.length).toBeGreaterThan(0);
+    expect(runState.pitchKit?.productionRecommendation?.category).toBe("BUDGET_ALLOCATION");
+    expect(runState.pitchKit?.productionRecommendation?.affectedArtifact.tabTarget).toBe("BUDGET");
+    expect(runState.pitchKit?.productionRecommendation?.affectedArtifact.identifier).toContain("Sound Design");
 
     // Verify all 7 artifact kinds emitted in stream
     const artifacts = emittedEvents.filter((e) => e.type === "artifact");

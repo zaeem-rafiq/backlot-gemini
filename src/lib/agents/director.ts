@@ -223,6 +223,7 @@ export class DirectorOrchestrator {
               budget,
               breakdownResult.scriptBreakdown,
               {
+                schedule,
                 onLog: (lvl, msg) => log("marquee", lvl, msg),
                 onPosterImage: (url) => emit({ type: "poster_image", posterUrl: url }),
               }

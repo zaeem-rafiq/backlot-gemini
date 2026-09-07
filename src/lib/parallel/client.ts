@@ -28,7 +28,7 @@ export class ParallelSearchClient {
     apiKey?: string,
     endpoint: string = "https://api.parallel.ai/v1beta/search"
   ) {
-    this.apiKey = apiKey || process.env.PARALLEL_API_KEY;
+    this.apiKey = apiKey !== undefined ? apiKey : process.env.PARALLEL_API_KEY;
     this.endpoint = endpoint;
   }
 

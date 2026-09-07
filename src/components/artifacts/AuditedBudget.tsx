@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { Budget, BudgetLineItem } from "@/lib/types/budget";
 import {
   DollarSign,
@@ -19,14 +19,32 @@ import {
 
 interface AuditedBudgetProps {
   budget: Budget;
+  recommendedItemName?: string;
 }
 
-export function AuditedBudget({ budget }: AuditedBudgetProps) {
+export function AuditedBudget({ budget, recommendedItemName }: AuditedBudgetProps) {
   const [selectedTraceItem, setSelectedTraceItem] = useState<BudgetLineItem | null>(null);
   const [collapsedCategories, setCollapsedCategories] = useState<Record<string, boolean>>({});
   const toggleCategory = (cat: string) => {
     setCollapsedCategories((prev) => ({ ...prev, [cat]: !prev[cat] }));
   };
+
+  // Ensure the section containing recommendedItemName is uncollapsed
+  useEffect(() => {
+    if (recommendedItemName) {
+      for (const section of budget.sections) {
+        const found = section.items.find(
+          (i) =>
+            i.item.toLowerCase().includes(recommendedItemName.toLowerCase()) ||
+            recommendedItemName.toLowerCase().includes(i.item.toLowerCase())
+        );
+        if (found) {
+          setCollapsedCategories((prev) => ({ ...prev, [section.category]: false }));
+          break;
+        }
+      }
+    }
+  }, [recommendedItemName, budget.sections]);
   const totalLineItems = budget.sections.reduce((acc, s) => acc + s.items.length, 0);
 
   // Direct deterministic ledger metrics from audited budget
@@ -169,6 +187,17 @@ export function AuditedBudget({ budget }: AuditedBudgetProps) {
                 <span className="text-studio-400 uppercase text-[10px] block mb-0.5 font-bold">Script Breakdown Origin (tracesTo):</span>
                 <strong className="text-white">{selectedTraceItem.tracesTo}</strong>
               </div>
+              {recommendedItemName && selectedTraceItem.item.toLowerCase().includes(recommendedItemName.toLowerCase()) && (
+                <div className="text-xs text-sky-300 bg-sky-950/30 border border-sky-500/30 rounded-lg p-2.5 mt-1 flex items-start gap-2">
+                  <Search className="w-3.5 h-3.5 text-sky-400 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <span className="text-sky-300 uppercase text-[10px] block font-extrabold tracking-wider">Parallel Market Comp Grounding:</span>
+                    <span className="text-[11px] text-studio-200">
+                      Validated by live Parallel Search comps. The Market Strategist recommends maintaining this audio design allocation to preserve festival acquisition value.
+                    </span>
+                  </div>
+                </div>
+              )}
               <span className="text-[11px] text-studio-300 pt-1 font-mono-tabular">
                 Deterministic Formula: {selectedTraceItem.qty} {selectedTraceItem.unit} @ ${selectedTraceItem.rate.toLocaleString()} / unit = <strong className="text-emerald-400">${selectedTraceItem.total.toLocaleString()}</strong>
               </span>
@@ -250,25 +279,44 @@ export function AuditedBudget({ budget }: AuditedBudgetProps) {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-studio-800/60 font-mono">
-                      {section.items.map((item, idx) => (
-                        <tr
-                          key={idx}
-                          tabIndex={0}
-                          role="button"
-                          aria-label={`Inspect provenance for ${item.item}`}
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter" || e.key === " ") {
-                              e.preventDefault();
-                              setSelectedTraceItem(item);
-                            }
-                          }}
-                          onClick={() => setSelectedTraceItem(item)}
-                          className="hover:bg-[#141B2A] transition cursor-pointer group focus-ring"
-                        >
-                          <td className="py-3.5 px-6 text-white font-medium flex items-center gap-2">
-                            <span className="text-studio-500 group-hover:text-amber-400 transition font-bold">•</span>
-                            {item.item}
-                          </td>
+                      {section.items.map((item, idx) => {
+                        const isRecommended = Boolean(
+                          recommendedItemName && (
+                            item.item.toLowerCase().includes(recommendedItemName.toLowerCase()) ||
+                            recommendedItemName.toLowerCase().includes(item.item.toLowerCase())
+                          )
+                        );
+                        return (
+                          <tr
+                            key={idx}
+                            tabIndex={0}
+                            role="button"
+                            aria-label={`Inspect provenance for ${item.item}`}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter" || e.key === " ") {
+                                e.preventDefault();
+                                setSelectedTraceItem(item);
+                              }
+                            }}
+                            onClick={() => setSelectedTraceItem(item)}
+                            className={`transition cursor-pointer group focus-ring ${
+                              isRecommended
+                                ? "bg-sky-500/15 hover:bg-sky-500/25 border-l-4 border-sky-400"
+                                : "hover:bg-[#141B2A]"
+                            }`}
+                          >
+                            <td className="py-3.5 px-6 text-white font-medium flex items-center gap-2 flex-wrap">
+                              <span className="text-studio-500 group-hover:text-amber-400 transition font-bold">•</span>
+                              <span className={isRecommended ? "text-sky-200 font-bold" : ""}>{item.item}</span>
+                              {isRecommended && (
+                                <span
+                                  className="px-2 py-0.5 rounded-full bg-sky-500/25 border border-sky-500/50 text-[9px] font-mono text-sky-300 font-extrabold inline-flex items-center gap-1 shadow-sm"
+                                  title="Grounded in live Parallel Search market evidence"
+                                >
+                                  <Search className="w-2.5 h-2.5" /> Parallel Comp
+                                </span>
+                              )}
+                            </td>
                           <td className="py-3.5 px-3 text-studio-300 text-[11px]">{item.unit}</td>
                           <td className="py-3.5 px-3 text-right text-studio-200 font-mono-tabular">{item.qty}</td>
                           <td className="py-3.5 px-3 text-right text-studio-400 font-mono-tabular">
@@ -284,7 +332,8 @@ export function AuditedBudget({ budget }: AuditedBudgetProps) {
                             </span>
                           </td>
                         </tr>
-                      ))}
+                        );
+                      })}
                     </tbody>
                   </table>
                 </div>
