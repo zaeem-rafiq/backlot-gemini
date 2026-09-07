@@ -18,7 +18,7 @@
 1. **Story Coverage**: Ink's Reader Verdict **RECOMMEND**, radar scores, and premise analysis.
 2. **1st AD Breakdown**: Scene-by-scene 13-department tags (Cast, SFX, Stunts, Rain FX).
 3. **Stripboard Schedule**: 4-day optimized shooting schedule with day breaks, company moves, and Cast Day Matrix (non-union indie baseline).
-4. **Audited Budget**: Ledger's **$31,875** top sheet budget. Clicking any line item highlights its direct `tracesTo` script provenance.
+4. **Audited Budget**: Ledger's **$34,735** top sheet budget. Clicking any line item highlights its direct `tracesTo` script provenance.
 5. **Previz Storyboards & Pitch Kit**: 2.39:1 anamorphic storyboards with Kodak 5219 film LUTs, the theatrical one-sheet poster ("Hear your future. Change your fate."), and live Parallel Search citations.
 
 ### [02:30 – 02:55] Live Script Revision & Cascade Invalidation (Beat 4B)
