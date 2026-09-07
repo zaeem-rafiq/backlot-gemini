@@ -60,23 +60,23 @@ export function CoverageDossier({ coverage, title }: CoverageDossierProps) {
   };
 
   const dimensions = [
-    { label: "Premise & Originality", score: coverage.scores.premise, note: "High-concept speculative hook with high-tension time dilation" },
-    { label: "Narrative Structure", score: coverage.scores.structure, note: "Three-act short architecture with tight escalation to climax" },
-    { label: "Character Arc & Voice", score: coverage.scores.character, note: "Grounded protagonist motivation with clear professional stakes" },
-    { label: "Dialogue & Subtext", score: coverage.scores.dialogue, note: "Atmospheric on-air banter with realistic technical terminology" },
-    { label: "Marketability & ROI", score: coverage.scores.marketability, note: "Strong genre appeal with lean, producible physical footprint" },
+    { label: "Premise & Originality", score: coverage.scores.premise, note: "Core narrative hook, conceptual distinctiveness, and speculative appeal" },
+    { label: "Narrative Structure", score: coverage.scores.structure, note: "Three-act architecture, pacing escalation, and dramatic act turns" },
+    { label: "Character Arc & Voice", score: coverage.scores.character, note: "Protagonist motivation, interpersonal stakes, and supporting dynamics" },
+    { label: "Dialogue & Subtext", score: coverage.scores.dialogue, note: "Atmospheric authenticity, distinct character voice, and subtextual rhythm" },
+    { label: "Marketability & ROI", score: coverage.scores.marketability, note: "Commercial positioning, comp viability, and production efficiency" },
   ];
 
   return (
-    <div className="flex flex-col gap-6 animate-document-land">
+    <div className="flex flex-col gap-6 animate-document-land min-w-0 max-w-full">
       {/* Studio Memo Document Shell */}
-      <div className="bg-[#0B0D14] border border-studio-800/90 rounded-2xl p-6 sm:p-8 md:p-10 flex flex-col gap-8 shadow-2xl relative overflow-hidden manila-card">
+      <div className="bg-[#0B0D14] border border-studio-800/90 rounded-2xl p-3.5 sm:p-8 md:p-10 flex flex-col gap-6 sm:gap-8 shadow-2xl relative overflow-hidden manila-card min-w-0 max-w-full">
         {/* Archival Memo Header & Studio Department Metadata */}
         <div className="border-b border-studio-800/80 pb-6 flex flex-col gap-5">
           <div className="flex items-center justify-between flex-wrap gap-3">
-            <div className="flex items-center gap-2.5 text-xs font-mono tracking-widest text-amber-400 uppercase font-bold">
-              <FileText className="w-4 h-4 text-amber-400" />
-              <span>Hollywood Studio Story Analysis & Reader Coverage</span>
+            <div className="flex items-center gap-2 text-xs font-mono tracking-wide sm:tracking-widest text-amber-400 uppercase font-bold min-w-0">
+              <FileText className="w-4 h-4 text-amber-400 flex-shrink-0" />
+              <span className="break-words">Hollywood Studio Story Analysis & Reader Coverage</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-[10px] font-mono px-2.5 py-1 rounded bg-[#06080C] text-studio-300 border border-studio-800 font-bold">
@@ -88,7 +88,7 @@ export function CoverageDossier({ coverage, title }: CoverageDossierProps) {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 font-mono text-xs pt-2 bg-[#06080C]/80 p-4 rounded-xl border border-studio-800/80">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 font-mono text-xs pt-2 bg-[#06080C]/80 p-3 sm:p-4 rounded-xl border border-studio-800/80">
             <div className="flex flex-col gap-0.5">
               <span className="text-[10px] uppercase text-studio-400 font-bold tracking-wider">Project Title</span>
               <span className="font-extrabold text-white uppercase text-sm">{title}</span>
@@ -98,8 +98,8 @@ export function CoverageDossier({ coverage, title }: CoverageDossierProps) {
               <span className="font-bold text-amber-300">Ink (Story Dept)</span>
             </div>
             <div className="flex flex-col gap-0.5">
-              <span className="text-[10px] uppercase text-studio-400 font-bold tracking-wider">Format & Pages</span>
-              <span className="text-studio-200">Short Film (12 Pgs)</span>
+              <span className="text-[10px] uppercase text-studio-400 font-bold tracking-wider">Format & Material</span>
+              <span className="text-studio-200">Screenplay Manuscript</span>
             </div>
             <div className="flex flex-col gap-0.5">
               <span className="text-[10px] uppercase text-studio-400 font-bold tracking-wider">Primary Genre</span>
@@ -113,15 +113,15 @@ export function CoverageDossier({ coverage, title }: CoverageDossierProps) {
           {/* Stamped Verdict (Authentic Studio Stamp Effect) */}
           <div className="lg:col-span-4 flex flex-col items-center justify-center p-2">
             <div
-              className={`stamp-verdict ${stamp.stampClass} px-7 py-5 rounded-xl transform -rotate-2 sm:-rotate-3 transition-transform hover:rotate-0 flex flex-col items-center gap-1.5 cursor-default select-none shadow-2xl`}
+              className={`stamp-verdict ${stamp.stampClass} px-4 py-3 sm:px-7 sm:py-5 max-w-full rounded-xl transform -rotate-2 sm:-rotate-3 transition-transform hover:rotate-0 flex flex-col items-center gap-1.5 cursor-default select-none shadow-2xl`}
             >
-              <span className="text-[10px] font-mono font-extrabold tracking-widest opacity-80 uppercase">
+              <span className="text-[10px] font-mono font-extrabold tracking-widest opacity-80 uppercase text-center">
                 STUDIO READER VERDICT
               </span>
-              <span className="text-4xl md:text-5xl font-extrabold tracking-widest font-mono">
+              <span className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-widest font-mono text-center">
                 {stamp.label}
               </span>
-              <span className="text-[9px] font-mono font-bold tracking-tight opacity-90 border-t border-current pt-1.5 mt-1 text-center">
+              <span className="text-[9px] font-mono font-bold tracking-tight opacity-90 border-t border-current pt-1.5 mt-1 text-center break-words max-w-full">
                 {stamp.subtext}
               </span>
             </div>

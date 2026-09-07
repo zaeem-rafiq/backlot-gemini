@@ -1,30 +1,44 @@
 # Day 12 Video Demonstration Plan — Backlot Studio
 
-**Rule**: All narration numbers are read directly off the live screen and verified ledger delta, never scripted from memory.
+**Status**: Planned Demonstration Script (Unrecorded / Local Plan; not recorded, uploaded, or submitted).
+**Rule**: All narration numbers are read directly off the live screen and verified ledger math, never scripted from memory or synthetic speculation.
+**Target Duration**: 02:55 (175 seconds max)
+**Production URL**: `https://backlot-studio-112519007745.us-central1.run.app`
 
 ---
 
-## 3-Minute Video Breakdown
+## Timed Demonstration Script (2:55 Total Runtime)
 
-### [00:00 – 00:30] Cold Open & The Studio Problem
-- **Visual**: Screenplay text for *FREQUENCY ZERO* loaded into the Studio manuscript drawer.
-- **Narration**: Traditional film pre-production takes weeks of fragmented spreadsheets, disconnected breakdown sheets, and costly guessing. Backlot replaces that with a coordinated multi-agent studio crew powered by Google Gemini and live Parallel Search market intelligence.
+### [00:00 – 00:20] Cold Open: Target Audience & The Studio Problem (Demo Target: <20s)
+- **Screen**: Backlot Studio workstation loaded in Google Chrome on Google Cloud Run (`https://backlot-studio-112519007745.us-central1.run.app`). Header displays `Studio OS v2.5` and live SMPTE timecode ticker. Screenplay manuscript for *FREQUENCY ZERO* open in Courier Prime 12pt.
+- **Narration**: *"For independent filmmakers, line producers, and studio executives deciding whether to greenlight a project, pre-production is broken. Turning a screenplay manuscript into breakdowns, schedules, budgets, and pitch kits takes weeks across disconnected spreadsheets with zero financial auditability. Backlot replaces that manual grind with an AI-native studio crew powered exclusively by Google Gemini and live Parallel Search market intelligence."*
 
-### [00:30 – 01:15] Dispatching the Studio Crew
-- **Visual**: Clicking **Greenlight & Dispatch Crew**. Telemetry Wire streams live token generation. Channel strips update in real-time.
-- **Narration**: Director orchestrates six specialized studio units. Ink evaluates the screenplay narrative structure; Slate catalogs 13 categories of physical breakdown elements; Ledger executes deterministic arithmetic for the stripboard and budget; Easel blocks camera setups; and Marquee searches live box-office and festival comps.
+### [00:20 – 00:55] Dispatching Crew & Live Parallel Search Citations (Demo Target: <60s)
+- **Screen**: Click **Greenlight & Dispatch Crew** (or open Telemetry Wire). Wire monitor shows streaming logs from `global-aiplatform.googleapis.com` under project `polygraph-hackathon`.
+- **Screen Focus (<00:55)**: Switch to Marquee telemetry stream showing live Parallel Search execution (`v1beta/search`). Live comps and festival citations appear with verifiable URLs (e.g. *The Lighthouse* Box Office Mojo `https://www.boxofficemojo.com/release/rl3305670145/`, Sundance, SXSW).
+- **Narration**: *"Director orchestrates six specialized studio units via Gemini on Vertex AI. Notice the telemetry wire: at runtime, Marquee executes live Parallel Search queries, pulling verified market comp and festival award citations directly into the pitch dossier. No stale training data — live web intelligence grounded by Parallel."*
 
-### [01:15 – 02:30] Inspecting the Five Deliverables
-1. **Story Coverage**: Ink's Reader Verdict **RECOMMEND**, radar scores, and premise analysis.
-2. **1st AD Breakdown**: Scene-by-scene 13-department tags (Cast, SFX, Stunts, Rain FX).
-3. **Stripboard Schedule**: 4-day optimized shooting schedule with day breaks, company moves, and Cast Day Matrix (non-union indie baseline).
-4. **Audited Budget**: Ledger's **$34,735** top sheet budget. Clicking any line item highlights its direct `tracesTo` script provenance.
-5. **Previz Storyboards & Pitch Kit**: 2.39:1 anamorphic storyboards with Kodak 5219 film LUTs, the theatrical one-sheet poster ("Hear your future. Change your fate."), and live Parallel Search citations.
+### [00:55 – 01:25] Deliverable 1: Story Coverage (Ink)
+- **Screen**: Select **Story Coverage** tab. Show authentic green rubber stamp: **RECOMMEND** (*"PRIORITY ACQUISITION / FAST-TRACK GREENLIGHT"*). Show pull quote: *“An electrifying masterclass in analog audio suspense.”* Scroll to Critic Diagnostic Score Matrix: Premise 9/10, Structure 9/10, Character 8/10, Dialogue 8/10, Marketability 9/10.
+- **Narration**: *"Ink delivers Hollywood-standard story coverage in seconds. Our calibrated diagnostic matrix scores narrative structure, character arcs, and marketability, concluding with an executive RECOMMEND verdict and actionable development notes."*
 
-### [02:30 – 02:55] Live Script Revision & Cascade Invalidation (Beat 4B)
-- **Visual**: Screenwriter opens Scene 8 in the manuscript drawer, removes the bridge stunt fall, and triggers an incremental revision run.
-- **Narration**: Pre-production is iterative. When we cut the bridge stunt in Scene 8, Backlot's cascade invalidation engine immediately re-analyzes only the modified scene, pinning all 9 untouched scenes with 100% mathematical zero-drift. The Executive Delta banner instantly reports a **-$6,484** net budget reduction (eliminating stunt coordinator, equipment, and stunt hazard fees with exact provenance tracing) and flags Frame 8A as **STALE** for selective re-render.
+### [01:25 – 01:45] Deliverable 2: 1st AD Physical Breakdown (Slate)
+- **Screen**: Select **1st AD Breakdown** tab. Show 10 scene breakdown strips, color-coded department cards tagging 13 physical categories: Cast, Background Actors, Stunts, SFX, Sound, Props, Vehicles, and Special Equipment.
+- **Narration**: *"Slate conducts a line-by-line 1st AD script breakdown across all 10 scenes, tagging all 13 standard physical production departments — from rain machines and vintage radio consoles to stunt coordinators."*
 
-### [02:55 – 03:00] Closing & Call to Action
-- **Visual**: Hosted Cloud Run deployment URL.
-- **Narration**: Backlot: turning screenplays into auditable studio packages in seconds.
+### [01:45 – 02:05] Deliverable 3: Stripboard Schedule & Magnetic Board (Ledger)
+- **Screen**: Select **Stripboard Schedule** tab. Show 4-Day physical magnetic stripboard with Day/Night color coding (Day Int Canary, Night Int Steel Blue). Highlight summary stats: **4 Shoot Days**, **2 Night Shoots**, **4 Intra-day Company Moves**, **3 Principal Actors**. Expand Day 1 to highlight the 6/8-page company move deduction and cast matrix badges.
+- **Narration**: *"Ledger generates a professional stripboard schedule with pure deterministic math. Location clustering groups scenes, enforces a 6/8th page deduction for company moves, accounts for night shoot differentials, and builds the full Cast Day Matrix."*
+
+### [02:05 – 02:25] Deliverable 4: Audited Production Budget (Ledger)
+- **Screen**: Select **Audited Budget** tab. Highlight Canonical Production Top Sheet: Grand Total **$34,735.00** (with 10% contingency included). Click line item `1001 Lead Actor (Elena)` to trigger the Cross-Artifact Provenance modal showing its exact `tracesTo` script origin.
+- **Narration**: *"Here is Backlot's core architectural invariant: 100% pure math ledger arithmetic. No financial numbers are ever routed through an LLM. Every single dollar of our $34,735 top sheet carries an explicit `tracesTo` provenance tag linking directly back to the physical scene breakdown."*
+
+### [02:25 – 02:45] Deliverable 5: Previz Storyboard & Pitch Kit (Easel & Marquee)
+- **Screen**: Select **Previz Storyboard** tab to show 2.39:1 anamorphic cinematography cards with lens choices (35mm Anamorphic, 50mm Prime), lighting setups, and keyframe prompts. Then click **Pitch Kit & Sources** to reveal the theatrical key art concept ("Hear your future. Change your fate.") and Marquee's verified Parallel Search comps table.
+- **Narration**: *"Easel blocks shot lists with 2.39:1 aspect ratio specs, while Marquee packages the final pitch deck with festival submission strategies and verified box-office comp data from Parallel Search."*
+
+### [02:45 – 02:55] Architecture & Closing Summary
+- **Screen**: Show `/api/health` endpoint on screen confirming `Gemini Enterprise Agent Platform (Vertex AI)` (`global-aiplatform.googleapis.com`), project `polygraph-hackathon`, `Parallel Search API (v1beta/search)`, and deployed Cloud Run URL (`https://backlot-studio-112519007745.us-central1.run.app`).
+- **Narration**: *"Built exclusively on Google Gemini, Google Cloud Run, and Parallel Search, with 100% deterministic ledger math. Backlot turns screenplays into production-ready greenlight packages in under thirty seconds."*
+

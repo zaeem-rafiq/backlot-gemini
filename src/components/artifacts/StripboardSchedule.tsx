@@ -104,7 +104,7 @@ export function StripboardSchedule({ schedule, scriptParse }: StripboardSchedule
   return (
     <div className="flex flex-col gap-6 animate-document-land">
       {/* Board Metadata & Industry Stripboard Legend */}
-      <div className="bg-[#0B0D14] border border-studio-800/90 rounded-2xl p-6 sm:p-8 flex flex-col gap-6 shadow-2xl">
+      <div className="bg-[#0B0D14] border border-studio-800/90 rounded-2xl p-4 sm:p-8 flex flex-col gap-6 shadow-2xl">
         <div className="flex items-center justify-between flex-wrap gap-4 border-b border-studio-800/80 pb-5">
           <div className="flex items-center gap-3.5">
             <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-amber-500/20 to-amber-600/5 border border-amber-500/40 flex items-center justify-center text-amber-400 font-bold shadow-inner">
@@ -284,14 +284,14 @@ export function StripboardSchedule({ schedule, scriptParse }: StripboardSchedule
                         <React.Fragment key={scId}>
                           {/* If this scene triggers an intra-day move, show the move strip */}
                           {idx > 0 && day.companyMoves > 0 && idx === 1 && (
-                            <div className="bg-amber-950/70 border-y-2 border-amber-500/80 text-amber-200 font-mono text-xs py-2 px-4 rounded-md flex items-center justify-between my-1">
+                            <div className="bg-amber-950/70 border-y-2 border-amber-500/80 text-amber-200 font-mono text-xs py-2 px-3 sm:px-4 rounded-md flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 sm:gap-2 my-1">
                               <div className="flex items-center gap-2">
-                                <Truck className="w-4 h-4 text-amber-400 animate-pulse" />
-                                <span className="font-extrabold uppercase tracking-wider">
+                                <Truck className="w-4 h-4 text-amber-400 animate-pulse flex-shrink-0" />
+                                <span className="font-extrabold uppercase tracking-wider text-[11px] sm:text-xs">
                                   COMPANY MOVE & GEAR PACK: RELOCATING TO NEXT SET
                                 </span>
                               </div>
-                              <span className="text-[10px] text-amber-300 font-bold bg-amber-900/80 px-2 py-0.5 rounded border border-amber-500/40">
+                              <span className="text-[10px] text-amber-300 font-bold bg-amber-900/80 px-2 py-0.5 rounded border border-amber-500/40 self-start sm:self-auto">
                                 -6/8 PGS EFF CAPACITY DEDUCTED
                               </span>
                             </div>
@@ -299,7 +299,7 @@ export function StripboardSchedule({ schedule, scriptParse }: StripboardSchedule
 
                           {/* Physical Magnetic Strip */}
                           <div
-                            className={`magnetic-strip rounded-lg border px-3.5 py-2.5 flex items-center justify-between gap-3 font-mono text-xs transition hover:brightness-105 ${stripTheme.stripClass}`}
+                            className={`magnetic-strip rounded-lg border px-3.5 py-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 font-mono text-xs transition hover:brightness-105 ${stripTheme.stripClass}`}
                           >
                             {/* Left: Scene Number & Type Tag */}
                             <div className="flex items-center gap-2.5 flex-shrink-0">
@@ -378,7 +378,7 @@ export function StripboardSchedule({ schedule, scriptParse }: StripboardSchedule
       </div>
 
       {/* Cast Availability & Booking Matrix (Call Sheet Ledger) */}
-      <div className="bg-[#0B0D14] border border-studio-800/90 rounded-2xl p-6 sm:p-8 flex flex-col gap-4 shadow-2xl">
+      <div className="bg-[#0B0D14] border border-studio-800/90 rounded-2xl p-4 sm:p-8 flex flex-col gap-4 shadow-2xl">
         <div className="flex items-center justify-between border-b border-studio-800/80 pb-3 flex-wrap gap-2">
           <h4 className="text-xs font-mono uppercase tracking-wider text-white font-bold flex items-center gap-2">
             <Users className="w-4 h-4 text-emerald-400" /> Cast Availability & Cast Day Matrix

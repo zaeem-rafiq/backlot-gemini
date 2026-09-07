@@ -30,6 +30,7 @@ export const DEVELOPER_API_CHAINS: ModelChainConfig = {
     process.env.MODEL_REASONING_OVERRIDE || "gemini-3.5-flash",
     "gemini-3-flash-preview",
     "gemini-2.5-flash",
+    "gemini-2.5-flash-lite",
   ],
   fast: [
     process.env.MODEL_FAST_OVERRIDE || "gemini-3.1-flash-lite",

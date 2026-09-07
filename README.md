@@ -17,8 +17,8 @@ In traditional motion picture and independent film production, **pre-production 
 - Unstructured spreadsheet budgeting suffering from an average **8–12% formula error rate** and orphaned line items lacking script-traceable provenance *[Source: Entertainment Partners Financial Audits]*.
 
 **BACKLOT collapses this entire 4-to-6 week pre-production gauntlet into an instant, deterministic, multi-agent studio session:**
-- **Zero-Quota Instant Evaluation:** Loads a verified 7-artifact production package in **<250ms** via pre-baked sample-run fixtures at zero API cost.
-- **Live Multi-Agent Streaming Execution:** Dispatches an autonomous crew of 6 specialized AI agents running on the **Gemini Enterprise Agent Platform** with Google Cloud Application Default Credentials (ADC) and the **Parallel Search API**, generating an audited, production-grade greenlight package in **~7–12 seconds**.
+- **Zero-Quota Instant Evaluation:** Loads a verified 7-artifact production package (measured example: ~37ms local fixture load) via pre-baked sample-run fixtures at zero API cost.
+- **Live Multi-Agent Streaming Execution:** Dispatches an autonomous crew of 6 specialized AI agents running on the **Gemini Enterprise Agent Platform** with Google Cloud Application Default Credentials (ADC) and the **Parallel Search API**, generating an audited greenlight package (measured example: 27.8s live streaming execution on Cloud Run with 47 SSE events).
 
 ---
 
@@ -59,7 +59,44 @@ graph TD
 
 ---
 
-## 3. Core Architectural Invariants
+## 3. Quick Start & Clean Clone Setup
+
+### Prerequisites
+- **Node.js**: `v20.x` or `v22.x` (verified on Node `v22.22.3`)
+- **npm**: `v10.x` or later
+- **Google Chrome** (optional, for headless browser visual verification)
+
+### Step 1: Clone & Clean Install
+```bash
+git clone https://github.com/zaeem-rafiq/backlot-gemini.git
+cd backlot-gemini
+npm ci
+```
+
+### Step 2: Environment Configuration
+Copy the provided environment template:
+```bash
+cp .env.example .env.local
+```
+Add your API keys in `.env.local`:
+```bash
+# Google Gemini API Key (Required for live multi-agent crew execution)
+GEMINI_API_KEY=your_gemini_api_key_here
+
+# Parallel Partner Search API Key (Required for Marquee market research)
+PARALLEL_API_KEY=your_parallel_api_key_here
+```
+> **Zero-Quota Demonstration:** You can launch and evaluate Backlot **without any API keys configured**. Backlot ships with a verified 7-artifact production fixture (`src/fixtures/sample-run.json`) with pre-rendered assets in `public/renders/` that loads instantly at zero API quota cost.
+
+### Step 3: Launch Local Studio
+```bash
+npm run dev
+```
+Open [http://localhost:3000](http://localhost:3000) in your browser. Click **Load Sample** to inspect the pre-baked production package or paste custom screenplay text and click **Greenlight & Dispatch Crew** to execute live streaming orchestration.
+
+---
+
+## 4. Core Architectural Invariants
 
 ### A. 100% Deterministic Ledger Math & Cross-Artifact Provenance
 Financial figures and production schedules are **never routed through an LLM**. 
@@ -78,12 +115,12 @@ Marquee queries `https://api.parallel.ai/v1beta/search` at runtime to extract re
 - **Clean REST Integration:** Zero third-party AI frameworks (no LangChain, no LlamaIndex) for 100% compliance.
 - **Honest Degradation:** If search is offline or unconfigured, the panel renders an honest notice (`Live market research unavailable`) without fabricating fake box office metrics or placeholder links.
 
-### D. Zero-Quota Instant Demonstration
-Ships with a pre-baked 7-artifact sample run fixture (`src/fixtures/sample-run.json`) with static image assets in `public/renders/`. Evaluators and judges can load the complete production package in **<250ms** at zero API quota cost.
+### D. Zero-Quota Demonstration Mode
+Ships with a pre-baked 7-artifact sample run fixture (`src/fixtures/sample-run.json`) with static image assets in `public/renders/`. Evaluators and judges can inspect the complete production package at zero API quota cost without requiring active API keys.
 
 ---
 
-## 4. Authoritative Sourced Statistics
+## 5. Authoritative Sourced Statistics
 
 All industry statistics cited within Backlot are calibrated against checkable, authoritative published sources:
 
@@ -105,7 +142,7 @@ All industry statistics cited within Backlot are calibrated against checkable, a
 
 ---
 
-## 5. Technology Stack
+## 6. Technology Stack
 
 - **Framework:** Next.js 15+ (App Router), React 19, TypeScript
 - **Styling & UI:** Tailwind CSS, Lucide React, Custom Dark Cinema Design System
@@ -117,10 +154,10 @@ All industry statistics cited within Backlot are calibrated against checkable, a
 
 ---
 
-## 6. Verification & Test Commands
+## 7. Verification & Test Commands
 
 ```bash
-# 1. Run deterministic ledger and schema unit tests (31 tests)
+# 1. Run deterministic ledger and schema unit tests (46 tests across 8 suites)
 npm test
 
 # 2. Run domain evaluation test suite against FREQUENCY ZERO ground truth (5 evals)
@@ -135,7 +172,7 @@ curl https://backlot-studio-112519007745.us-central1.run.app/api/health
 
 ---
 
-## 7. Hackathon Compliance Declaration (§7.B)
+## 8. Hackathon Compliance Declaration (§7.B)
 
 - **AI Model Selection:** 100% Google Gemini models (`gemini-3.5-flash`, `gemini-3.1-flash-lite`, `gemini-2.5-flash`, `gemini-2.5-pro`, `gemini-2.5-flash-image`, `gemini-3.1-flash-image`).
 - **Zero Non-Google AI:** No OpenAI, Anthropic, Replicate, FLUX, Stability, ElevenLabs, LangChain, LlamaIndex, or CrewAI anywhere in the repository or runtime dependencies.

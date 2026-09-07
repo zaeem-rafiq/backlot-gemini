@@ -26,6 +26,7 @@ import {
   ShieldAlert,
   Square,
   GitCompare,
+  X,
 } from "lucide-react";
 import { FREQUENCY_ZERO_SCRIPT } from "@/fixtures/frequency-zero";
 import { RunState, StreamEvent, AgentId, AgentStatusState } from "@/lib/types/events";
@@ -46,6 +47,7 @@ type ActiveTab = "COVERAGE" | "BREAKDOWN" | "SCHEDULE" | "BUDGET" | "STORYBOARD"
 export default function BacklotStudioPage() {
   const [screenplay, setScreenplay] = useState<string>(FREQUENCY_ZERO_SCRIPT);
   const [runState, setRunState] = useState<RunState | null>(sampleRunData as unknown as RunState);
+  const [runSource, setRunSource] = useState<"sample" | "live">("sample");
   const [activeTab, setActiveTab] = useState<ActiveTab>("COVERAGE");
   const [isRunning, setIsRunning] = useState<boolean>(false);
   const [enableImages, setEnableImages] = useState(false);
@@ -68,19 +70,19 @@ export default function BacklotStudioPage() {
     {
       agent: "director",
       level: "info",
-      message: `Loaded verified production package for '${sampleRunData.title}'.`,
+      message: `Loaded pre-baked production package for '${sampleRunData.title}' (Zero-Quota demo fixture).`,
       timestamp: new Date().toISOString(),
     },
     {
       agent: "marquee",
       level: "info",
-      message: `Retrieved ${sampleRunData.pitchKit?.marketEvidence?.length || 0} live Parallel Search API market citations with active verified URLs.`,
+      message: `Market evidence loaded from verified pre-baked fixture (${sampleRunData.pitchKit?.marketEvidence?.length || 0} citations).`,
       timestamp: new Date().toISOString(),
     },
     {
       agent: "ledger",
       level: "info",
-      message: `Audited 100% deterministic budget ($${sampleRunData.budget?.summary?.grandTotal?.toLocaleString() || "0"}) with complete cross-artifact provenance.`,
+      message: `Audited budget loaded from verified fixture ($${sampleRunData.budget?.summary?.grandTotal?.toLocaleString() || "0"}, 100% deterministic math).`,
       timestamp: new Date().toISOString(),
     },
   ]);
@@ -121,6 +123,13 @@ export default function BacklotStudioPage() {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  // Collapse sidebar by default on mobile devices to give full canvas real estate
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.innerWidth < 768) {
+      setSidebarOpen(false);
+    }
   }, []);
 
   const abortControllerRef = useRef<AbortController | null>(null);
@@ -169,7 +178,11 @@ export default function BacklotStudioPage() {
     }
     flushLogs();
     setIsRunning(false);
+    setRunSource("sample");
     setRunState(sampleRunData as unknown as RunState);
+    if (typeof window !== "undefined" && window.innerWidth < 768) {
+      setSidebarOpen(false);
+    }
     setAgentStatuses({
       director: "done",
       ink: "done",
@@ -182,19 +195,19 @@ export default function BacklotStudioPage() {
       {
         agent: "director",
         level: "info",
-        message: `Loaded verified production package for '${sampleRunData.title}'.`,
+        message: `Loaded pre-baked production package for '${sampleRunData.title}' (Zero-Quota demo fixture).`,
         timestamp: new Date().toISOString(),
       },
       {
         agent: "marquee",
         level: "info",
-        message: `Retrieved ${sampleRunData.pitchKit?.marketEvidence?.length || 0} live Parallel Search API market citations with active verified URLs.`,
+        message: `Market evidence loaded from verified pre-baked fixture (${sampleRunData.pitchKit?.marketEvidence?.length || 0} citations).`,
         timestamp: new Date().toISOString(),
       },
       {
         agent: "ledger",
         level: "info",
-        message: `Audited 100% deterministic budget ($${sampleRunData.budget?.summary?.grandTotal?.toLocaleString() || "0"}) with complete cross-artifact provenance.`,
+        message: `Audited budget loaded from verified fixture ($${sampleRunData.budget?.summary?.grandTotal?.toLocaleString() || "0"}, 100% deterministic math).`,
         timestamp: new Date().toISOString(),
       },
     ]);
@@ -214,6 +227,10 @@ export default function BacklotStudioPage() {
     const controller = new AbortController();
     abortControllerRef.current = controller;
 
+    setRunSource("live");
+    if (typeof window !== "undefined" && window.innerWidth < 768) {
+      setSidebarOpen(false);
+    }
     setIsRunning(true);
     setWireOpen(true);
     setLogs([]);
@@ -451,7 +468,11 @@ export default function BacklotStudioPage() {
       label: "Pitch Kit & Sources",
       icon: <Megaphone className="w-3.5 h-3.5" />,
       count: runState?.pitchKit ? `${runState.pitchKit.marketEvidence?.length || 0} Comps` : undefined,
-      readyBadge: runState?.pitchKit ? "PARALLEL LIVE" : undefined,
+      readyBadge: runState?.pitchKit
+        ? runSource === "sample"
+          ? "PARALLEL (FIXTURE)"
+          : "PARALLEL LIVE"
+        : undefined,
     },
     ...(runState?.revision
       ? [
@@ -467,9 +488,9 @@ export default function BacklotStudioPage() {
   ];
 
   return (
-    <main className="min-h-screen bg-[#07080B] text-[#F8FAFC] flex flex-col font-sans selection:bg-amber-500/30">
+    <main className="min-h-screen w-full max-w-[100vw] overflow-x-hidden bg-[#07080B] text-[#F8FAFC] flex flex-col font-sans selection:bg-amber-500/30">
       {/* Master Broadcast Hardware Header */}
-      <header className="h-14 border-b border-studio-800 bg-[#090B10]/95 backdrop-blur px-4 sm:px-6 flex items-center justify-between sticky top-0 z-50 shadow-md">
+      <header className="h-14 border-b border-studio-800 bg-[#090B10]/95 backdrop-blur px-3 sm:px-6 flex items-center justify-between sticky top-0 z-50 shadow-md w-full max-w-[100vw]">
         <div className="flex items-center gap-3 min-w-0">
           {/* Sidebar Toggle Button */}
           <button
@@ -499,40 +520,41 @@ export default function BacklotStudioPage() {
         <TimecodeDisplay />
 
         {/* Header Right Actions */}
-        <div className="flex items-center gap-2.5 flex-shrink-0 font-mono">
+        <div className="flex items-center gap-1.5 sm:gap-2.5 flex-shrink-0 font-mono">
           {isRunning && (
             <button
               onClick={handleAbortRun}
-              className="px-2.5 py-1.5 rounded bg-rose-500/20 hover:bg-rose-500/30 border border-rose-500/50 text-xs text-rose-300 flex items-center gap-1.5 transition focus-ring cursor-pointer font-bold animate-pulse"
+              className="px-2 sm:px-2.5 py-1.5 rounded bg-rose-500/20 hover:bg-rose-500/30 border border-rose-500/50 text-xs text-rose-300 flex items-center gap-1.5 transition focus-ring cursor-pointer font-bold animate-pulse"
               aria-label="Abort In-Flight Studio Run"
               title="Abort Active Multi-Agent Run"
             >
               <Square className="w-3 h-3 text-rose-400 fill-rose-400" />
-              <span>Abort Run</span>
+              <span className="hidden sm:inline">Abort</span>
             </button>
           )}
           {/* Command Palette Trigger */}
           <button
             onClick={() => setCommandPaletteOpen(true)}
-            className="px-2.5 py-1.5 rounded bg-[#101420] hover:bg-studio-800 border border-studio-700 text-xs text-studio-200 flex items-center gap-1.5 transition focus-ring cursor-pointer font-bold"
+            className="hidden sm:flex px-2.5 py-1.5 rounded bg-[#101420] hover:bg-studio-800 border border-studio-700 text-xs text-studio-200 items-center gap-1.5 transition focus-ring cursor-pointer font-bold"
             aria-label="Open Studio Command Palette (Cmd+K)"
             title="Open Command Palette (Cmd+K)"
           >
             <span className="text-amber-400 font-extrabold">⌘K</span>
-            <span className="hidden sm:inline">Command Deck</span>
+            <span className="hidden md:inline">Command Deck</span>
           </button>
 
           <button
             onClick={() => setWireOpen(!wireOpen)}
-            className={`px-2.5 py-1.5 rounded text-xs flex items-center gap-1.5 transition focus-ring cursor-pointer border ${
+            className={`px-2 py-1.5 sm:px-2.5 rounded text-xs flex items-center gap-1.5 transition focus-ring cursor-pointer border ${
               wireOpen
                 ? "bg-amber-500/20 text-amber-300 border-amber-500/50 font-bold shadow-sm shadow-amber-500/10"
                 : "bg-[#101420] text-studio-400 hover:text-white border-studio-800"
             }`}
             aria-label="Toggle live on-set wire telemetry monitor"
+            title="Toggle Live Wire Telemetry"
           >
             <Terminal className="w-3.5 h-3.5 text-amber-400" />
-            <span className="hidden sm:inline font-bold">Telemetry Wire</span>
+            <span className="hidden md:inline font-bold">Telemetry Wire</span>
             <span className="text-[10px] px-1.5 py-0.2 rounded bg-[#040508] text-amber-300 font-mono-tabular border border-studio-800">
               {logs.length}
             </span>
@@ -541,29 +563,60 @@ export default function BacklotStudioPage() {
           <button
             onClick={handleLoadSample}
             disabled={isRunning}
-            className="px-2.5 py-1.5 rounded bg-[#101420] hover:bg-studio-800 border border-studio-700 text-xs text-studio-200 flex items-center gap-1.5 transition disabled:opacity-50 focus-ring cursor-pointer font-bold"
+            className="px-2 py-1.5 sm:px-2.5 rounded bg-[#101420] hover:bg-studio-800 border border-studio-700 text-xs text-studio-200 flex items-center gap-1.5 transition disabled:opacity-50 focus-ring cursor-pointer font-bold"
             aria-label="Load verified sample production run"
+            title="Load Sample"
           >
             <RefreshCw className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
-            <span className="hidden sm:inline">Load Sample</span>
+            <span className="hidden md:inline">Load Sample</span>
           </button>
 
-          <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#040508] border border-studio-800 text-[11px] text-studio-300">
-            <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse flex-shrink-0" />
-            <span className="font-semibold text-emerald-300">
-              {runState?.modelsUsed && runState.modelsUsed.length > 0
-                ? `${runState.modelsUsed.find((m) => m.startsWith("gemini")) || "gemini-3.5-flash"} Live`
-                : "Gemini 3.5 Flash Live"}
-            </span>
-          </div>
+          {runSource === "sample" ? (
+            <div className="hidden lg:flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#0A0D14] border border-studio-700 text-[11px] text-studio-300">
+              <span className="h-2 w-2 rounded-full bg-amber-400 flex-shrink-0" />
+              <span className="font-semibold text-amber-300">Sample Run (Baked Fixture)</span>
+            </div>
+          ) : (
+            <div className="hidden lg:flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#040508] border border-studio-800 text-[11px] text-studio-300">
+              <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse flex-shrink-0" />
+              <span className="font-semibold text-emerald-300">
+                {runState?.modelsUsed && runState.modelsUsed.length > 0
+                  ? `${runState.modelsUsed.find((m) => m.startsWith("gemini")) || "gemini-3.5-flash"} Live`
+                  : "Gemini 3.5 Flash Live"}
+              </span>
+            </div>
+          )}
         </div>
       </header>
 
       {/* Main Studio Suite Workspace */}
-      <div className="flex-1 flex overflow-hidden">
-        {/* Left Master Studio Rack (Collapsible) */}
+      <div className="flex-1 flex overflow-hidden relative min-w-0 w-full">
+        {/* Mobile Backdrop Overlay */}
         {sidebarOpen && (
-          <aside className="w-80 border-r border-studio-800 bg-[#090B10] flex flex-col justify-between flex-shrink-0 overflow-y-auto scrollbar-thin">
+          <div
+            onClick={() => setSidebarOpen(false)}
+            className="fixed inset-0 bg-black/75 z-40 md:hidden backdrop-blur-sm transition-opacity"
+            aria-hidden="true"
+          />
+        )}
+
+        {/* Left Master Studio Rack (Collapsible & Mobile Slide-Over) */}
+        {sidebarOpen && (
+          <aside className="fixed inset-y-0 left-0 z-50 w-[85vw] max-w-xs md:static md:w-80 md:z-auto border-r border-studio-800 bg-[#090B10] flex flex-col justify-between flex-shrink-0 overflow-y-auto scrollbar-thin shadow-2xl md:shadow-none">
+            {/* Mobile drawer header with close button */}
+            <div className="md:hidden flex items-center justify-between p-3.5 border-b border-studio-800 bg-[#07090E]">
+              <div className="flex items-center gap-2">
+                <Clapperboard className="w-4 h-4 text-amber-400" />
+                <span className="text-xs font-mono font-bold text-white uppercase tracking-wider">Studio Control Rack</span>
+              </div>
+              <button
+                onClick={() => setSidebarOpen(false)}
+                className="p-1 rounded text-studio-400 hover:text-white cursor-pointer"
+                aria-label="Close studio control rack"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
             <div className="p-4 flex flex-col gap-4">
               {/* Screenplay Binder Module */}
               <div className="bg-[#0D1017] border border-studio-800 rounded-lg p-3.5 flex flex-col gap-3 shadow-inner">
@@ -709,9 +762,9 @@ export default function BacklotStudioPage() {
         )}
 
         {/* Main Deliverable Canvas (Full Real Estate) */}
-        <div className="flex-1 flex flex-col overflow-y-auto bg-[#07080B] relative scrollbar-thin">
+        <div className="flex-1 flex flex-col min-w-0 overflow-y-auto overflow-x-hidden bg-[#07080B] relative scrollbar-thin">
           {/* Top Deliverable Workstation Navigation Bar */}
-          <div className="sticky top-0 z-30 bg-[#090B10]/95 backdrop-blur border-b border-studio-800 px-4 sm:px-6 py-2.5 flex items-center justify-between gap-4 overflow-x-auto scrollbar-none shadow-sm">
+          <div className="sticky top-0 z-30 bg-[#090B10]/95 backdrop-blur border-b border-studio-800 px-3 sm:px-6 py-2.5 flex items-center justify-between gap-4 overflow-x-auto max-w-full scrollbar-none shadow-sm">
             <div
               role="tablist"
               aria-label="Studio Deliverables"
@@ -754,12 +807,12 @@ export default function BacklotStudioPage() {
           </div>
 
           {/* Full Width Deliverable Viewport */}
-          <div className="p-4 sm:p-6 lg:p-8 flex-1 max-w-7xl w-full mx-auto">
+          <div className="p-3 sm:p-6 lg:p-8 flex-1 max-w-7xl w-full mx-auto min-w-0">
             <div
               role="tabpanel"
               id={`panel-${activeTab}`}
               aria-labelledby={`tab-${activeTab}`}
-              className="w-full"
+              className="w-full min-w-0"
             >
               {activeTab === "COVERAGE" && (
                 runState?.coverage ? (

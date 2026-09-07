@@ -23,14 +23,13 @@ describe("FREQUENCY ZERO — Domain Judgment Evals", () => {
     const parseRes = await ink.parseScript(FREQUENCY_ZERO_SCRIPT);
     parsedScript = parseRes.scriptParse;
 
-    const [covRes, bdRes] = await Promise.all([
-      ink.generateCoverage(parsedScript, FREQUENCY_ZERO_SCRIPT),
-      slate.breakdownScript(parsedScript, FREQUENCY_ZERO_SCRIPT),
-    ]);
+    // Run sequentially to eliminate concurrent 503 contention on Gemini API rate limits
+    const covRes = await ink.generateCoverage(parsedScript, FREQUENCY_ZERO_SCRIPT);
+    const bdRes = await slate.breakdownScript(parsedScript, FREQUENCY_ZERO_SCRIPT);
 
     coverage = covRes.coverage;
     breakdown = bdRes.scriptBreakdown;
-  }, 120000);
+  }, 300000);
 
   it("evaluates Slate correctly flags the physical stunt in Scene 8", () => {
     const scene8 = breakdown.breakdowns.find((b) => b.sceneId === 8);

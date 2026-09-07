@@ -24,54 +24,16 @@ interface AuditedBudgetProps {
 export function AuditedBudget({ budget }: AuditedBudgetProps) {
   const [selectedTraceItem, setSelectedTraceItem] = useState<BudgetLineItem | null>(null);
   const [collapsedCategories, setCollapsedCategories] = useState<Record<string, boolean>>({});
-  const [rateMultiplier, setRateMultiplier] = useState<number>(1.0);
-  const [selectedTierName, setSelectedTierName] = useState<string>("Standard SAG Indie ($250/day)");
-  const [searchQuery, setSearchQuery] = useState("");
-
   const toggleCategory = (cat: string) => {
     setCollapsedCategories((prev) => ({ ...prev, [cat]: !prev[cat] }));
   };
-
   const totalLineItems = budget.sections.reduce((acc, s) => acc + s.items.length, 0);
 
-  // Pure deterministic recalculation based on active rate card tier (memoized)
-  const { calculatedSections, calculatedSubtotal, calculatedContingency, calculatedGrandTotal } = useMemo(() => {
-    const sections = budget.sections.map((section) => {
-      const isContingencySection = section.category.toLowerCase().includes("contingency");
-      const items = section.items.map((item) => {
-        if (item.unit === "percent") {
-          const adjustedTotal = Math.round(item.total * rateMultiplier);
-          return { ...item, total: adjustedTotal };
-        }
-        const adjustedRate = Math.round(item.rate * rateMultiplier);
-        const adjustedTotal = adjustedRate * item.qty;
-        return {
-          ...item,
-          rate: adjustedRate,
-          total: adjustedTotal,
-        };
-      });
-      const subtotal = items.reduce((acc, it) => acc + it.total, 0);
-      return {
-        ...section,
-        items,
-        subtotal,
-        isContingencySection,
-      };
-    });
-
-    const nonContingencySections = sections.filter((s) => !s.isContingencySection);
-    const subtotal = nonContingencySections.reduce((acc, s) => acc + s.subtotal, 0);
-    const contingency = Math.round(subtotal * 0.1);
-    const grandTotal = subtotal + contingency;
-
-    return {
-      calculatedSections: sections,
-      calculatedSubtotal: subtotal,
-      calculatedContingency: contingency,
-      calculatedGrandTotal: grandTotal,
-    };
-  }, [budget.sections, rateMultiplier]);
+  // Direct deterministic ledger metrics from audited budget
+  const calculatedSections = budget.sections;
+  const calculatedSubtotal = budget.summary.subtotalBeforeContingency;
+  const calculatedContingency = budget.summary.contingencyTotal;
+  const calculatedGrandTotal = budget.summary.grandTotal;
 
   // Map category names to canonical film account code numbers
   const getAccountCode = (categoryName: string, index: number) => {
@@ -89,7 +51,7 @@ export function AuditedBudget({ budget }: AuditedBudgetProps) {
   return (
     <div className="flex flex-col gap-6 animate-document-land">
       {/* Top Sheet Header Banner */}
-      <div className="bg-[#0B0D14] border border-studio-800/90 rounded-2xl p-6 sm:p-8 flex flex-col gap-6 shadow-2xl">
+      <div className="bg-[#0B0D14] border border-studio-800/90 rounded-2xl p-4 sm:p-8 flex flex-col gap-6 shadow-2xl">
         <div className="flex items-center justify-between flex-wrap gap-4 border-b border-studio-800/80 pb-5">
           <div className="flex items-center gap-3.5">
             <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-emerald-500/20 to-emerald-600/5 border border-emerald-500/40 flex items-center justify-center text-emerald-400 font-bold shadow-inner">
@@ -105,36 +67,17 @@ export function AuditedBudget({ budget }: AuditedBudgetProps) {
                 </span>
               </div>
               <p className="text-xs text-studio-400 font-sans mt-0.5">
-                Tier Standard: {selectedTierName} · Zero LLM Invented Figures
+                Standard SAG Indie Baseline ($250/day) · 100% Deterministic Arithmetic
               </p>
             </div>
           </div>
 
-          {/* Rate Card Tier Switcher */}
-          <div className="flex items-center gap-2 font-mono text-xs flex-wrap">
-            <span className="text-studio-400 uppercase text-[10px] font-bold">Rate Tier:</span>
-            <div className="flex items-center gap-1 bg-[#06080C] p-1 rounded-lg border border-studio-800">
-              {[
-                { name: "Indie ($250/d)", mult: 1.0, label: "Standard SAG Indie ($250/day)" },
-                { name: "Tier 1 ($450/d)", mult: 1.8, label: "Tier 1 Low Budget ($450/day)" },
-                { name: "Studio ($750/d)", mult: 3.0, label: "Major Studio Union ($750/day)" },
-              ].map((tier) => (
-                <button
-                  key={tier.name}
-                  onClick={() => {
-                    setRateMultiplier(tier.mult);
-                    setSelectedTierName(tier.label);
-                  }}
-                  className={`px-2.5 py-1 rounded text-[10px] font-bold transition focus-ring cursor-pointer ${
-                    rateMultiplier === tier.mult
-                      ? "bg-emerald-500 text-black shadow-sm"
-                      : "text-studio-400 hover:text-white"
-                  }`}
-                >
-                  {tier.name}
-                </button>
-              ))}
-            </div>
+          {/* Certified Rate Card Indicator */}
+          <div className="flex items-center gap-2 font-mono text-xs">
+            <span className="text-[10px] font-mono px-3 py-1.5 rounded-lg bg-[#06080C] border border-studio-800 text-emerald-400 font-bold flex items-center gap-1.5 shadow-inner">
+              <BadgeCheck className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Standard SAG Indie Rate Card</span>
+            </span>
           </div>
         </div>
 
