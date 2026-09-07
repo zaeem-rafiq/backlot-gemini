@@ -43,17 +43,30 @@ export async function POST(req: NextRequest) {
       }
     };
 
+    const isRevision = Boolean(body.isRevision);
+    const originalRun = body.originalRun;
+
     // Run the pipeline in background while streaming
     (async () => {
       const director = new DirectorOrchestrator();
       try {
-        await director.executeRun(screenplayText, {
-          enableImages,
-          signal: req.signal,
-          onEvent: (event) => {
-            sendEvent(event).catch(() => {});
-          },
-        });
+        if (isRevision && originalRun) {
+          await director.executeRevisionRun(originalRun, screenplayText, {
+            enableImages,
+            signal: req.signal,
+            onEvent: (event) => {
+              sendEvent(event).catch(() => {});
+            },
+          });
+        } else {
+          await director.executeRun(screenplayText, {
+            enableImages,
+            signal: req.signal,
+            onEvent: (event) => {
+              sendEvent(event).catch(() => {});
+            },
+          });
+        }
       } catch (runErr) {
         console.error("Director run error:", runErr);
       } finally {

@@ -15,7 +15,7 @@ For every scene, extract:
 7. Vehicles (picture cars, trucks, bikes)
 8. SFX (practical physical effects: rain rigs, sparks, smoke, explosions, squibs)
 9. VFX (post visual effects, green screens, CGI elements)
-10. Stunts (falls, combat, wirework, precision driving)
+10. Stunts (genuine high-risk physical action: falls, combat, wirework, precision driving, water rescues, high drops requiring a SAG/DGA Stunt Coordinator. NEVER classify ordinary character manual labor, artisan craftwork, holding tools/props, or standard physical movement as stunts)
 11. Animals (live animals requiring wranglers)
 12. Sound (critical practical sound recording cues, wild tracks)
 13. Special Equipment (cranes, car mounts, hazers, rain machines)

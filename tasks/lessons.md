@@ -7,4 +7,12 @@
 
 ## 2026-08-27: Script Narration Numbers Grounded in Live Ledger
 - **What went wrong**: The demo video outline scripted a preliminary approximation of "$2,300 savings" for the Scene 8 stunt cut instead of reading the exact computed ledger variance.
-- **Rule & Remediation**: Narration numbers and demo script figures must always be read directly off the live UI and verified ledger calculation (`-$6,484` net budget variance on Scene 8 stunt removal), never scripted from memory.
+- **Rule & Remediation**: Narration numbers and demo script figures must always be read directly off the live UI and verified ledger calculation (-$6,484 net budget variance on Scene 8 stunt removal), never scripted from memory.
+
+## 2026-08-27: Fixture Ledger Synchronization via Pure Code Engines
+- **What went wrong**: The static sample run fixture (`sample-run.json`) contained hardcoded subtotals that drifted by $344 on Locations & Logistics and $250 on Post Production relative to their internal line items and the live `buildBudget` calculation.
+- **Rule & Remediation**: Never manually hand-edit budget JSON fixtures. Always regenerate sample fixtures directly via pure deterministic engine functions (`buildBudget(schedule, breakdown)`) to ensure 100% mathematical integrity and provenance synchronization.
+
+## 2026-08-27: Explicit Negative Constraints on Specialist Physical Breakdown Prompts
+- **What went wrong**: Slate classified artisan craftwork in `THE GLASSBLOWER` (holding a blowpipe and shaping hot glass) as physical stunts, causing Ledger to book an unjustified $1,300 Stunt Coordinator.
+- **Rule & Remediation**: Breakdown agent system prompts must include explicit negative guidance distinguishing genuine high-risk action (combat, falls, wirework, precision driving) from normal character labor, artisan craftwork, or tool manipulation.

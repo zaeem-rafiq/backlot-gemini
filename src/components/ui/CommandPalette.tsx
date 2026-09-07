@@ -17,13 +17,15 @@ import {
   X,
   ArrowRight,
   Command,
+  GitCompare,
 } from "lucide-react";
 import { RunState } from "@/lib/types/events";
+import sampleRunData from "@/fixtures/sample-run.json";
 
 interface CommandPaletteProps {
   isOpen: boolean;
   onClose: () => void;
-  onSelectTab: (tab: "COVERAGE" | "BREAKDOWN" | "SCHEDULE" | "BUDGET" | "STORYBOARD" | "PITCH_KIT") => void;
+  onSelectTab: (tab: "COVERAGE" | "BREAKDOWN" | "SCHEDULE" | "BUDGET" | "STORYBOARD" | "PITCH_KIT" | "REVISION") => void;
   onDispatch: () => void;
   onLoadSample: () => void;
   onToggleScriptDrawer: () => void;
@@ -131,6 +133,21 @@ export function CommandPalette({
         onClose();
       },
     },
+    ...(runState?.revision
+      ? [
+          {
+            id: "tab-revision",
+            category: "NAVIGATION" as const,
+            title: "Script Revision & Variance Diff",
+            subtitle: "Cascade invalidation manifest, pinning ledger, and budget delta",
+            icon: <GitCompare className="w-4 h-4 text-amber-400" />,
+            action: () => {
+              onSelectTab("REVISION");
+              onClose();
+            },
+          },
+        ]
+      : []),
 
     // Actions
     {
@@ -147,7 +164,7 @@ export function CommandPalette({
     {
       id: "action-sample",
       category: "ACTIONS",
-      title: "Load Sample Production ('FREQUENCY ZERO')",
+      title: `Load Sample Production ('${sampleRunData.title}')`,
       subtitle: "Instant zero-quota verified studio package",
       icon: <Sparkles className="w-4 h-4 text-emerald-400" />,
       action: () => {

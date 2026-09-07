@@ -670,7 +670,7 @@
     "sections": [
       {
         "category": "Crew",
-        "subtotal": 13350,
+        "subtotal": 15200,
         "items": [
           {
             "category": "Crew",
@@ -748,16 +748,25 @@
             "category": "Crew",
             "item": "Practical SFX Technician",
             "unit": "day",
-            "qty": 2,
+            "qty": 3,
             "rate": 450,
-            "total": 900,
-            "tracesTo": "Practical SFX Tech booked for 2 day(s) ← practical SFX flagged in scene(s): 2, 8"
+            "total": 1350,
+            "tracesTo": "Practical SFX Tech booked for 3 day(s) ← practical SFX flagged in scene(s): 2, 3, 6, 8"
+          },
+          {
+            "category": "Crew",
+            "item": "Key Hair & Makeup Artist",
+            "unit": "day",
+            "qty": 4,
+            "rate": 350,
+            "total": 1400,
+            "tracesTo": "Specialist HMU booked for 4 day(s) ← special makeup/hair flagged in scene(s): 1, 2, 6, 8, 9, 10"
           }
         ]
       },
       {
         "category": "Night Premium",
-        "subtotal": 1058,
+        "subtotal": 1223,
         "items": [
           {
             "category": "Night Premium",
@@ -765,14 +774,14 @@
             "unit": "percent",
             "qty": 2,
             "rate": 15,
-            "total": 1058,
-            "tracesTo": "15% night turnaround premium on $7,050 labor across 2 night shoot day(s)"
+            "total": 1223,
+            "tracesTo": "15% night turnaround premium on $8,150 labor across 2 night shoot day(s)"
           }
         ]
       },
       {
         "category": "Cast",
-        "subtotal": 2000,
+        "subtotal": 1875,
         "items": [
           {
             "category": "Cast",
@@ -805,10 +814,10 @@
             "category": "Cast",
             "item": "Background Performers",
             "unit": "per-person-day",
-            "qty": 2,
+            "qty": 1,
             "rate": 125,
-            "total": 250,
-            "tracesTo": "2 background performer booking(s) across scene(s): 6"
+            "total": 125,
+            "tracesTo": "1 background performer booking(s) across scene(s): 6"
           }
         ]
       },
@@ -847,7 +856,7 @@
       },
       {
         "category": "Locations & Logistics",
-        "subtotal": 5194,
+        "subtotal": 5604,
         "items": [
           {
             "category": "Locations & Logistics",
@@ -862,10 +871,10 @@
             "category": "Locations & Logistics",
             "item": "Catering & Craft Services",
             "unit": "per-person-day",
-            "qty": 44,
+            "qty": 47,
             "rate": 22,
-            "total": 968,
-            "tracesTo": "Daily hot meals and craft services ($22/person/day) for 44 total person-day(s)"
+            "total": 1034,
+            "tracesTo": "Daily hot meals and craft services ($22/person/day) for 47 total person-day(s)"
           },
           {
             "category": "Locations & Logistics",
@@ -889,7 +898,7 @@
       },
       {
         "category": "Post Production",
-        "subtotal": 3675,
+        "subtotal": 3975,
         "items": [
           {
             "category": "Post Production",
@@ -931,16 +940,16 @@
             "category": "Post Production",
             "item": "Visual Effects (VFX) Compositing",
             "unit": "per-shot",
-            "qty": 1,
+            "qty": 3,
             "rate": 275,
-            "total": 275,
-            "tracesTo": "VFX cleanup & compositing ($275/shot) for 1 shot(s) in scene(s): 8"
+            "total": 825,
+            "tracesTo": "VFX cleanup & compositing ($275/shot) for 3 shot(s) in scene(s): 2, 7, 8"
           }
         ]
       },
       {
         "category": "Contingency",
-        "subtotal": 2898,
+        "subtotal": 3158,
         "items": [
           {
             "category": "Contingency",
@@ -948,22 +957,22 @@
             "unit": "percent",
             "qty": 1,
             "rate": 10,
-            "total": 2898,
+            "total": 3158,
             "tracesTo": "10% standard production contingency reserve against unforeseen weather, overtime, or material overages"
           }
         ]
       }
     ],
     "summary": {
-      "crewSubtotal": 13350,
-      "nightPremiumTotal": 1058,
-      "castSubtotal": 2000,
+      "crewSubtotal": 15200,
+      "nightPremiumTotal": 1223,
+      "castSubtotal": 1875,
       "equipmentSubtotal": 3700,
-      "locationsLogisticsSubtotal": 5194,
-      "postSubtotal": 3675,
-      "subtotalBeforeContingency": 28977,
-      "contingencyTotal": 2898,
-      "grandTotal": 31875
+      "locationsLogisticsSubtotal": 5604,
+      "postSubtotal": 3975,
+      "subtotalBeforeContingency": 31577,
+      "contingencyTotal": 3158,
+      "grandTotal": 34735
     },
     "rateCardName": "US Non-Union Indie Short (2026 Standard)",
     "currency": "USD"
@@ -1056,7 +1065,7 @@
       "imagePrompt": "Photorealistic movie poster for FREQUENCY ZERO, glowing vintage 1970s radio dial superimposed over a dark desert highway bridge in a lightning storm, striking red and amber color palette, official festival laurel branding, 2:3 vertical aspect ratio.",
       "posterUrl": "/renders/frequency-zero-poster.png"
     },
-    "pitchParagraph": "Carrying an Ink Story Analyst coverage verdict of RECOMMEND and an audited Ledger production budget of $31,875 across a 4-day shoot, FREQUENCY ZERO is an airtight, high-ROI proof-of-concept for theatrical and episodic sci-fi suspense. By grounding its supernatural temporal premise in tangible 1970s analog radio hardware and visceral physical stunts, the project delivers A-list festival production value with disciplined indie capital efficiency.",
+    "pitchParagraph": "Carrying an Ink Story Analyst coverage verdict of RECOMMEND and an audited Ledger production budget of $34,735 across a 4-day shoot, FREQUENCY ZERO is an airtight, high-ROI proof-of-concept for theatrical and episodic sci-fi suspense. By grounding its supernatural temporal premise in tangible 1970s analog radio hardware and visceral physical stunts, the project delivers A-list festival production value with disciplined indie capital efficiency.",
     "marketEvidence": [
       {
         "title": "The Vast of Night - Wikipedia",

@@ -68,19 +68,19 @@ export default function BacklotStudioPage() {
     {
       agent: "director",
       level: "info",
-      message: "Loaded verified production package for 'FREQUENCY ZERO'.",
+      message: `Loaded verified production package for '${sampleRunData.title}'.`,
       timestamp: new Date().toISOString(),
     },
     {
       agent: "marquee",
       level: "info",
-      message: "Retrieved 10 live Parallel Search API market citations with active verified URLs.",
+      message: `Retrieved ${sampleRunData.pitchKit?.marketEvidence?.length || 0} live Parallel Search API market citations with active verified URLs.`,
       timestamp: new Date().toISOString(),
     },
     {
       agent: "ledger",
       level: "info",
-      message: "Audited 100% deterministic budget ($31,875) with complete cross-artifact provenance.",
+      message: `Audited 100% deterministic budget ($${sampleRunData.budget?.summary?.grandTotal?.toLocaleString() || "0"}) with complete cross-artifact provenance.`,
       timestamp: new Date().toISOString(),
     },
   ]);
@@ -182,19 +182,19 @@ export default function BacklotStudioPage() {
       {
         agent: "director",
         level: "info",
-        message: "Loaded verified production package for 'FREQUENCY ZERO'.",
+        message: `Loaded verified production package for '${sampleRunData.title}'.`,
         timestamp: new Date().toISOString(),
       },
       {
         agent: "marquee",
         level: "info",
-        message: "Retrieved 10 live Parallel Search API market citations with active verified URLs.",
+        message: `Retrieved ${sampleRunData.pitchKit?.marketEvidence?.length || 0} live Parallel Search API market citations with active verified URLs.`,
         timestamp: new Date().toISOString(),
       },
       {
         agent: "ledger",
         level: "info",
-        message: "Audited 100% deterministic budget ($31,875) with complete cross-artifact provenance.",
+        message: `Audited 100% deterministic budget ($${sampleRunData.budget?.summary?.grandTotal?.toLocaleString() || "0"}) with complete cross-artifact provenance.`,
         timestamp: new Date().toISOString(),
       },
     ]);
@@ -571,11 +571,16 @@ export default function BacklotStudioPage() {
                   <div className="flex items-center gap-2 min-w-0">
                     <Film className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
                     <span className="text-xs font-mono font-bold text-white truncate uppercase tracking-wide">
-                      {runState?.title || "FREQUENCY ZERO"}
+                      {runState?.title || sampleRunData.title}
                     </span>
                   </div>
                   <span className="text-[9px] font-mono text-amber-300 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/30 font-bold flex-shrink-0">
-                    10 SC · 12 PGS
+                    {(() => {
+                      const scenes = runState?.scriptParse?.scenes?.length || runState?.breakdown?.breakdowns?.length || 0;
+                      const eighths = runState?.schedule?.stats?.totalPageEighths || runState?.scriptParse?.scenes?.reduce((a, s) => a + s.pageEighths, 0) || 0;
+                      const pages = eighths > 0 ? Math.ceil(eighths / 8) : 1;
+                      return scenes > 0 ? `${scenes} SC · ${pages} PGS` : "MANUSCRIPT";
+                    })()}
                   </span>
                 </div>
 
