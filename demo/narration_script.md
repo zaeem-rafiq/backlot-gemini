@@ -2,7 +2,7 @@
 **Project:** Backlot Studio — AI-Native Pre-Production Multi-Agent Studio  
 **Track:** Agentic Cinema Hackathon (Parallel Track)  
 **Live Production URL:** `https://backlot-studio-112519007745.us-central1.run.app`  
-**Serving Revision:** `backlot-studio-00014-p4r`  
+**Serving Revision:** `backlot-studio-00015-j5m` (Rollback Target: `backlot-studio-00014-p4r`)  
 **Demonstrated Run ID:** `run_1788831276597`  
 **Video File:** `demo/backlot_studio_demo.mp4` (1080p, H.264, 30fps, AAC 48kHz Stereo)  
 **Preserved Silent Cut:** `demo/backlot_studio_demo_silent_cut.mp4` (1080p, H.264, 30fps)  
@@ -56,7 +56,7 @@ An independent producer uploads a suspense thriller screenplay (*FREQUENCY ZERO*
 ### [01:21.5 – 01:43.0] Act 4: Inspect in Budget & Script Provenance Verification (Spoken: 01:22.2 – 01:41.25, Slack: +1.75s)
 - **Visual:** The producer clicks **INSPECT IN BUDGET** directly on the recommendation card. The app smoothly switches to the **Audited Budget** tab and opens the **Line Item Audit Drawer**, automatically highlighting Account 6000 *Sound Design, Foley & Mix* ($650.00 flat). The drawer displays the post-production allocation formula and explicit cross-artifact provenance (`tracesTo: Sound design, foley & mix allocation`). The producer scrolls up to inspect the Canonical Production Top Sheet: Audited Production Total `$11,827.00` ($10,752 subtotal + $1,075 contingency reserve, 24/24 line items traced). The producer dismisses the drawer — the budget total remains rock-solid at `$11,827.00`.
 - **Narration (Gemini TTS / Fenrir):**
-  > "Clicking Inspect in Budget highlights Sound Design, Foley and Mix in Account 6000, displaying its post-production formula and script provenance. Budget and schedule arithmetic is computed deterministically in TypeScript. Our audited total of eleven thousand, eight hundred twenty-seven dollars remains completely invariant."
+  > "Clicking Inspect in Budget highlights Account 6000 Sound Design, displaying its formula and script provenance. All budget arithmetic is computed deterministically in TypeScript. Our eleven thousand, eight hundred twenty-seven dollar total remains invariant."
 
 ---
 
