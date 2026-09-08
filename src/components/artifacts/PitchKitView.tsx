@@ -165,7 +165,7 @@ export function PitchKitView({ pitchKit, title, onNavigateTab, onInspectArtifact
 
           {/* SOURCE-BACKED PRODUCTION RECOMMENDATION */}
           {pitchKit.productionRecommendation ? (
-            <div className="bg-gradient-to-br from-sky-950/40 via-[#0B0D14] to-[#06080C] border-2 border-sky-500/50 rounded-xl p-5 sm:p-6 flex flex-col gap-4 shadow-xl">
+            <div data-testid="recommendation-card" className="bg-gradient-to-br from-sky-950/40 via-[#0B0D14] to-[#06080C] border-2 border-sky-500/50 rounded-xl p-5 sm:p-6 flex flex-col gap-4 shadow-xl">
               <div className="flex items-center justify-between flex-wrap gap-2">
                 <div className="flex items-center gap-2">
                   <span className="h-2 w-2 rounded-full bg-sky-400 animate-pulse" />
@@ -184,7 +184,7 @@ export function PitchKitView({ pitchKit, title, onNavigateTab, onInspectArtifact
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <h5 className="text-sm sm:text-base font-mono font-bold text-white tracking-tight">
+                <h5 data-testid="recommendation-title" className="text-sm sm:text-base font-mono font-bold text-white tracking-tight">
                   {pitchKit.productionRecommendation.title}
                 </h5>
                 <div className="bg-[#06080C] border border-studio-700/80 rounded-lg p-3.5 flex items-start gap-3 shadow-inner">
@@ -195,7 +195,7 @@ export function PitchKitView({ pitchKit, title, onNavigateTab, onInspectArtifact
                     <span className="text-[10px] font-mono text-studio-400 uppercase font-extrabold tracking-wider">
                       Actionable Producer Decision
                     </span>
-                    <p className="text-xs sm:text-sm text-white font-sans font-medium leading-relaxed">
+                    <p data-testid="recommendation-actionable-decision" className="text-xs sm:text-sm text-white font-sans font-medium leading-relaxed">
                       {pitchKit.productionRecommendation.actionableDecision}
                     </p>
                   </div>
@@ -208,7 +208,7 @@ export function PitchKitView({ pitchKit, title, onNavigateTab, onInspectArtifact
                   <span className="text-[10px] font-mono text-sky-300 uppercase font-extrabold tracking-wider flex items-center gap-1.5">
                     <Search className="w-3 h-3 text-sky-400" /> [Retrieved Fact · Parallel Search API]
                   </span>
-                  <p className="text-[11px] text-studio-200 font-sans leading-relaxed">
+                  <p data-testid="recommendation-factual-finding" className="text-[11px] text-studio-200 font-sans leading-relaxed">
                     {pitchKit.productionRecommendation.factualFinding}
                   </p>
                 </div>
@@ -216,7 +216,7 @@ export function PitchKitView({ pitchKit, title, onNavigateTab, onInspectArtifact
                   <span className="text-[10px] font-mono text-amber-300 uppercase font-extrabold tracking-wider flex items-center gap-1.5">
                     <Lightbulb className="w-3 h-3 text-amber-400" /> [Inferred Producer Advice · Studio OS]
                   </span>
-                  <p className="text-[11px] text-studio-200 font-sans leading-relaxed">
+                  <p data-testid="recommendation-inferred-advice" className="text-[11px] text-studio-200 font-sans leading-relaxed">
                     {pitchKit.productionRecommendation.inferredAdvice}
                   </p>
                 </div>
@@ -229,7 +229,7 @@ export function PitchKitView({ pitchKit, title, onNavigateTab, onInspectArtifact
                   <span className="text-[10px] font-mono text-amber-400 uppercase font-bold tracking-wider">
                     Evidence-Backed Tradeoff Rationale
                   </span>
-                  <p className="text-[11px] text-studio-300 font-sans leading-relaxed">
+                  <p data-testid="recommendation-tradeoff-rationale" className="text-[11px] text-studio-300 font-sans leading-relaxed">
                     {pitchKit.productionRecommendation.tradeoffRationale}
                   </p>
                 </div>
@@ -240,16 +240,17 @@ export function PitchKitView({ pitchKit, title, onNavigateTab, onInspectArtifact
                     <span className="text-[10px] font-mono text-studio-400 uppercase font-bold tracking-wider">
                       Affected Production Artifact
                     </span>
-                    <span className="text-xs font-mono font-bold text-white truncate">
+                    <span data-testid="recommendation-target-identifier" className="text-xs font-mono font-bold text-white truncate">
                       {pitchKit.productionRecommendation.affectedArtifact.identifier}
                     </span>
-                    <span className="text-[10px] text-studio-400 truncate">
+                    <span data-testid="recommendation-target-label" className="text-[10px] text-studio-400 truncate">
                       {pitchKit.productionRecommendation.affectedArtifact.label}
                     </span>
                   </div>
 
                   {(onInspectArtifact || onNavigateTab) && (
                     <button
+                      data-testid="recommendation-inspect-button"
                       onClick={() => {
                         if (onInspectArtifact) {
                           onInspectArtifact(
@@ -274,12 +275,13 @@ export function PitchKitView({ pitchKit, title, onNavigateTab, onInspectArtifact
                 <span className="text-studio-400 flex items-center gap-1">
                   Referenced Parallel search finding:
                   <a
+                    data-testid="recommendation-source-link"
                     href={pitchKit.productionRecommendation.sourceCitation.url}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-sky-300 hover:text-sky-200 underline font-bold inline-flex items-center gap-1 ml-1"
                   >
-                    <span>{pitchKit.productionRecommendation.sourceCitation.title}</span>
+                    <span data-testid="recommendation-source-title">{pitchKit.productionRecommendation.sourceCitation.title}</span>
                     <ExternalLink className="w-2.5 h-2.5" />
                   </a>
                 </span>
@@ -287,7 +289,7 @@ export function PitchKitView({ pitchKit, title, onNavigateTab, onInspectArtifact
               </div>
             </div>
           ) : (
-            <div className="bg-[#0B0D14] border border-studio-800/90 rounded-xl p-4 sm:p-5 flex items-start gap-3 text-xs">
+            <div data-testid="recommendation-withheld" className="bg-[#0B0D14] border border-studio-800/90 rounded-xl p-4 sm:p-5 flex items-start gap-3 text-xs">
               <AlertCircle className="w-5 h-5 text-amber-400/80 flex-shrink-0 mt-0.5" />
               <div className="flex flex-col gap-1">
                 <span className="text-[11px] font-mono font-bold text-amber-300 uppercase tracking-wide">

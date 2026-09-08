@@ -26,7 +26,7 @@ An AI-native pre-production studio crew powered by Google Gemini and Parallel Se
 - **Hosted Live Application:** `https://backlot-studio-112519007745.us-central1.run.app`
 - **Health & Architecture Endpoint:** `https://backlot-studio-112519007745.us-central1.run.app/api/health`
 - **GitHub Repository:** `https://github.com/zaeem-rafiq/backlot-gemini`
-- **Demo Video:** `demo/backlot_studio_demo.mp4` (Local 1080p demonstration export with full Google Gemini 2.5 Flash TTS narration; authentic live Cloud Run recording, run `run_1788831276597`, 02:12 duration, accompanied by `demo/narration_script.md`; preserved silent rough cut available at `demo/backlot_studio_demo_silent_cut.mp4`)
+- **Demo Video:** `demo/backlot_studio_demo.mp4` (Local 1080p demonstration export with full Google Gemini 2.5 Flash TTS narration; 9-segment zero-overlap master mix leveled to -2.5 dB peak / -23.0 dB mean; authentic live Cloud Run recording with validated receipt `demo/captures/fresh_run_receipt.json`, 02:09.65 duration [129.65s], accompanied by `demo/narration_script.md`; preserved silent cut available at `demo/backlot_studio_demo_silent_cut.mp4`)
 
 ### Built With (Tags)
 ```text
@@ -76,7 +76,7 @@ Backlot was engineered as a high-performance, containerized studio workstation w
   - *Fast Synthesis & Packaging (Easel, Marquee):* `gemini-3.1-flash-lite` $\rightarrow$ `gemini-2.5-flash-lite` $\rightarrow$ `gemini-2.5-flash`
   - *Visual Storyboard Keyframes (Easel):* `gemini-2.5-flash-image` $\rightarrow$ `gemini-3.1-flash-image` $\rightarrow$ `gemini-3-pro-image`
 - **Official Parallel Search API (Partner Track):** Marquee connects to `https://api.parallel.ai/v1beta/search` at runtime via a clean REST client, pulling live market comps and festival signals without bloated third-party wrappers. Retrieved facts remain strictly separate from inferred producer advice; URL membership in search citations indicates query relevance rather than proof that a source supports every recommendation. When search returns no citations or is offline, recommendations are withheld rather than hallucinated.
-- **100% Deterministic Pure TypeScript Ledger Math:** Budget and schedule arithmetic is computed deterministically in TypeScript, with cross-artifact provenance tracing each line item to the script breakdown element that triggered it. Rate cards, union tier scale models, crew day-rates, catering allowances (modeled baseline assumption of $22/person/day), and 10% contingency reserves are computed in pure TypeScript functions covered by **72 automated unit tests**. Financial numbers and scheduling formulas are **never routed through an LLM**.
+- **100% Deterministic Pure TypeScript Ledger Math:** Budget and schedule arithmetic is computed deterministically in pure TypeScript, while Gemini may receive computed totals for greenlight synthesis. Never route arithmetic or financial formulas through an LLM. Rate cards, union tier scale models, crew day-rates, catering allowances (modeled baseline assumption of $22/person/day), and 10% contingency reserves are computed in pure TypeScript functions covered by **73 automated unit tests**, with cross-artifact provenance tracing each line item to the script breakdown element that triggered it.
 - **Deployment & Cloud Infrastructure:** Containerized with **Docker** and deployed to **Google Cloud Run** in `us-central1` with a 900-second execution timeout, auto-scaling, and measured warm health responses at ~37ms.
 
 ---
@@ -95,7 +95,7 @@ Backlot was engineered as a high-performance, containerized studio workstation w
 - **100% Google AI & Hackathon Rule Compliance (§7.B):** Backlot uses exclusively Google Gemini models across all agent workflows. Zero non-Google AI libraries (no OpenAI, Anthropic, Replicate, FLUX, LangChain, LlamaIndex, or CrewAI).
 - **Measured Live Studio Execution:** Completed a full 6-agent streaming pipeline with live Parallel search in ~27.8s on Cloud Run for a 2-scene script.
 - **Mathematical Auditability:** Recomputed 28 of 28 line items, 7 of 7 category subtotals, and verified 100% of `tracesTo` provenance strings against script elements.
-- **Robustness & Test Suite:** 72 automated unit tests passing across ledger math, schema contracts, fallback chains, normalization boundaries, and parallel mapping.
+- **Robustness & Test Suite:** 73 automated unit tests passing across ledger math, schema contracts, fallback chains, normalization boundaries, and parallel mapping.
 - **Live Cloud Run Deployment:** Verified on Google Cloud Run in `us-central1` with healthy `/api/health` introspection and `/api/run` SSE telemetry streaming.
 
 ---
@@ -124,7 +124,7 @@ Backlot was engineered as a high-performance, containerized studio workstation w
 | **100% Google Gemini Models** | Ink/Slate: `gemini-3.5-flash`; Easel/Marquee: `gemini-3.1-flash-lite`; Easel Previz: `gemini-2.5-flash-image` | **COMPLIANT** |
 | **Zero Non-Google AI** | 0 references to OpenAI, Anthropic, Replicate, FLUX, LangChain, LlamaIndex, CrewAI | **COMPLIANT** |
 | **Partner Track Integration** | Official runtime integration with Parallel Search API (`v1beta/search`) in Marquee | **COMPLIANT** |
-| **Deterministic Math** | Budget and schedule arithmetic computed deterministically in TypeScript (72 unit tests) | **COMPLIANT** |
+| **Deterministic Math** | Budget and schedule arithmetic computed deterministically in TypeScript (73 unit tests) | **COMPLIANT** |
 | **Cross-Artifact Provenance** | 100% of budget line items contain `tracesTo` links back to breakdown elements | **COMPLIANT** |
 | **Zero-Quota Bake** | Pre-baked 7-artifact sample fixture loads instantly (~37ms local load) with zero API calls | **COMPLIANT** |
 | **Live Deployed URL** | Live container deployed on Google Cloud Run (`us-central1`) | **COMPLIANT** |
@@ -135,22 +135,22 @@ Backlot was engineered as a high-performance, containerized studio workstation w
 
 ## 4. Verification Evidence & Inspection Commands
 
-### Automated Test Suite (72 Tests Passing)
+### Automated Test Suite (73 Tests Passing)
 ```bash
 $ npm test
-✓ src/lib/parallel/__tests__/parallel.test.ts (3 tests)
-✓ src/lib/ai/__tests__/fallback.test.ts (7 tests)
 ✓ src/lib/ledger/__tests__/schedule.test.ts (7 tests)
+✓ src/lib/parallel/__tests__/parallel.test.ts (3 tests)
+✓ src/lib/ledger/__tests__/budget.test.ts (9 tests)
 ✓ src/lib/ledger/__tests__/revision-adversarial.test.ts (4 tests)
 ✓ src/lib/ledger/__tests__/revision.test.ts (9 tests)
 ✓ src/lib/types/__tests__/schemas.test.ts (7 tests)
-✓ src/lib/agents/__tests__/marquee-recommendation.test.ts (13 tests)
+✓ src/lib/agents/__tests__/marquee-recommendation.test.ts (14 tests)
 ✓ src/lib/agents/__tests__/director.test.ts (2 tests)
-✓ src/lib/ledger/__tests__/budget.test.ts (9 tests)
+✓ src/lib/ai/__tests__/fallback.test.ts (7 tests)
 ✓ src/components/artifacts/__tests__/AuditedBudget.test.ts (11 tests)
 
 Test Files  10 passed (10)
-     Tests  72 passed (72)
+     Tests  73 passed (73)
 ```
 
 ### Production Build Verification

@@ -128,6 +128,29 @@ describe("validateProductionRecommendation — Physical Feasibility & Feasibilit
     expect(validated).toBeNull();
   });
 
+  it("rejects recommendation proposing to divert funds from script-required crew even when destination item is Sound Design", () => {
+    const bypassRec: ProductionRecommendation = {
+      title: "Audio Priority",
+      category: "BUDGET_ALLOCATION",
+      factualFinding: audioCitation.snippet,
+      inferredAdvice: "Divert $200 from SFX toward sound design.",
+      actionableDecision: "Divert funds from SFX toward Sound Design, Foley & Mix to achieve audio suspense.",
+      tradeoffRationale: audioCitation.snippet,
+      affectedArtifact: {
+        kind: "budget_line_item",
+        identifier: "Sound Design, Foley & Mix",
+        label: "Account 6000: Post Production / Sound Design, Foley & Mix",
+        tabTarget: "BUDGET",
+      },
+      sourceCitation: audioCitation,
+    };
+
+    // The destination item (Sound Design) is valid, but the advice diverts funds from script-required SFX.
+    // The shared validation boundary must detect the required funding source and withhold the entire recommendation!
+    const validated = validateProductionRecommendation(bypassRec, mockBudget, [audioCitation]);
+    expect(validated).toBeNull();
+  });
+
   it("rejects citation when URL does not match an actual returned citation (title match alone is insufficient)", () => {
     const fakeUrlCitation: ParallelSourceCitation = {
       ...audioCitation,

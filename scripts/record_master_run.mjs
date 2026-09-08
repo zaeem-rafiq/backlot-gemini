@@ -104,6 +104,14 @@ async function main() {
 
   // Step 7: Extract run receipt
   console.log("[7/10] Extracting run receipt from DOM and state...");
+  let deployedRevision = "unknown";
+  try {
+    deployedRevision = runCmd('gcloud run services describe backlot-studio --region us-central1 --project polygraph-hackathon --format="value(status.latestReadyRevisionName)"');
+  } catch (err) {
+    console.warn("Could not query Cloud Run revision:", err.message);
+  }
+  console.log("Detected live deployed revision:", deployedRevision);
+
   const initialReceipt = browserEval(`(() => {
     // 1. Run ID from logs
     const allDivs = Array.from(document.querySelectorAll('*'));
@@ -124,7 +132,6 @@ async function main() {
     return {
       runId,
       budgetTotal,
-      deployedRevision: "backlot-studio-00016-2db",
       timestamp: new Date().toISOString()
     };
   })()`);
@@ -141,56 +148,31 @@ async function main() {
   browserEval(`window.scrollBy({ top: 650, behavior: 'smooth' })`);
   await sleep(4000);
 
-  // Extract recommendation details
+  // Extract recommendation details using explicit data-testid attributes
   const recDetails = browserEval(`(() => {
-    const text = document.body.innerText || "";
-    const hasRec = text.includes("Source-Backed Production Recommendation");
-    const isWithheld = text.includes("Production Recommendation Withheld");
+    const card = document.querySelector('[data-testid="recommendation-card"]');
+    const withheldEl = document.querySelector('[data-testid="recommendation-withheld"]');
 
-    if (isWithheld && !hasRec) {
+    if (!card) {
       return {
         hasRecommendation: false,
         status: "withheld",
-        reason: "Market citations retrieved, but no supported production recommendation produced for this screenplay."
+        reason: withheldEl ? withheldEl.textContent.trim() : "Market citations retrieved, but no supported production recommendation produced."
       };
     }
 
-    // Recommendation card details
-    const h5 = Array.from(document.querySelectorAll('h5')).find(h => {
-      const p = h.closest('div');
-      return p && p.textContent.includes('Actionable Producer Decision');
-    }) || document.querySelector('h5');
-    const title = h5 ? h5.textContent.trim() : "";
-
-    // Actionable decision
-    const actBlock = Array.from(document.querySelectorAll('div')).find(d => d.textContent.includes('Actionable Producer Decision'));
-    const actionableDecision = actBlock ? actBlock.querySelector('p')?.textContent?.trim() : "";
-
-    // Retrieved fact
-    const factBlock = Array.from(document.querySelectorAll('div')).find(d => d.textContent.includes('[Retrieved Fact · Parallel Search API]'));
-    const factualFinding = factBlock ? factBlock.querySelector('p')?.textContent?.trim() : "";
-
-    // Inferred advice
-    const adviceBlock = Array.from(document.querySelectorAll('div')).find(d => d.textContent.includes('[Inferred Producer Advice · Studio OS]'));
-    const inferredAdvice = adviceBlock ? adviceBlock.querySelector('p')?.textContent?.trim() : "";
-
-    // Tradeoff
-    const tradeBlock = Array.from(document.querySelectorAll('div')).find(d => d.textContent.includes('Evidence-Backed Tradeoff Rationale'));
-    const tradeoffRationale = tradeBlock ? tradeBlock.querySelector('p')?.textContent?.trim() : "";
-
-    // Target Artifact
-    const targetBlock = Array.from(document.querySelectorAll('div')).find(d => d.textContent.includes('Affected Production Artifact'));
-    const spans = targetBlock ? Array.from(targetBlock.querySelectorAll('span')) : [];
-    const targetIdentifier = spans.length > 1 ? spans[1].textContent.trim() : "";
-    const targetLabel = spans.length > 2 ? spans[2].textContent.trim() : "";
-
-    const inspectBtn = Array.from(document.querySelectorAll('button')).find(b => b.textContent.includes('INSPECT IN'));
+    const title = document.querySelector('[data-testid="recommendation-title"]')?.textContent?.trim() || "";
+    const actionableDecision = document.querySelector('[data-testid="recommendation-actionable-decision"]')?.textContent?.trim() || "";
+    const factualFinding = document.querySelector('[data-testid="recommendation-factual-finding"]')?.textContent?.trim() || "";
+    const inferredAdvice = document.querySelector('[data-testid="recommendation-inferred-advice"]')?.textContent?.trim() || "";
+    const tradeoffRationale = document.querySelector('[data-testid="recommendation-tradeoff-rationale"]')?.textContent?.trim() || "";
+    const targetIdentifier = document.querySelector('[data-testid="recommendation-target-identifier"]')?.textContent?.trim() || "";
+    const targetLabel = document.querySelector('[data-testid="recommendation-target-label"]')?.textContent?.trim() || "";
+    const inspectBtn = document.querySelector('[data-testid="recommendation-inspect-button"]');
     const inspectBtnText = inspectBtn ? inspectBtn.textContent.trim() : "";
-
-    // Source Citation
-    const sourceAnchor = document.querySelector('a[href^="http"]');
-    const sourceTitle = sourceAnchor ? sourceAnchor.textContent.trim() : "";
-    const sourceUrl = sourceAnchor ? sourceAnchor.getAttribute('href') : "";
+    const sourceLink = document.querySelector('[data-testid="recommendation-source-link"]');
+    const sourceUrl = sourceLink ? sourceLink.getAttribute('href') : "";
+    const sourceTitle = document.querySelector('[data-testid="recommendation-source-title"]')?.textContent?.trim() || "";
 
     return {
       hasRecommendation: true,
@@ -211,8 +193,28 @@ async function main() {
     };
   })()`);
 
+  // Enforce receipt integrity validation
+  if (recDetails.hasRecommendation) {
+    if (!recDetails.title) throw new Error("Receipt validation failed: missing recommendation title");
+    if (!recDetails.actionableDecision) throw new Error("Receipt validation failed: missing actionableDecision");
+    if (!recDetails.factualFinding) throw new Error("Receipt validation failed: missing factualFinding");
+    if (recDetails.factualFinding.includes("Calibrated pitch loglines")) {
+      throw new Error("Receipt validation failed: factualFinding captured header text instead of citation finding!");
+    }
+    if (!recDetails.targetArtifact?.identifier) {
+      throw new Error("Receipt validation failed: missing targetArtifact identifier");
+    }
+    if (recDetails.targetArtifact.identifier === "CUSTOM PRODUCTION") {
+      throw new Error("Receipt validation failed: targetArtifact identifier captured screenplay header instead of budget item!");
+    }
+    if (!recDetails.sourceCitation?.url) {
+      throw new Error("Receipt validation failed: missing sourceCitation URL");
+    }
+  }
+
   const fullReceipt = {
     ...initialReceipt,
+    deployedRevision,
     recommendation: recDetails
   };
 
@@ -224,7 +226,7 @@ async function main() {
   // Step 8: Click INSPECT IN BUDGET if available
   if (recDetails.hasRecommendation && recDetails.targetArtifact?.buttonText) {
     console.log(`[8/10] Deep linking: clicking '${recDetails.targetArtifact.buttonText}'...`);
-    browserEval(`Array.from(document.querySelectorAll('button')).find(b => b.textContent.includes('INSPECT IN'))?.click()`);
+    browserEval(`document.querySelector('[data-testid="recommendation-inspect-button"]')?.click()`);
     await sleep(4000);
 
     const drawerAudit = browserEval(`(() => {
@@ -280,8 +282,23 @@ async function main() {
     try {
       runCmd(`agent-browser open "${recDetails.sourceCitation.url}"`);
       await sleep(4000);
-      browserEval(`window.scrollBy({ top: 350, behavior: 'smooth' })`);
-      await sleep(4000);
+      browserEval(`(() => {
+        const target = Array.from(document.querySelectorAll('h1, h2, h3, a, p, em, strong')).find(el => {
+          const t = el.textContent || "";
+          return (
+            t.includes("production value bar") ||
+            t.includes("Should you make a horror film") ||
+            t.includes("Guts of the Craft") ||
+            t.includes("Screen Craft")
+          );
+        });
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+          window.scrollBy({ top: 400, behavior: 'smooth' });
+        }
+      })()`);
+      await sleep(4500);
     } catch (e) {
       console.warn("Could not navigate to external source URL:", e.message);
     }

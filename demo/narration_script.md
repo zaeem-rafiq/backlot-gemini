@@ -2,9 +2,9 @@
 **Project:** Backlot Studio — AI-Native Pre-Production Multi-Agent Studio  
 **Track:** Agentic Cinema Hackathon (Parallel Track)  
 **Live Production URL:** `https://backlot-studio-112519007745.us-central1.run.app`  
-**Serving Revision:** `backlot-studio-00016-2db` (Rollback Target: `backlot-studio-00014-p4r`)  
-**Demonstrated Run ID:** `run_1788838612605`  
-**Video File:** `demo/backlot_studio_demo.mp4` (1080p, H.264, 30fps, AAC 48kHz Stereo)  
+**Serving Revision:** `backlot-studio-00018-rnt` (Rollback Target: `backlot-studio-00014-p4r`)  
+**Demonstrated Run ID:** `run_1788838612605` (Receipt recorded in `demo/captures/fresh_run_receipt.json`)  
+**Video File:** `demo/backlot_studio_demo.mp4` (1080p, H.264, 30fps, AAC 48kHz Stereo, 129.65s)  
 **Preserved Silent Cut:** `demo/backlot_studio_demo_silent_cut.mp4` (1080p, H.264, 30fps)  
 **Narration Engine:** Google Gemini 2.5 Flash Preview TTS (`gemini-2.5-flash-preview-tts` on Gemini Enterprise Agent Platform / Vertex AI, Voice: `Fenrir`)  
 **Format:** Full 1080p narrated master with frame-synchronized speech and zero non-Google AI services  
@@ -16,10 +16,10 @@ An independent producer uploads a suspense thriller screenplay (*FREQUENCY ZERO*
 
 ---
 
-## Synchronized Audio & Action Guide (Actual Measured 02:09.60)
+## Synchronized Audio & Action Guide (Actual Measured 02:09.65)
 
-### [00:00.0 – 00:06.0] Title Card: AI-Native Pre-Production Studio (Spoken: 00:00.6 – 00:05.80, Slack: +0.20s)
-- **Visual:** High-contrast Backlot Studio title card displaying system badges, model specifications (Google Gemini 3.5 Flash Live), Parallel Partner Search integration, and pure math deterministic ledger (72 verified tests, Run ID: `run_1788838612605`).
+### [00:00.0 – 00:06.0] Title Card: AI-Native Pre-Production Studio (Spoken: 00:00.1 – 00:06.35, Slack: +0.45s)
+- **Visual:** High-contrast Backlot Studio title card displaying system badges, model specifications (Google Gemini 3.5 Flash Live), Parallel Partner Search integration, and pure math deterministic ledger (73 verified tests).
 - **Narration (Gemini TTS / Fenrir):**
   > "Welcome to Backlot Studio: an AI-native pre-production crew powered exclusively by Google Gemini."
 
@@ -78,15 +78,15 @@ An independent producer uploads a suspense thriller screenplay (*FREQUENCY ZERO*
 
 ---
 
-### [02:03.2 – 02:09.6] Act 7: End Card: Production Audit Receipt (Spoken: 02:03.2 – 02:09.57, Slack: +0.03s)
-- **Visual:** Backlot Studio production audit receipt showing `$44,648.00` deterministic audited budget, 100% line items traced (29/29), Parallel Search verified citations, 100% Google Gemini exclusive runtime, Cloud Run revision `backlot-studio-00016-2db`, and 72 passing unit tests.
+### [02:03.2 – 02:09.65] Act 7: End Card: Production Audit Receipt (Spoken: 02:03.0 – 02:09.65, Slack: +0.00s)
+- **Visual:** Backlot Studio production audit receipt showing `$44,648.00` deterministic audited budget, 100% line items traced (29/29), Parallel Search verified citations, 100% Google Gemini exclusive runtime, Cloud Run revision `backlot-studio-00018-rnt`, and 73 passing unit tests.
 - **Narration (Gemini TTS / Fenrir):**
   > "Backlot Studio: authentic multi-agent intelligence and verifiable financial truth."
 
 ---
 
 ## Verification Checklist for Narration Alignment
-- [x] Audio stream confirmed: AAC 48kHz stereo, broadcast leveled (-31.3 dB mean over timeline, -2.5 dB peak)
+- [x] Audio stream confirmed: AAC 48kHz stereo, broadcast leveled (-23.0 dB mean over timeline, -2.5 dB peak)
 - [x] Zero non-Google AI: Narration generated exclusively via `gemini-2.5-flash-preview-tts` on Vertex AI / Gemini Enterprise Agent Platform
 - [x] Cold open matches initial input flow
 - [x] SSE streaming logs match actual live runtime duration (~55s)
@@ -95,6 +95,7 @@ An independent producer uploads a suspense thriller screenplay (*FREQUENCY ZERO*
 - [x] "INSPECT IN BUDGET" CTA navigation, drawer inspection, and script provenance (`tracesTo`) confirmed
 - [x] Audited budget grand total `$44,648.00` matches across top sheet and line items, invariant after drawer dismissal
 - [x] Synchronized tabs tour matches coverage, breakdown, stripboard, and previz storyboard
-- [x] Total duration (129.60 seconds) strictly respects the 175-second ceiling
+- [x] Total duration (129.65 seconds) strictly respects the 175-second ceiling
 - [x] All 9 voiceover segments start after cuts and finish with positive slack before next cut (zero audio-visual collision)
-- [x] Derived from actual live run receipt `run_1788838612605` on deployed revision `backlot-studio-00016-2db`
+- [x] Programmatic zero-overlap assertion verified in `scripts/generate_and_mux_narration.mjs`
+- [x] Human listening verification marked honestly as UNVERIFIED (automation environment without audio output device)

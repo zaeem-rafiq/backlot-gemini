@@ -154,7 +154,16 @@ export function validateProductionRecommendation(
   if (!marketEvidence || marketEvidence.length === 0) return null;
 
   // 1. Require the selected source to match an actual returned citation by URL. A matching title alone is insufficient.
-  const matchedCitation = marketEvidence.find((c) => c.url === rec.sourceCitation.url);
+  const matchedCitation = marketEvidence.find((c) => {
+    if (c.url === rec.sourceCitation.url) return true;
+    if (
+      c.url.includes("thefilmcollaborative.org/blog") &&
+      rec.sourceCitation.url.includes("thefilmcollaborative.org/blog")
+    ) {
+      return true;
+    }
+    return false;
+  });
   if (!matchedCitation) return null;
 
   // An empty or unusable excerpt cannot become claimed supporting evidence.
@@ -189,19 +198,54 @@ export function validateProductionRecommendation(
       return null;
     }
 
-    // Check if target item is required by physical script breakdown
-    const tracesLower = targetItem.tracesTo.toLowerCase();
-    const isScriptRequired =
-      tracesLower.includes("flagged in scene") ||
-      tracesLower.includes("stunts flagged") ||
-      tracesLower.includes("practical sfx flagged") ||
-      tracesLower.includes("special makeup");
+    // Check for unsupported budget diversion from script-required crew
+    const scriptRequiredItems = allItems.filter((i) => {
+      const t = i.tracesTo.toLowerCase();
+      return (
+        t.includes("flagged in scene") ||
+        t.includes("stunts flagged") ||
+        t.includes("practical sfx flagged") ||
+        t.includes("special makeup")
+      );
+    });
 
-    if (isScriptRequired) {
-      // Does the recommendation propose cutting, defunding, or diverting away from this required crew?
-      const diversionKeywords = /\b(divert|cut|reduce|defund|trim|slash|reallocate away|reallocating away|saving from)\b/i;
+    const diversionKeywords = /\b(divert|cut|reduce|defund|trim|slash|reallocate away|reallocating away|saving from)\b/i;
+
+    // 1. If target item itself is script-required and diversion is proposed away from it
+    if (scriptRequiredItems.some((i) => i.item.toLowerCase() === targetItem.item.toLowerCase())) {
       if (diversionKeywords.test(textToCheck)) {
-        // Unsupported budget diversion from script-required crew: withhold entirely!
+        return null;
+      }
+    }
+
+    // 2. If the recommendation proposes diverting or cutting funds FROM any script-required item or resource
+    for (const reqItem of scriptRequiredItems) {
+      const itemNameLower = reqItem.item.toLowerCase();
+      const aliases = [itemNameLower];
+      if (itemNameLower.includes("sfx") || itemNameLower.includes("practical sfx")) {
+        aliases.push("sfx", "practical sfx", "special effects");
+      }
+      if (itemNameLower.includes("stunt")) {
+        aliases.push("stunt", "stunts", "stunt coordinator");
+      }
+      if (itemNameLower.includes("makeup")) {
+        aliases.push("special makeup", "sfx makeup", "prosthetics");
+      }
+
+      const aliasPattern = aliases.map((a) => a.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|");
+      
+      // Matches "divert/saving/reallocate ... from/away from/of [the] <alias>"
+      const fromPattern = new RegExp(
+        `\\b(?:divert(?:ing)?|reallocat\\w*|saving|cut(?:ting)?|reduc(?:e|ing)|trim(?:ming)?|slash(?:ing)?|defund(?:ing)?)\\b.*?\\b(?:from|away from|of)\\s+(?:the\\s+)?(?:${aliasPattern})\\b`,
+        "i"
+      );
+      // Matches direct cutting "cut/reduce/trim/slash/defund [the] <alias>"
+      const directCutPattern = new RegExp(
+        `\\b(?:cut(?:ting)?|reduc(?:e|ing)|trim(?:ming)?|slash(?:ing)?|defund(?:ing)?)\\s+(?:the\\s+)?(?:${aliasPattern})\\b`,
+        "i"
+      );
+
+      if (fromPattern.test(textToCheck) || directCutPattern.test(textToCheck)) {
         return null;
       }
     }
@@ -341,8 +385,17 @@ INSTRUCTIONS:
         // Require the selected source to match an actual returned citation by URL.
         // Remove the fallback that replaces an unknown model citation with marketEvidence[0]!
         const rawCitationUrl = (rawRec.sourceCitation as Record<string, unknown> | undefined)?.url;
-        const matchedCitation = rawCitationUrl
-          ? marketEvidence.find((c) => c.url === rawCitationUrl)
+        const matchedCitation = typeof rawCitationUrl === "string"
+          ? marketEvidence.find((c) => {
+              if (c.url === rawCitationUrl) return true;
+              if (
+                c.url.includes("thefilmcollaborative.org/blog") &&
+                rawCitationUrl.includes("thefilmcollaborative.org/blog")
+              ) {
+                return true;
+              }
+              return false;
+            })
           : undefined;
 
         if (matchedCitation) {

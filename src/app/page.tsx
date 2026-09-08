@@ -872,6 +872,7 @@ export default function BacklotStudioPage() {
               {activeTab === "BUDGET" && (
                 runState?.budget ? (
                   <AuditedBudget
+                    key={`${runState.id || "run"}-${runSource}-${highlightedBudgetItem || "none"}`}
                     budget={runState.budget}
                     productionRecommendation={runState.pitchKit?.productionRecommendation ?? null}
                     recommendedItemName={

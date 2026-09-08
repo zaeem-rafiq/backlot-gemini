@@ -6,28 +6,28 @@ const segments = [
   {
     id: 1,
     name: "01_title_card",
-    targetStart: 0.6,
+    targetStart: 0.1,
     windowEnd: 6.0,
-    text: "Welcome to Backlot Studio: an AI-native pre-production crew powered exclusively by Google Gemini."
+    text: "Backlot Studio: an AI-native pre-production crew powered by Google Gemini."
   },
   {
     id: 2,
     name: "02_act1_script",
-    targetStart: 6.6,
-    windowEnd: 15.0,
+    targetStart: 6.8,
+    windowEnd: 18.0,
     text: "Every production starts with the script. Our producer inspects Frequency Zero, a contained suspense thriller in a remote broadcast booth."
   },
   {
     id: 3,
     name: "03_act2_crew",
-    targetStart: 16.0,
-    windowEnd: 41.0,
+    targetStart: 18.8,
+    windowEnd: 37.0,
     text: "With one click, the Director agent orchestrates our studio crew. Watch live Server-Sent Events stream as Gemini powers Ink for coverage, Slate for breakdown, Easel for previz, and Marquee for Parallel Search market intelligence."
   },
   {
     id: 4,
     name: "04_act2_ledger",
-    targetStart: 42.0,
+    targetStart: 38.0,
     windowEnd: 68.0,
     text: "While the generative agents run in parallel, the Ledger agent calculates rates deterministically in TypeScript. All six department deliverables are locked live on Cloud Run in under sixty seconds."
   },
@@ -42,27 +42,27 @@ const segments = [
     id: 6,
     name: "06_act4_budget",
     targetStart: 84.0,
-    windowEnd: 94.0,
+    windowEnd: 98.5,
     text: "Clicking Inspect in Budget opens the line item audit drawer, verifying script breakdown origin and deterministic math. Our forty-four thousand, six hundred forty-eight dollar total remains immutable."
   },
   {
     id: 7,
     name: "07_act5_tour",
-    targetStart: 95.0,
-    windowEnd: 110.0,
+    targetStart: 99.0,
+    windowEnd: 111.5,
     text: "Every deliverable stays synchronized across departments: diagnostic story coverage, thirteen breakdown categories, magnetic stripboard scheduling, and widescreen previz boards."
   },
   {
     id: 8,
     name: "08_act6_source",
-    targetStart: 111.0,
-    windowEnd: 122.0,
+    targetStart: 112.0,
+    windowEnd: 122.5,
     text: "Parallel grounds this directly in verified reporting from The Film Collaborative, inspecting the live publication cited in our Pitch Kit."
   },
   {
     id: 9,
     name: "09_act7_end",
-    targetStart: 123.2,
+    targetStart: 123.0,
     windowEnd: 129.6,
     text: "Backlot Studio: authentic multi-agent intelligence and verifiable financial truth."
   }
@@ -130,11 +130,26 @@ async function generateTTS() {
     generatedClips.push({ ...seg, dur, finish, slack, wavPath });
   }
 
-  // Step 2: Build mixed audio track using ffmpeg filter_complex
+  // Step 2: Verify strictly non-overlapping timeline before mixing
+  console.log("\n=== VERIFYING TIMELINE INTEGRITY (ZERO-OVERLAP INVARIANT) ===");
+  for (let i = 1; i < generatedClips.length; i++) {
+    const prev = generatedClips[i - 1];
+    const curr = generatedClips[i];
+    const gap = curr.targetStart - prev.finish;
+    if (gap < 0) {
+      throw new Error(
+        `TIMELINE TIMING FAULT: Segment ${curr.id} (${curr.name}) starts at ${curr.targetStart.toFixed(2)}s before Segment ${prev.id} (${prev.name}) finishes at ${prev.finish.toFixed(2)}s (overlap: ${(-gap).toFixed(2)}s)!`
+      );
+    }
+    console.log(
+      `✓ Transition ${prev.id} -> ${curr.id}: Gap = +${gap.toFixed(2)}s (${prev.name} ends @ ${prev.finish.toFixed(2)}s, ${curr.name} starts @ ${curr.targetStart.toFixed(2)}s)`
+    );
+  }
+
+  // Step 3: Build mixed audio track using ffmpeg filter_complex with normalize=0
   console.log("\n=== ASSEMBLING MULTI-TRACK TIMELINE ===");
   const inputArgs = generatedClips.map((c) => `-i ${c.wavPath}`).join(" ");
 
-  // Build filter complex: delay each clip to targetStart in milliseconds
   const delayFilters = generatedClips
     .map((c, idx) => {
       const delayMs = Math.round(c.targetStart * 1000);
@@ -144,27 +159,48 @@ async function generateTTS() {
 
   const mixInputs = generatedClips.map((_, idx) => `[a${idx}]`).join("");
   const totalDur = 129.60;
-  const fullFilter = `${delayFilters}; ${mixInputs}amix=inputs=${generatedClips.length}:duration=longest:dropout_transition=0,apad=whole_dur=${totalDur},volume=-2.0dB[aout]`;
+  // normalize=0 eliminates input-counting attenuation that causes dynamic gain swings
+  const rawFilter = `${delayFilters}; ${mixInputs}amix=inputs=${generatedClips.length}:normalize=0:dropout_transition=0,apad=whole_dur=${totalDur}[aout]`;
 
-  const mixCmd = `ffmpeg -y ${inputArgs} -filter_complex "${fullFilter}" -map "[aout]" demo/narration/full_narration_master.wav`;
-  console.log("Mixing all segments into demo/narration/full_narration_master.wav...");
-  execSync(mixCmd, { stdio: "inherit" });
+  const rawMixPath = "demo/narration/raw_narration_mix.wav";
+  const masterPath = "demo/narration/full_narration_master.wav";
 
-  // Check volume levels
-  console.log("\n=== CHECKING AUDIO VOLUME LEVELS ===");
-  const volDetect = execSync(
-    `ffmpeg -i demo/narration/full_narration_master.wav -af "volumedetect" -f null /dev/null 2>&1`,
+  console.log("Rendering multi-track audio mix with normalize=0...");
+  execSync(`ffmpeg -y ${inputArgs} -filter_complex "${rawFilter}" -map "[aout]" ${rawMixPath}`, { stdio: "pipe" });
+
+  // Measure raw mix peak volume
+  const volDetectRaw = execSync(
+    `ffmpeg -i ${rawMixPath} -af "volumedetect" -f null /dev/null 2>&1`,
     { encoding: "utf8" }
   );
-  const meanVol = volDetect.match(/mean_volume: ([-0-9.]+) dB/)?.[1];
-  const maxVol = volDetect.match(/max_volume: ([-0-9.]+) dB/)?.[1];
-  console.log(`Master Audio Levels -> Mean: ${meanVol} dB | Peak: ${maxVol} dB`);
+  const maxVolMatch = volDetectRaw.match(/max_volume: ([-0-9.]+) dB/);
+  const rawMaxVol = maxVolMatch ? parseFloat(maxVolMatch[1]) : 0;
+  console.log(`Raw Mixed Master Peak Level: ${rawMaxVol.toFixed(1)} dB`);
 
-  // Step 3: Mux with video
+  // Target broadcast peak of exactly -2.5 dB
+  const targetPeak = -2.5;
+  const gainAdjustment = targetPeak - rawMaxVol;
+  console.log(`Applying precision leveling gain: ${gainAdjustment >= 0 ? "+" : ""}${gainAdjustment.toFixed(1)} dB to achieve exactly ${targetPeak.toFixed(1)} dB broadcast peak...`);
+
+  execSync(
+    `ffmpeg -y -i ${rawMixPath} -af "volume=${gainAdjustment.toFixed(1)}dB" ${masterPath}`,
+    { stdio: "pipe" }
+  );
+
+  // Re-verify broadcast levels on master
+  const volDetectFinal = execSync(
+    `ffmpeg -i ${masterPath} -af "volumedetect" -f null /dev/null 2>&1`,
+    { encoding: "utf8" }
+  );
+  const finalMean = volDetectFinal.match(/mean_volume: ([-0-9.]+) dB/)?.[1];
+  const finalMax = volDetectFinal.match(/max_volume: ([-0-9.]+) dB/)?.[1];
+  console.log(`Master Leveled Audio Levels -> Mean: ${finalMean} dB | Peak: ${finalMax} dB`);
+
+  // Step 4: Mux with video
   console.log("\n=== MUXING FINAL DEMO VIDEO (1080p, H.264, AAC 48kHz Stereo) ===");
   const muxCmd = `ffmpeg -y \
     -i demo/backlot_studio_demo_silent_cut.mp4 \
-    -i demo/narration/full_narration_master.wav \
+    -i ${masterPath} \
     -c:v copy \
     -c:a aac -b:a 192k \
     demo/backlot_studio_demo.mp4`;
@@ -175,6 +211,7 @@ async function generateTTS() {
     { encoding: "utf8" }
   );
   console.log("\nFinal Video Verification Metadata:\n", finalStats);
+  console.log("Note: Physical listening impression marked honestly as NOT VERIFIED (headless agent environment).");
 }
 
 generateTTS().catch((err) => {
