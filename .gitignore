@@ -36,8 +36,10 @@ scratch/
 
 # Demo captures, video exports & frame dumps
 demo/captures/
+demo/narration/
 demo/*.mp4
 demo/*.webm
 demo/*.png
+demo/*.wav
 demo/*frames/
 demo/master_timeline/
