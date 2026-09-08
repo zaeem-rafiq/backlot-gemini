@@ -52,9 +52,9 @@ async function main() {
   // Step 6: Wait for run to start, then monitor until done
   console.log("[6/10] Monitoring live execution stream...");
   
-  // Wait up to 10s for isRunning to become true
+  // Wait up to 15s for isRunning to become true
   let started = false;
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < 15; i++) {
     await sleep(1000);
     const check = browserEval(`(() => {
       const btn = Array.from(document.querySelectorAll('button')).find(b => b.textContent.includes('Orchestrating'));
@@ -65,6 +65,10 @@ async function main() {
       console.log(`Pipeline orchestrating confirmed at +${i + 1}s`);
       break;
     }
+  }
+
+  if (!started) {
+    throw new Error("Run verification failed: Studio crew dispatch was never observed starting.");
   }
 
   // Monitor until completion
@@ -83,12 +87,16 @@ async function main() {
       const isRunning = !!btnOrchestrating || (btnGreenlight && btnGreenlight.disabled);
       
       const text = document.body.innerText || "";
-      const hasError = text.includes("Studio execution error") || text.includes("Pipeline Failed");
+      const hasError = text.includes("Studio execution error") || text.includes("Pipeline Failed") || text.includes("error occurred during execution");
       
-      return { isRunning: !!isRunning, hasError };
+      return { isRunning: !!isRunning, hasError: !!hasError };
     })()`);
 
     console.log(`[Status +${Math.round(elapsed / 1000)}s] isRunning: ${status?.isRunning}, error: ${status?.hasError}`);
+
+    if (status?.hasError) {
+      throw new Error("Run verification failed: Studio execution error or pipeline failure observed in UI.");
+    }
 
     if (status && !status.isRunning && elapsed > 8000) {
       isDone = true;
@@ -98,7 +106,7 @@ async function main() {
   }
 
   if (!isDone) {
-    console.warn("Run reached maximum wait time. Proceeding with state inspection...");
+    throw new Error(`Run verification failed: Execution timed out after ${maxWaitMs / 1000}s without observing package lock.`);
   }
   await sleep(4000);
 
@@ -111,6 +119,10 @@ async function main() {
     console.warn("Could not query Cloud Run revision:", err.message);
   }
   console.log("Detected live deployed revision:", deployedRevision);
+
+  if (!deployedRevision || deployedRevision === "unknown" || !deployedRevision.startsWith("backlot-studio-")) {
+    throw new Error(`Run verification failed: Invalid or unknown deployed revision identity: ${deployedRevision}`);
+  }
 
   const initialReceipt = browserEval(`(() => {
     // 1. Run ID from logs
@@ -135,6 +147,13 @@ async function main() {
       timestamp: new Date().toISOString()
     };
   })()`);
+
+  if (!initialReceipt.runId || initialReceipt.runId === "unknown" || !/^run_\d+$/.test(initialReceipt.runId)) {
+    throw new Error(`Run verification failed: Missing or invalid runId in receipt: ${initialReceipt.runId}`);
+  }
+  if (!initialReceipt.budgetTotal || initialReceipt.budgetTotal === "unknown" || !/^\$[\d,]+$/.test(initialReceipt.budgetTotal) || initialReceipt.budgetTotal === "$0") {
+    throw new Error(`Run verification failed: Missing or invalid budget total in receipt: ${initialReceipt.budgetTotal}`);
+  }
 
   console.log("Initial receipt header:", JSON.stringify(initialReceipt, null, 2));
 
@@ -215,7 +234,13 @@ async function main() {
   const fullReceipt = {
     ...initialReceipt,
     deployedRevision,
-    recommendation: recDetails
+    recommendation: recDetails,
+    verification: {
+      crewDispatchStarted: started,
+      packageLocked: isDone,
+      noPipelineErrors: true,
+      workflowOutcome: recDetails.hasRecommendation ? "positive_recommendation_verified" : "valid_negative_outcome_withheld"
+    }
   };
 
   fs.writeFileSync(receiptPath, JSON.stringify(fullReceipt, null, 2), "utf-8");
@@ -225,7 +250,7 @@ async function main() {
 
   // Step 8: Click INSPECT IN BUDGET if available
   if (recDetails.hasRecommendation && recDetails.targetArtifact?.buttonText) {
-    console.log(`[8/10] Deep linking: clicking '${recDetails.targetArtifact.buttonText}'...`);
+    console.log(`[8/10] Positive workflow: clicking '${recDetails.targetArtifact.buttonText}'...`);
     browserEval(`document.querySelector('[data-testid="recommendation-inspect-button"]')?.click()`);
     await sleep(4000);
 
@@ -237,6 +262,13 @@ async function main() {
       } : { found: false };
     })()`);
     console.log("Audit drawer found:", drawerAudit?.found);
+    if (!drawerAudit?.found) {
+      throw new Error("Run verification failed: Line item audit drawer did not open on inspect CTA click.");
+    }
+    const targetIdentifier = recDetails.targetArtifact.identifier;
+    if (!drawerAudit.text.toLowerCase().includes(targetIdentifier.toLowerCase())) {
+      throw new Error(`Run verification failed: Drawer content does not match target artifact '${targetIdentifier}'!`);
+    }
     await sleep(4500);
 
     // Scroll up to show canonical top sheet
@@ -248,10 +280,27 @@ async function main() {
     console.log("Dismissing audit drawer...");
     browserEval(`document.querySelector('button[aria-label="Dismiss Line Item Inspector"]')?.click()`);
     await sleep(2000);
+
+    // Verify budget total is unchanged
+    const postDismissTotal = browserEval(`(() => {
+      const budgetTab = document.getElementById("tab-BUDGET");
+      return budgetTab ? budgetTab.querySelector('span:last-child')?.textContent?.trim() : "unknown";
+    })()`);
+    if (postDismissTotal !== initialReceipt.budgetTotal) {
+      throw new Error(`Run verification failed: Budget total changed after drawer dismissal! Before: ${initialReceipt.budgetTotal}, After: ${postDismissTotal}`);
+    }
+    console.log(`Budget total invariance verified: ${postDismissTotal}`);
   } else {
-    console.log("[8/10] Navigating to Audited Budget tab directly...");
+    console.log("[8/10] Recommendation was withheld; recording as valid negative outcome without claiming positive workflow passed.");
     browserEval(`document.getElementById("tab-BUDGET")?.click()`);
     await sleep(4000);
+    const budgetTabTotal = browserEval(`(() => {
+      const budgetTab = document.getElementById("tab-BUDGET");
+      return budgetTab ? budgetTab.querySelector('span:last-child')?.textContent?.trim() : "unknown";
+    })()`);
+    if (budgetTabTotal !== initialReceipt.budgetTotal) {
+      throw new Error(`Run verification failed: Budget tab total mismatch! Expected ${initialReceipt.budgetTotal}, found ${budgetTabTotal}`);
+    }
     browserEval(`window.scrollBy({ top: 400, behavior: 'smooth' })`);
     await sleep(3000);
     browserEval(`window.scrollTo({ top: 0, behavior: 'smooth' })`);
@@ -276,20 +325,22 @@ async function main() {
   browserEval(`document.getElementById("tab-STORYBOARD")?.click()`);
   await sleep(3500);
 
-  // Step 10: Inspect source citation page
-  if (recDetails.sourceCitation?.url) {
+  // Step 10: Inspect source citation page if positive recommendation exists
+  if (recDetails.hasRecommendation && recDetails.sourceCitation?.url) {
     console.log(`[10/10] Navigating to source citation page: ${recDetails.sourceCitation.url}...`);
     try {
       runCmd(`agent-browser open "${recDetails.sourceCitation.url}"`);
       await sleep(4000);
-      browserEval(`(() => {
+      const passageLoaded = browserEval(`(() => {
+        const text = document.body.innerText || "";
         const target = Array.from(document.querySelectorAll('h1, h2, h3, a, p, em, strong')).find(el => {
           const t = el.textContent || "";
           return (
-            t.includes("production value bar") ||
+            t.includes("production value") ||
             t.includes("Should you make a horror film") ||
             t.includes("Guts of the Craft") ||
-            t.includes("Screen Craft")
+            t.includes("Screen Craft") ||
+            t.includes("horror")
           );
         });
         if (target) {
@@ -297,10 +348,15 @@ async function main() {
         } else {
           window.scrollBy({ top: 400, behavior: 'smooth' });
         }
+        return text.length > 50;
       })()`);
       await sleep(4500);
+      if (!passageLoaded) {
+        throw new Error(`Run verification failed: Supporting source citation page failed to load content: ${recDetails.sourceCitation.url}`);
+      }
     } catch (e) {
       console.warn("Could not navigate to external source URL:", e.message);
+      throw e;
     }
   }
 

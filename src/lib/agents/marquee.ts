@@ -154,16 +154,7 @@ export function validateProductionRecommendation(
   if (!marketEvidence || marketEvidence.length === 0) return null;
 
   // 1. Require the selected source to match an actual returned citation by URL. A matching title alone is insufficient.
-  const matchedCitation = marketEvidence.find((c) => {
-    if (c.url === rec.sourceCitation.url) return true;
-    if (
-      c.url.includes("thefilmcollaborative.org/blog") &&
-      rec.sourceCitation.url.includes("thefilmcollaborative.org/blog")
-    ) {
-      return true;
-    }
-    return false;
-  });
+  const matchedCitation = marketEvidence.find((c) => c.url === rec.sourceCitation.url);
   if (!matchedCitation) return null;
 
   // An empty or unusable excerpt cannot become claimed supporting evidence.
@@ -386,16 +377,7 @@ INSTRUCTIONS:
         // Remove the fallback that replaces an unknown model citation with marketEvidence[0]!
         const rawCitationUrl = (rawRec.sourceCitation as Record<string, unknown> | undefined)?.url;
         const matchedCitation = typeof rawCitationUrl === "string"
-          ? marketEvidence.find((c) => {
-              if (c.url === rawCitationUrl) return true;
-              if (
-                c.url.includes("thefilmcollaborative.org/blog") &&
-                rawCitationUrl.includes("thefilmcollaborative.org/blog")
-              ) {
-                return true;
-              }
-              return false;
-            })
+          ? marketEvidence.find((c) => c.url === rawCitationUrl)
           : undefined;
 
         if (matchedCitation) {

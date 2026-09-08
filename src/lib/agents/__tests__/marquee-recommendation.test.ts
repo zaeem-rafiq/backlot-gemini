@@ -178,6 +178,37 @@ describe("validateProductionRecommendation — Physical Feasibility & Feasibilit
     expect(validated).toBeNull();
   });
 
+  it("rejects an unreturned article URL even on the same domain (no domain-wide URL equivalence)", () => {
+    const returnedCitation: ParallelSourceCitation = {
+      ...audioCitation,
+      url: "https://www.thefilmcollaborative.org/blog/tag/horror-films/",
+    };
+
+    const recWithUnreturnedArticleUrl: ProductionRecommendation = {
+      title: "Protect Sound Design Allocation",
+      category: "BUDGET_ALLOCATION",
+      factualFinding: returnedCitation.snippet,
+      inferredAdvice: "Protect the sound design allocation.",
+      actionableDecision: "Protect Sound Design line item.",
+      tradeoffRationale: returnedCitation.snippet,
+      affectedArtifact: {
+        kind: "budget_line_item",
+        identifier: "Sound Design, Foley & Mix",
+        label: "Account 6000: Post Production / Sound Design, Foley & Mix",
+        tabTarget: "BUDGET",
+      },
+      // Uses a specific unreturned article URL on the same domain
+      sourceCitation: {
+        ...returnedCitation,
+        url: "https://www.thefilmcollaborative.org/blog/2013/10/should-you-make-a-horror-film/",
+      },
+    };
+
+    // Must be rejected because the specific article URL was never returned in marketEvidence
+    const validated = validateProductionRecommendation(recWithUnreturnedArticleUrl, mockBudget, [returnedCitation]);
+    expect(validated).toBeNull();
+  });
+
   it("rejects nonexistent or ambiguous budget item targets", () => {
     const nonexistentTargetRec: ProductionRecommendation = {
       title: "Protect Nonexistent Item",

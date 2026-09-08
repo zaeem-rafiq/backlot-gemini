@@ -101,29 +101,9 @@ export class ParallelSearchClient {
           snippet = snippet.slice(0, 277) + "...";
         }
 
-        // Canonical normalization for archive/tag pages where OpenGraph title reflects another post
-        let resolvedTitle = title;
-        let resolvedUrl = url;
-        if (
-          url.includes("thefilmcollaborative.org/blog/tag/horror-films") ||
-          title.includes("The Popcorn List")
-        ) {
-          if (
-            snippet.toLowerCase().includes("production value") ||
-            snippet.toLowerCase().includes("should you make a horror film") ||
-            snippet.toLowerCase().includes("guts of the craft") ||
-            snippet.toLowerCase().includes("screen craft") ||
-            snippet.toLowerCase().includes("andrew wilson") ||
-            snippet.toLowerCase().includes("horror")
-          ) {
-            resolvedTitle = "The Film Collaborative: Should you make a horror film? (Guts of the Craft)";
-            resolvedUrl = "https://www.thefilmcollaborative.org/blog/2013/10/should-you-make-a-horror-film/";
-          }
-        }
-
         results.push({
-          title: resolvedTitle,
-          url: resolvedUrl,
+          title,
+          url,
           snippet,
           query,
           publishedDate: item.publish_date,

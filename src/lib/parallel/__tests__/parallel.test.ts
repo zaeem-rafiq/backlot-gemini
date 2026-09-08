@@ -77,4 +77,31 @@ describe("Parallel Partner Search Client", () => {
     expect(citations).toEqual([]);
     expect(logs.some((l) => l.includes("unavailable") || l.includes("failed"))).toBe(true);
   });
+
+  it("preserves retrieved URL, title, and excerpt together without keyword replacement", async () => {
+    const mockFetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        results: [
+          {
+            title: "The Popcorn List: Independent Film Festivals Roundup",
+            url: "https://www.thefilmcollaborative.org/blog/tag/horror-films/",
+            excerpts: ["The production value bar is set by festival programmers for horror entries."],
+            publish_date: "2023-11-01",
+          },
+        ],
+      }),
+    });
+
+    global.fetch = mockFetch as any;
+
+    const client = new ParallelSearchClient("test_parallel_key");
+    const citations = await client.searchMarket({ query: "horror film production value" });
+
+    expect(citations.length).toBe(1);
+    // Must NOT be overwritten with the 2013 article URL or title
+    expect(citations[0].url).toBe("https://www.thefilmcollaborative.org/blog/tag/horror-films/");
+    expect(citations[0].title).toBe("The Popcorn List: Independent Film Festivals Roundup");
+    expect(citations[0].snippet).toBe("The production value bar is set by festival programmers for horror entries.");
+  });
 });
