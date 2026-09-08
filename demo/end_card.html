@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Backlot Studio — Demo End Card</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      width: 1920px;
+      height: 1080px;
+      background-color: #06080c;
+      color: #f8fafc;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", monospace;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 80px 100px;
+      overflow: hidden;
+      position: relative;
+    }
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: 
+        linear-gradient(rgba(16, 185, 129, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(16, 185, 129, 0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #1e293b;
+      padding-bottom: 24px;
+    }
+    .logo-group {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .logo-badge {
+      background: #10b981;
+      color: #000;
+      font-weight: 800;
+      font-size: 16px;
+      padding: 6px 14px;
+      border-radius: 4px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-family: "SFMono-Regular", Menlo, Monaco, monospace;
+    }
+    .system-status {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 14px;
+      color: #94a3b8;
+      font-family: "SFMono-Regular", Menlo, Monaco, monospace;
+    }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 10px #10b981;
+    }
+    .hero {
+      margin-top: 30px;
+      max-width: 1500px;
+    }
+    .track-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 4px;
+      color: #10b981;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      font-family: "SFMono-Regular", Menlo, Monaco, monospace;
+    }
+    h1 {
+      font-size: 64px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      margin-bottom: 16px;
+      background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .receipt-box {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid #1e293b;
+      border-radius: 8px;
+      padding: 28px 32px;
+      margin-top: 30px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 30px;
+    }
+    .receipt-item {
+      border-left: 2px solid #334155;
+      padding-left: 18px;
+    }
+    .receipt-item.verified {
+      border-left-color: #10b981;
+    }
+    .receipt-label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #64748b;
+      margin-bottom: 6px;
+      font-family: "SFMono-Regular", Menlo, Monaco, monospace;
+    }
+    .receipt-val {
+      font-size: 24px;
+      font-weight: 700;
+      color: #f8fafc;
+      margin-bottom: 6px;
+      font-family: "SFMono-Regular", Menlo, Monaco, monospace;
+    }
+    .receipt-desc {
+      font-size: 13px;
+      color: #94a3b8;
+      line-height: 1.4;
+    }
+    .rules-row {
+      display: flex;
+      gap: 20px;
+      margin-top: 24px;
+    }
+    .rule-pill {
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid #334155;
+      padding: 10px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      color: #cbd5e1;
+      font-family: "SFMono-Regular", Menlo, Monaco, monospace;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .rule-pill span {
+      color: #10b981;
+      font-weight: 700;
+    }
+    .footer {
+      border-top: 1px solid #1e293b;
+      padding-top: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      color: #64748b;
+      font-family: "SFMono-Regular", Menlo, Monaco, monospace;
+    }
+    .accent-amber { color: #f59e0b; }
+    .accent-emerald { color: #10b981; }
+    .accent-cyan { color: #06b6d4; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo-group">
+      <div class="logo-badge">BACKLOT</div>
+      <div style="font-size: 16px; font-weight: 600; letter-spacing: 0.05em; color: #cbd5e1;">PRODUCTION AUDIT RECEIPT</div>
+    </div>
+    <div class="system-status">
+      <div class="status-dot"></div>
+      <span>AUDIT STATUS: DETERMINISTIC LEDGER VERIFIED</span>
+    </div>
+  </div>
+
+  <div class="hero">
+    <div class="track-tag">Agentic Cinema Hackathon — Verified Demonstration</div>
+    <h1>Production Integrity Delivered</h1>
+
+    <div class="receipt-box">
+      <div class="receipt-item verified">
+        <div class="receipt-label">Deterministic Audited Budget</div>
+        <div class="receipt-val accent-emerald">$11,827.00</div>
+        <div class="receipt-desc">Production subtotal $10,752 + 10% contingency reserve $1,075. Zero LLM math. Pure pure-math arithmetic.</div>
+      </div>
+
+      <div class="receipt-item verified">
+        <div class="receipt-label">Cross-Artifact Provenance</div>
+        <div class="receipt-val accent-amber">24 of 24 Traced (100%)</div>
+        <div class="receipt-desc">Every single line item carries verified tracesTo provenance to physical scene elements.</div>
+      </div>
+
+      <div class="receipt-item verified">
+        <div class="receipt-label">Parallel Grounding & Comps</div>
+        <div class="receipt-val accent-cyan">15 Web Citations</div>
+        <div class="receipt-desc">Real-time market search across box office, festival acquisitions, and distribution precedents.</div>
+      </div>
+    </div>
+
+    <div class="rules-row">
+      <div class="rule-pill"><span>✓</span> 100% Google Gemini Exclusive (Zero Non-Google AI)</div>
+      <div class="rule-pill"><span>✓</span> 68 Passing Deterministic Unit Tests</div>
+      <div class="rule-pill"><span>✓</span> Cloud Run Revision: backlot-studio-00014-p4r</div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div>DEMONSTRATED RUN: run_1788831276597 &bull; DURATION: 28.5s &bull; SCRIPT: FREQUENCY ZERO</div>
+    <div>LIVE APP: https://backlot-studio-112519007745.us-central1.run.app</div>
+  </div>
+</body>
+</html>

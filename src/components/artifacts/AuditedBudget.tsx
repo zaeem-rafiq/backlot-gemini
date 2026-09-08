@@ -25,13 +25,10 @@ export function getRecommendationForBudgetItem(
   if (!item || !recommendation) return null;
   if (recommendation.affectedArtifact.kind !== "budget_line_item") return null;
 
-  const recTarget = recommendation.affectedArtifact.identifier.toLowerCase().trim();
-  const itemName = item.item.toLowerCase().trim();
+  const recTarget = recommendation.affectedArtifact.identifier.trim().toLowerCase();
+  const itemName = item.item.trim().toLowerCase();
 
-  if (itemName.includes(recTarget) || recTarget.includes(itemName)) {
-    return recommendation;
-  }
-  return null;
+  return itemName === recTarget ? recommendation : null;
 }
 
 export interface AuditedBudgetProps {
@@ -44,17 +41,14 @@ export interface AuditedBudgetProps {
 export function AuditedBudget({
   budget,
   productionRecommendation,
-  recommendedItemName,
   initialSelectedItemName,
 }: AuditedBudgetProps) {
   const [selectedTraceItem, setSelectedTraceItem] = useState<BudgetLineItem | null>(() => {
-    const targetName = initialSelectedItemName || recommendedItemName;
+    const targetName = initialSelectedItemName?.trim().toLowerCase();
     if (targetName) {
       for (const section of budget.sections) {
         const found = section.items.find(
-          (i) =>
-            i.item.toLowerCase().includes(targetName.toLowerCase()) ||
-            targetName.toLowerCase().includes(i.item.toLowerCase())
+          (i) => i.item.trim().toLowerCase() === targetName
         );
         if (found) return found;
       }
@@ -66,26 +60,23 @@ export function AuditedBudget({
     setCollapsedCategories((prev) => ({ ...prev, [cat]: !prev[cat] }));
   };
 
-  // Ensure the section containing recommendedItemName or initialSelectedItemName is uncollapsed
+  // Ensure the section containing initialSelectedItemName is uncollapsed, or clear selection on new run
   useEffect(() => {
-    const targetName = initialSelectedItemName || recommendedItemName;
+    const targetName = initialSelectedItemName?.trim().toLowerCase();
     if (targetName) {
       for (const section of budget.sections) {
         const found = section.items.find(
-          (i) =>
-            i.item.toLowerCase().includes(targetName.toLowerCase()) ||
-            targetName.toLowerCase().includes(i.item.toLowerCase())
+          (i) => i.item.trim().toLowerCase() === targetName
         );
         if (found) {
           setCollapsedCategories((prev) => ({ ...prev, [section.category]: false }));
-          if (initialSelectedItemName) {
-            setSelectedTraceItem(found);
-          }
-          break;
+          setSelectedTraceItem(found);
+          return;
         }
       }
     }
-  }, [initialSelectedItemName, recommendedItemName, budget.sections]);
+    setSelectedTraceItem(null);
+  }, [initialSelectedItemName, budget]);
 
   // Scroll to provenance drawer when an item is selected
   useEffect(() => {
@@ -368,13 +359,7 @@ export function AuditedBudget({
                     <tbody className="divide-y divide-studio-800/60 font-mono">
                       {section.items.map((item, idx) => {
                         const matchingRec = getRecommendationForBudgetItem(item, productionRecommendation);
-                        const isRecommended = Boolean(
-                          matchingRec ||
-                          (recommendedItemName && (
-                            item.item.toLowerCase().includes(recommendedItemName.toLowerCase()) ||
-                            recommendedItemName.toLowerCase().includes(item.item.toLowerCase())
-                          ))
-                        );
+                        const isRecommended = Boolean(matchingRec);
                         return (
                           <tr
                             key={idx}

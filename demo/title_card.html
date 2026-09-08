@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Backlot Studio — Demo Title Card</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      width: 1920px;
+      height: 1080px;
+      background-color: #06080c;
+      color: #f8fafc;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", monospace;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 80px 100px;
+      overflow: hidden;
+      position: relative;
+    }
+    /* Subtle background grid */
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: 
+        linear-gradient(rgba(245, 158, 11, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(245, 158, 11, 0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #1e293b;
+      padding-bottom: 24px;
+    }
+    .logo-group {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .logo-badge {
+      background: #f59e0b;
+      color: #000;
+      font-weight: 800;
+      font-size: 16px;
+      padding: 6px 14px;
+      border-radius: 4px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-family: "SFMono-Regular", Menlo, Monaco, monospace;
+    }
+    .system-status {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 14px;
+      color: #94a3b8;
+      font-family: "SFMono-Regular", Menlo, Monaco, monospace;
+    }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 10px #10b981;
+    }
+    .hero {
+      margin-top: 40px;
+      max-width: 1400px;
+    }
+    .track-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      background: rgba(245, 158, 11, 0.1);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      border-radius: 4px;
+      color: #f59e0b;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+      font-family: "SFMono-Regular", Menlo, Monaco, monospace;
+    }
+    h1 {
+      font-size: 72px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.05;
+      margin-bottom: 20px;
+      background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .subhead {
+      font-size: 26px;
+      color: #94a3b8;
+      line-height: 1.4;
+      margin-bottom: 48px;
+      max-width: 1100px;
+    }
+    .subhead strong {
+      color: #f8fafc;
+      font-weight: 600;
+    }
+    .spec-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+    .spec-card {
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid #1e293b;
+      border-radius: 8px;
+      padding: 22px 24px;
+      backdrop-filter: blur(12px);
+    }
+    .spec-label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #64748b;
+      margin-bottom: 8px;
+      font-family: "SFMono-Regular", Menlo, Monaco, monospace;
+    }
+    .spec-val {
+      font-size: 18px;
+      font-weight: 700;
+      color: #f8fafc;
+      margin-bottom: 6px;
+      font-family: "SFMono-Regular", Menlo, Monaco, monospace;
+    }
+    .spec-detail {
+      font-size: 13px;
+      color: #94a3b8;
+      line-height: 1.35;
+    }
+    .footer {
+      border-top: 1px solid #1e293b;
+      padding-top: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      color: #64748b;
+      font-family: "SFMono-Regular", Menlo, Monaco, monospace;
+    }
+    .accent-amber { color: #f59e0b; }
+    .accent-emerald { color: #10b981; }
+    .accent-cyan { color: #06b6d4; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo-group">
+      <div class="logo-badge">BACKLOT</div>
+      <div style="font-size: 16px; font-weight: 600; letter-spacing: 0.05em; color: #cbd5e1;">STUDIO OS v2.5</div>
+    </div>
+    <div class="system-status">
+      <div class="status-dot"></div>
+      <span>CLOUDRUN DEPLOYMENT: backlot-studio-00014-p4r</span>
+    </div>
+  </div>
+
+  <div class="hero">
+    <div class="track-tag">Agentic Cinema Hackathon — Parallel Track</div>
+    <h1>AI-Native Pre-Production Studio</h1>
+    <p class="subhead">
+      An autonomous 6-agent studio crew that converts raw screenplays into verified pre-production packages:
+      <strong>100% deterministic ledger arithmetic</strong>, <strong>cross-artifact script provenance</strong>, and <strong>Parallel Search market comp intelligence</strong>.
+    </p>
+
+    <div class="spec-grid">
+      <div class="spec-card">
+        <div class="spec-label">Multi-Agent Intelligence</div>
+        <div class="spec-val accent-amber">Google Gemini 3.5 Flash</div>
+        <div class="spec-detail">6 specialized studio departments (Director, Ink, Slate, Ledger, Easel, Marquee)</div>
+      </div>
+
+      <div class="spec-card">
+        <div class="spec-label">Market Comps & Grounding</div>
+        <div class="spec-val accent-cyan">Parallel Partner Search</div>
+        <div class="spec-detail">Live festival, box office & distributor signals with verified web citations</div>
+      </div>
+
+      <div class="spec-card">
+        <div class="spec-label">Financial Architecture</div>
+        <div class="spec-val accent-emerald">Pure Math Ledger</div>
+        <div class="spec-detail">Deterministic Pure TypeScript Ledger Arithmetic: 100% unit-tested calculations</div>
+      </div>
+
+      <div class="spec-card">
+        <div class="spec-label">Line Item Auditability</div>
+        <div class="spec-val accent-amber">Cross-Artifact Provenance</div>
+        <div class="spec-detail">Every dollar traced directly to physical breakdown elements via tracesTo</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div>LIVE RECORDING DEMONSTRATION &bull; SCRIPT: FREQUENCY ZERO (CONT. SUSPENSE)</div>
+    <div>AUTHENTICATED ENDPOINT: https://backlot-studio-112519007745.us-central1.run.app</div>
+  </div>
+</body>
+</html>

@@ -2,8 +2,9 @@ import { describe, it, expect } from "vitest";
 import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { AuditedBudget, getRecommendationForBudgetItem } from "../AuditedBudget";
+import { PitchKitView } from "../PitchKitView";
 import { Budget, BudgetLineItem } from "@/lib/types/budget";
-import { ProductionRecommendation } from "@/lib/types/pitch";
+import { ProductionRecommendation, PitchKit } from "@/lib/types/pitch";
 
 describe("AuditedBudget — Recommendation Provenance & Drawer Display", () => {
   const mockBudget: Budget = {
@@ -76,7 +77,7 @@ describe("AuditedBudget — Recommendation Provenance & Drawer Display", () => {
     },
   };
 
-  it("getRecommendationForBudgetItem returns recommendation only for matching line item", () => {
+  it("getRecommendationForBudgetItem returns recommendation only for exact matching line item and rejects substrings", () => {
     const sfxItem = mockBudget.sections[0].items[0];
     const soundItem = mockBudget.sections[1].items[0];
 
@@ -85,6 +86,29 @@ describe("AuditedBudget — Recommendation Provenance & Drawer Display", () => {
 
     // Sound Design item MUST receive sound recommendation
     expect(getRecommendationForBudgetItem(soundItem, soundRec)).toBe(soundRec);
+
+    // Production Sound Mixer must NOT match Sound Design, Foley & Mix (substring "Sound" must not match!)
+    const mixerItem: BudgetLineItem = {
+      category: "Crew",
+      item: "Production Sound Mixer",
+      unit: "day",
+      qty: 1,
+      rate: 450,
+      total: 450,
+      tracesTo: "Location Sound Mixer booked for 1 shoot day(s)",
+    };
+    expect(getRecommendationForBudgetItem(mixerItem, soundRec)).toBeNull();
+
+    // Partial substring recommendation identifier (e.g. "Sound") must NOT match either item
+    const partialRec: ProductionRecommendation = {
+      ...soundRec,
+      affectedArtifact: {
+        ...soundRec.affectedArtifact,
+        identifier: "Sound", // Partial substring
+      },
+    };
+    expect(getRecommendationForBudgetItem(soundItem, partialRec)).toBeNull();
+    expect(getRecommendationForBudgetItem(mixerItem, partialRec)).toBeNull();
 
     // When recommendation is null, neither receives a recommendation
     expect(getRecommendationForBudgetItem(sfxItem, null)).toBeNull();
@@ -165,5 +189,151 @@ describe("AuditedBudget — Recommendation Provenance & Drawer Display", () => {
     expect(html).toContain("$1,705.00");
     expect(html).toContain("$1,550.00");
     expect(html).toContain("+$155.00");
+  });
+
+  it("removes stale recommendation highlighting when loaded without a matching recommendation", () => {
+    // When a budget is rendered without a recommendation or with a null recommendation,
+    // NO rows have the isRecommended highlight class or Parallel Comp badge
+    const html = renderToStaticMarkup(
+      React.createElement(AuditedBudget, {
+        budget: mockBudget,
+        productionRecommendation: null,
+      })
+    );
+
+    expect(html).not.toContain("Parallel Comp");
+    expect(html).not.toContain("border-sky-400");
+    expect(html).not.toContain("bg-sky-500/15");
+  });
+
+  it("ensures rejected crew-diversion advice is absent from every displayed field", () => {
+    // If a recommendation was rejected, passing null ensures no advice appears anywhere
+    const html = renderToStaticMarkup(
+      React.createElement(AuditedBudget, {
+        budget: mockBudget,
+        productionRecommendation: null,
+        initialSelectedItemName: "Practical SFX Technician",
+      })
+    );
+
+    expect(html).not.toContain("Divert");
+    expect(html).not.toContain("reallocate");
+    expect(html).not.toContain("Parallel Market Comp Reference");
+    expect(html).not.toContain("Actionable Decision:");
+  });
+});
+
+describe("PitchKitView — Recommendation & Withholding Copy Calibration", () => {
+  const basePitchKit: PitchKit = {
+    tagline: "Static in the dark.",
+    loglines: ["A late night DJ hears tomorrow's broadcast.", "Static hides secrets."],
+    whyNow: "Audio suspense is resonant.",
+    audience: {
+      primary: "Sci-Fi Thriller enthusiasts",
+      secondary: "Indie festival audience",
+    },
+    festivalStrategy: [
+      {
+        name: "Sundance Film Festival",
+        tier: "Tier 1 / Oscar Qualifying",
+        why: "Strong precedent for contained sci-fi.",
+      },
+    ],
+    posterConcept: {
+      description: "Radio tower silhouette",
+      imagePrompt: "A moody radio tower in a storm.",
+    },
+    pitchParagraph: "Carrying a RECOMMEND verdict and an audited budget of $11,827.",
+    marketEvidence: [],
+    productionRecommendation: null,
+  };
+
+  it("displays evidence unavailable notice when market evidence is empty", () => {
+    const html = renderToStaticMarkup(
+      React.createElement(PitchKitView, {
+        pitchKit: {
+          ...basePitchKit,
+          marketEvidence: [],
+          productionRecommendation: null,
+        },
+      })
+    );
+
+    expect(html).toContain("Production Recommendation Withheld");
+    expect(html).toContain("Production recommendation withheld because market evidence is unavailable.");
+    // Must NOT claim Parallel was offline
+    expect(html).not.toContain("Live Parallel Search API evidence is currently offline or returned zero verified citations");
+  });
+
+  it("distinguishes rejected recommendation with available citations from unavailable search", () => {
+    const html = renderToStaticMarkup(
+      React.createElement(PitchKitView, {
+        pitchKit: {
+          ...basePitchKit,
+          marketEvidence: [
+            {
+              title: "The Vast of Night Comps",
+              url: "https://rottentomatoes.com/m/the_vast_of_night",
+              snippet: "Audio acclaim",
+              query: "audio comps",
+              relevance: "Benchmark",
+            },
+          ],
+          productionRecommendation: null, // Rejected by feasibility guard!
+        },
+      })
+    );
+
+    expect(html).toContain("Production Recommendation Withheld");
+    expect(html).toContain("Live market citations were retrieved, but no supported production recommendation was produced for this screenplay.");
+    // Must NOT claim Parallel was offline or returned 0 citations
+    expect(html).not.toContain("returned zero verified citations");
+    expect(html).not.toContain("currently offline");
+  });
+
+  it("displays supported recommendation with retrieved fact and inferred advice strictly partitioned", () => {
+    const html = renderToStaticMarkup(
+      React.createElement(PitchKitView, {
+        pitchKit: {
+          ...basePitchKit,
+          marketEvidence: [
+            {
+              title: "The Vast of Night Comps",
+              url: "https://rottentomatoes.com/m/the_vast_of_night",
+              snippet: "Audio acclaim snippet from source",
+              query: "audio comps",
+              relevance: "Benchmark",
+            },
+          ],
+          productionRecommendation: {
+            title: "Protect Sound Design",
+            category: "BUDGET_ALLOCATION",
+            factualFinding: "Audio acclaim snippet from source",
+            inferredAdvice: "Backlot Studio infers maintaining audio design.",
+            actionableDecision: "Protect $650 line item.",
+            tradeoffRationale: "Sensory immersion.",
+            affectedArtifact: {
+              kind: "budget_line_item",
+              identifier: "Sound Design, Foley & Mix",
+              label: "Account 6000: Post Production / Sound Design, Foley & Mix",
+              tabTarget: "BUDGET",
+            },
+            sourceCitation: {
+              title: "The Vast of Night Comps",
+              url: "https://rottentomatoes.com/m/the_vast_of_night",
+              snippet: "Audio acclaim snippet from source",
+              query: "audio comps",
+              relevance: "Benchmark",
+            },
+          },
+        },
+      })
+    );
+
+    expect(html).toContain("[Retrieved Fact · Parallel Search API]");
+    expect(html).toContain("Audio acclaim snippet from source");
+    expect(html).toContain("[Inferred Producer Advice · Studio OS]");
+    expect(html).toContain("Backlot Studio infers maintaining audio design.");
+    expect(html).toContain("Sound Design, Foley &amp; Mix");
   });
 });

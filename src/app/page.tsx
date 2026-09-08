@@ -186,6 +186,7 @@ export default function BacklotStudioPage() {
     }
     flushLogs();
     setIsRunning(false);
+    setHighlightedBudgetItem(null);
     setRunSource("sample");
     setRunState(sampleRunData as unknown as RunState);
     if (typeof window !== "undefined" && window.innerWidth < 768) {
@@ -235,6 +236,7 @@ export default function BacklotStudioPage() {
     const controller = new AbortController();
     abortControllerRef.current = controller;
 
+    setHighlightedBudgetItem(null);
     setRunSource("live");
     if (typeof window !== "undefined" && window.innerWidth < 768) {
       setSidebarOpen(false);
@@ -873,10 +875,9 @@ export default function BacklotStudioPage() {
                     budget={runState.budget}
                     productionRecommendation={runState.pitchKit?.productionRecommendation ?? null}
                     recommendedItemName={
-                      highlightedBudgetItem ??
-                      (runState.pitchKit?.productionRecommendation?.affectedArtifact?.kind === "budget_line_item"
+                      runState.pitchKit?.productionRecommendation?.affectedArtifact?.kind === "budget_line_item"
                         ? runState.pitchKit.productionRecommendation.affectedArtifact.identifier
-                        : undefined)
+                        : undefined
                     }
                     initialSelectedItemName={highlightedBudgetItem ?? undefined}
                   />

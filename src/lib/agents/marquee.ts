@@ -153,69 +153,65 @@ export function validateProductionRecommendation(
   if (!rec) return null;
   if (!marketEvidence || marketEvidence.length === 0) return null;
 
-  // Must match a real citation from marketEvidence
-  const citationMatches = marketEvidence.some(
-    (c) => c.url === rec.sourceCitation.url || c.title === rec.sourceCitation.title
-  );
-  if (!citationMatches) return null;
+  // 1. Require the selected source to match an actual returned citation by URL. A matching title alone is insufficient.
+  const matchedCitation = marketEvidence.find((c) => c.url === rec.sourceCitation.url);
+  if (!matchedCitation) return null;
 
-  // If affectedArtifact targets a budget line item
+  // 2. If affectedArtifact targets a budget line item
   if (rec.affectedArtifact.kind === "budget_line_item") {
-    const targetId = rec.affectedArtifact.identifier.toLowerCase().trim();
+    const targetId = rec.affectedArtifact.identifier.trim();
+    if (!targetId) return null;
+
     const allItems = budget.sections.flatMap((s) => s.items);
-    const targetItem = allItems.find(
-      (i) => i.item.toLowerCase().includes(targetId) || targetId.includes(i.item.toLowerCase())
+
+    // Resolve one unambiguous item from the current run's ledger.
+    // Exact match on item name (case-insensitive and trimmed). No substring matching!
+    const matchingItems = allItems.filter(
+      (i) => i.item.trim().toLowerCase() === targetId.toLowerCase()
     );
 
-    if (targetItem) {
-      // Check if target item is required by physical script breakdown
-      const tracesLower = targetItem.tracesTo.toLowerCase();
-      const isScriptRequired =
-        tracesLower.includes("flagged in scene") ||
-        tracesLower.includes("stunts flagged") ||
-        tracesLower.includes("practical sfx flagged") ||
-        tracesLower.includes("special makeup");
+    // Reject nonexistent or ambiguous targets
+    if (matchingItems.length !== 1) {
+      return null;
+    }
 
-      if (isScriptRequired) {
-        // Does the recommendation propose cutting, defunding, or diverting away from this required crew?
-        const diversionKeywords = /\b(divert|cut|reduce|defund|trim|slash|reallocate away|reallocating away|saving from)\b/i;
-        const textToCheck = `${rec.actionableDecision} ${rec.inferredAdvice} ${rec.tradeoffRationale}`;
-        if (diversionKeywords.test(textToCheck)) {
-          // Unsupported budget diversion from script-required crew!
-          // Check if it can be narrowed to a supported post-production action
-          const postItem = allItems.find(
-            (i) =>
-              i.category.toLowerCase().includes("post") ||
-              i.item.toLowerCase().includes("sound design") ||
-              i.item.toLowerCase().includes("color")
-          );
+    const targetItem = matchingItems[0];
 
-          const mentionsPost = /\b(sound design|foley|audio|color grading|mastering)\b/i.test(textToCheck);
-          const citationMentionsPost = /\b(sound|audio|score|music|color|visual|post)\b/i.test(
-            `${rec.sourceCitation.snippet} ${rec.sourceCitation.title}`
-          );
+    // Resource invariant: Production Sound Mixer and Sound Design, Foley & Mix are different resources.
+    // Advice about post-production Foley/mixing must not target an on-set mixer.
+    const textToCheck = `${rec.title} ${rec.actionableDecision} ${rec.inferredAdvice} ${rec.tradeoffRationale}`.toLowerCase();
+    const isPostAudioAdvice = /\b(foley|post-production|sound design|mix\b(?!er)|sound mix|audio mix|stereo mix|5\.1)\b/i.test(textToCheck);
+    if (targetItem.item.toLowerCase().includes("sound mixer") && isPostAudioAdvice) {
+      return null;
+    }
 
-          if (postItem && mentionsPost && citationMentionsPost) {
-            // Narrow to supported post-production allocation
-            return {
-              ...rec,
-              title: `Protect & Prioritize ${postItem.item}`,
-              actionableDecision: `Prioritize and allocate dedicated investment for ${postItem.item} to meet festival acquisition standards grounded in ${rec.sourceCitation.title}.`,
-              tradeoffRationale: `Grounded in market comps from ${rec.sourceCitation.title}. Maintaining dedicated post-production finishing preserves festival programmer engagement.`,
-              affectedArtifact: {
-                kind: "budget_line_item",
-                identifier: postItem.item,
-                label: `Account: ${postItem.category} / ${postItem.item}`,
-                tabTarget: "BUDGET",
-              },
-            };
-          }
+    // Check if target item is required by physical script breakdown
+    const tracesLower = targetItem.tracesTo.toLowerCase();
+    const isScriptRequired =
+      tracesLower.includes("flagged in scene") ||
+      tracesLower.includes("stunts flagged") ||
+      tracesLower.includes("practical sfx flagged") ||
+      tracesLower.includes("special makeup");
 
-          // Otherwise, the diversion cannot be justified against the production requirement: withhold!
-          return null;
-        }
+    if (isScriptRequired) {
+      // Does the recommendation propose cutting, defunding, or diverting away from this required crew?
+      const diversionKeywords = /\b(divert|cut|reduce|defund|trim|slash|reallocate away|reallocating away|saving from)\b/i;
+      if (diversionKeywords.test(textToCheck)) {
+        // Unsupported budget diversion from script-required crew: withhold entirely!
+        return null;
       }
     }
+
+    // Return recommendation with canonical item identity and label
+    return {
+      ...rec,
+      affectedArtifact: {
+        ...rec.affectedArtifact,
+        identifier: targetItem.item,
+        label: rec.affectedArtifact.label || `Account: ${targetItem.category} / ${targetItem.item}`,
+        tabTarget: "BUDGET",
+      },
+    };
   }
 
   return rec;
@@ -284,10 +280,9 @@ export class MarqueeAgent {
       ? `- Schedule: ${options.schedule.stats.shootDays} shoot day(s) (${options.schedule.stats.nightShoots} night shoots), ${options.schedule.days.length} shooting day blocks.`
       : `- Shoot Days: ${budget.sections.find((s) => s.category === "Crew")?.items[0]?.qty || "N/A"} days.`;
 
-    const sampleBudgetLines = budget.sections
+    const eligibleBudgetLines = budget.sections
       .flatMap((s) => s.items)
-      .slice(0, 8)
-      .map((item) => `  * ${item.item}: $${item.total.toLocaleString()} (tracesTo: "${item.tracesTo}")`)
+      .map((item) => `  * [${item.category}] "${item.item}": $${item.total.toLocaleString()} (tracesTo: "${item.tracesTo}")`)
       .join("\n");
 
     const marketResearchContext = marketEvidence.length > 0
@@ -307,8 +302,8 @@ SCREENPLAY METRICS:
 - Ledger Audited Budget Total: ${budgetTotalFormatted} across ${budget.sections.length} production categories.
 ${scheduleContext}
 
-KEY BUDGET LINE ITEMS FROM AUDITED LEDGER:
-${sampleBudgetLines}
+ELIGIBLE BUDGET LINE ITEMS FROM AUDITED LEDGER:
+${eligibleBudgetLines}
 
 ${marketResearchContext}
 
@@ -321,7 +316,7 @@ INSTRUCTIONS:
 - Create a portrait (2:3) poster art direction and self-contained generation prompt.
 - Write a 3-5 sentence executive pitchParagraph that explicitly cites the '${coverage.verdict}' coverage verdict and the exact '${budgetTotalFormatted}' budget total.
 - SOURCE-BACKED PRODUCTION RECOMMENDATION:
-  * If MARKET RESEARCH EVIDENCE is provided above: Synthesize at most one high-leverage 'productionRecommendation' for an indie producer. Select one of the exact citations retrieved above, link it to a concrete artifact (e.g., 'Shoot Day 1', an enhanceable post-production line item like 'Sound Design & Foley', or a scene), state the actionable decision, and provide the evidence-backed tradeoff rationale.
+  * If MARKET RESEARCH EVIDENCE is provided above: Synthesize at most one high-leverage 'productionRecommendation' for an indie producer. Select one of the exact citations retrieved above, link it to an exact eligible budget item from the list above (e.g., 'Sound Design, Foley & Mix' or 'Picture Editor'), state the actionable decision, and provide the evidence-backed tradeoff rationale.
   * PHYSICAL FEASIBILITY INVARIANT: Never recommend cutting, defunding, or diverting funds from script-required physical crew or equipment (such as Practical SFX Technician, Stunt Coordinator, or Key HMU). Budget recommendations must only target enhanceable allocations (Sound, Color, Deliverables, Contingency), or focus on FESTIVAL_WINDOW / DISTRIBUTION_STRATEGY. If citations do not support a valid tradeoff, omit productionRecommendation (null).
   * If MARKET RESEARCH EVIDENCE is offline/empty: Do NOT include a productionRecommendation (leave null).`;
 
@@ -339,39 +334,50 @@ INSTRUCTIONS:
     if (marketEvidence.length > 0) {
       const rawRec = rawData.productionRecommendation as Record<string, unknown> | undefined;
       if (rawRec && typeof rawRec === "object" && rawRec.title) {
-        // Ensure source citation is strictly grounded in one of the real retrieved Parallel citations
-        const matchedCitation = marketEvidence.find(
-          (c) => c.url === (rawRec.sourceCitation as Record<string, unknown>)?.url
-        ) || marketEvidence[0];
+        // Require the selected source to match an actual returned citation by URL.
+        // Remove the fallback that replaces an unknown model citation with marketEvidence[0]!
+        const rawCitationUrl = (rawRec.sourceCitation as Record<string, unknown> | undefined)?.url;
+        const matchedCitation = rawCitationUrl
+          ? marketEvidence.find((c) => c.url === rawCitationUrl)
+          : undefined;
 
-        try {
-          const rawArtifact = (rawRec.affectedArtifact as Record<string, unknown>) || {};
-          const candidateRec: ProductionRecommendation = {
-            title: String(rawRec.title),
-            category: (rawRec.category as ProductionRecommendation["category"]) || "DISTRIBUTION_STRATEGY",
-            factualFinding: String(rawRec.factualFinding || matchedCitation.snippet),
-            inferredAdvice: String(rawRec.inferredAdvice || rawRec.actionableDecision || rawRec.tradeoffRationale),
-            actionableDecision: String(rawRec.actionableDecision),
-            tradeoffRationale: String(rawRec.tradeoffRationale),
-            affectedArtifact: {
-              kind: (rawArtifact.kind as ProductionRecommendation["affectedArtifact"]["kind"]) || "budget_line_item",
-              identifier: String(rawArtifact.identifier || "Sound Design, Foley & Mix"),
-              label: String(rawArtifact.label || "Production Package"),
-              tabTarget: (rawArtifact.tabTarget as ProductionRecommendation["affectedArtifact"]["tabTarget"]) || "BUDGET",
-            },
-            sourceCitation: matchedCitation,
-          };
+        if (matchedCitation) {
+          try {
+            const rawArtifact = (rawRec.affectedArtifact as Record<string, unknown>) || {};
+            const candidateRec: ProductionRecommendation = {
+              title: String(rawRec.title),
+              category: (rawRec.category as ProductionRecommendation["category"]) || "DISTRIBUTION_STRATEGY",
+              // Use the canonical returned citation's excerpt as retrieved evidence
+              factualFinding: matchedCitation.snippet,
+              // Keep model-written interpretation explicitly labeled as inferred advice
+              inferredAdvice: String(rawRec.inferredAdvice || rawRec.actionableDecision || rawRec.tradeoffRationale),
+              actionableDecision: String(rawRec.actionableDecision),
+              tradeoffRationale: String(rawRec.tradeoffRationale),
+              affectedArtifact: {
+                kind: (rawArtifact.kind as ProductionRecommendation["affectedArtifact"]["kind"]) || "budget_line_item",
+                identifier: String(rawArtifact.identifier || ""),
+                label: String(rawArtifact.label || "Production Package"),
+                tabTarget: (rawArtifact.tabTarget as ProductionRecommendation["affectedArtifact"]["tabTarget"]) || "BUDGET",
+              },
+              sourceCitation: matchedCitation,
+            };
 
-          // Validate physical feasibility: do not allow unsupported diversions from script-required crew
-          productionRecommendation = validateProductionRecommendation(candidateRec, budget, marketEvidence);
-          if (!productionRecommendation && candidateRec) {
-            onLog?.(
-              "info",
-              `Marquee withheld unsupported recommendation targeting script-required crew '${candidateRec.affectedArtifact.identifier}'.`
-            );
+            // Validate exact budget target, source attribution, and physical feasibility
+            productionRecommendation = validateProductionRecommendation(candidateRec, budget, marketEvidence);
+            if (!productionRecommendation && candidateRec) {
+              onLog?.(
+                "info",
+                `Marquee withheld unsupported recommendation for '${candidateRec.affectedArtifact.identifier}'.`
+              );
+            }
+          } catch {
+            productionRecommendation = null;
           }
-        } catch {
-          productionRecommendation = null;
+        } else {
+          onLog?.(
+            "info",
+            "Marquee withheld recommendation because model citation URL did not match any returned citation."
+          );
         }
       }
     }

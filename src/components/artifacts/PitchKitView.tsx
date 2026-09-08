@@ -294,7 +294,9 @@ export function PitchKitView({ pitchKit, title, onNavigateTab, onInspectArtifact
                   Production Recommendation Withheld
                 </span>
                 <p className="text-[11px] text-studio-400 font-sans leading-relaxed">
-                  Recommendations are withheld when no source evidence is returned. Live Parallel Search API evidence is currently offline or returned zero verified citations.
+                  {pitchKit.marketEvidence && pitchKit.marketEvidence.length > 0
+                    ? "Live market citations were retrieved, but no supported production recommendation was produced for this screenplay."
+                    : "Production recommendation withheld because market evidence is unavailable."}
                 </p>
               </div>
             </div>

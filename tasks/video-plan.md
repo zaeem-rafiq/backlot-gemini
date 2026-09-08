@@ -1,44 +1,82 @@
-# Day 12 Video Demonstration Plan — Backlot Studio
+# Video Demonstration Plan & Recording Record — Backlot Studio
 
-**Status**: Planned Demonstration Script (Unrecorded / Local Plan; not recorded, uploaded, or submitted).
-**Rule**: All narration numbers are read directly off the live screen and verified ledger math, never scripted from memory or synthetic speculation.
-**Target Duration**: 02:55 (175 seconds max)
-**Production URL**: `https://backlot-studio-112519007745.us-central1.run.app`
+**Status**: Demonstration Video with Full Google Gemini 2.5 Flash TTS Narration Master Completed (Local File; not uploaded, published, or submitted per hackathon privacy and authorization rules).  
+**Demonstrated Run ID**: `run_1788831276597` (Runtime Duration: 28.5s)  
+**Production URL**: `https://backlot-studio-112519007745.us-central1.run.app`  
+**Serving Revision**: `backlot-studio-00014-p4r`  
+**Demonstration Script**: *FREQUENCY ZERO* (2-Scene Contained Suspense Thriller by Zaeem Khan)  
+**Local Export File**: `demo/backlot_studio_demo.mp4`  
+**Preserved Silent Cut**: `demo/backlot_studio_demo_silent_cut.mp4`  
+**Measured Duration**: `02:12.60` (132.60 seconds — strictly under the 175-second / 02:55 maximum cap)  
+**Resolution & Encoding**: 1920x1080 (Full HD 16:9), H.264 (yuv420p, 30 fps), AAC Audio (48000 Hz, Stereo, 192 kbps), 11.55 MB  
+**Audio / Narration**: Complete 9-segment narration track synthesized via Google Gemini 2.5 Flash Preview TTS (`gemini-2.5-flash-preview-tts` on Gemini Enterprise Agent Platform / Vertex AI, Voice: `Fenrir`), broadcast leveled (-23.1 dB mean, -2.8 dB peak), synchronized to scene cuts with positive slack    
 
 ---
 
-## Timed Demonstration Script (2:55 Total Runtime)
+## Authenticity & Grounding Invariants
 
-### [00:00 – 00:20] Cold Open: Target Audience & The Studio Problem (Demo Target: <20s)
-- **Screen**: Backlot Studio workstation loaded in Google Chrome on Google Cloud Run (`https://backlot-studio-112519007745.us-central1.run.app`). Header displays `Studio OS v2.5` and live SMPTE timecode ticker. Screenplay manuscript for *FREQUENCY ZERO* open in Courier Prime 12pt.
-- **Narration**: *"For independent filmmakers, line producers, and studio executives deciding whether to greenlight a project, pre-production is broken. Turning a screenplay manuscript into breakdowns, schedules, budgets, and pitch kits takes weeks across disconnected spreadsheets with zero financial auditability. Backlot replaces that manual grind with an AI-native studio crew powered exclusively by Google Gemini and live Parallel Search market intelligence."*
+1. **Zero Non-Google AI (§7.B)**: Orchestrated exclusively across Google Gemini 3.5 Flash, Gemini 3.1 Flash, and Gemini 2.5 Flash on Google Cloud Run via Google Gen AI SDK.
+2. **Deterministic Ledger Math**: Audited budget total is `$11,827.00` ($10,752.00 production subtotal + $1,075.00 10% contingency reserve) calculated by pure TypeScript ledger arithmetic. 100% traced (24 of 24 line items mapped via `tracesTo` to physical script breakdown elements).
+3. **Parallel Partner Search Evidence**: Real-time market comps and 15 verified citations retrieved at runtime.
+4. **Partitioned Recommendation**: Source-Backed Production Recommendation (`Audio-Centric Polish Allocation`) strictly separates the retrieved factual finding from inferred producer advice.
+5. **Interactive Cross-Artifact Provenance**: Demonstrated budget navigation from recommendation to Account 6000 *Sound Design, Foley & Mix* line item ($650.00 flat, `tracesTo: Sound design, foley & mix allocation`), confirming that opening and dismissing the audit inspector leaves the canonical top sheet ($11,827.00) invariant.
 
-### [00:20 – 00:55] Dispatching Crew & Live Parallel Search Citations (Demo Target: <60s)
-- **Screen**: Click **Greenlight & Dispatch Crew** (or open Telemetry Wire). Wire monitor shows streaming logs from `global-aiplatform.googleapis.com` under project `polygraph-hackathon`.
-- **Screen Focus (<00:55)**: Switch to Marquee telemetry stream showing live Parallel Search execution (`v1beta/search`). Live comps and festival citations appear with verifiable URLs (e.g. *The Lighthouse* Box Office Mojo `https://www.boxofficemojo.com/release/rl3305670145/`, Sundance, SXSW).
-- **Narration**: *"Director orchestrates six specialized studio units via Gemini on Vertex AI. Notice the telemetry wire: at runtime, Marquee executes live Parallel Search queries, pulling verified market comp and festival award citations directly into the pitch dossier. No stale training data — live web intelligence grounded by Parallel."*
+---
 
-### [00:55 – 01:25] Deliverable 1: Story Coverage (Ink)
-- **Screen**: Select **Story Coverage** tab. Show authentic green rubber stamp: **RECOMMEND** (*"PRIORITY ACQUISITION / FAST-TRACK GREENLIGHT"*). Show pull quote: *“An electrifying masterclass in analog audio suspense.”* Scroll to Critic Diagnostic Score Matrix: Premise 9/10, Structure 9/10, Character 8/10, Dialogue 8/10, Marketability 9/10.
-- **Narration**: *"Ink delivers Hollywood-standard story coverage in seconds. Our calibrated diagnostic matrix scores narrative structure, character arcs, and marketability, concluding with an executive RECOMMEND verdict and actionable development notes."*
+## Timed Demonstration Flow (Actual Measured 02:12.60)
 
-### [01:25 – 01:45] Deliverable 2: 1st AD Physical Breakdown (Slate)
-- **Screen**: Select **1st AD Breakdown** tab. Show 10 scene breakdown strips, color-coded department cards tagging 13 physical categories: Cast, Background Actors, Stunts, SFX, Sound, Props, Vehicles, and Special Equipment.
-- **Narration**: *"Slate conducts a line-by-line 1st AD script breakdown across all 10 scenes, tagging all 13 standard physical production departments — from rain machines and vintage radio consoles to stunt coordinators."*
+### [00:00 – 00:08] Title Card: AI-Native Pre-Production Studio (Duration: 8.0s)
+- **Visual**: High-contrast Backlot Studio Dark Cinema title card displaying system badges, model specifications (Google Gemini 3.5 Flash Live), Parallel Partner Search integration, and pure math deterministic ledger.
+- **Key Message**: Introducing Backlot Studio for the Agentic Cinema Hackathon (Parallel Track).
 
-### [01:45 – 02:05] Deliverable 3: Stripboard Schedule & Magnetic Board (Ledger)
-- **Screen**: Select **Stripboard Schedule** tab. Show 4-Day physical magnetic stripboard with Day/Night color coding (Day Int Canary, Night Int Steel Blue). Highlight summary stats: **4 Shoot Days**, **2 Night Shoots**, **4 Intra-day Company Moves**, **3 Principal Actors**. Expand Day 1 to highlight the 6/8-page company move deduction and cast matrix badges.
-- **Narration**: *"Ledger generates a professional stripboard schedule with pure deterministic math. Location clustering groups scenes, enforces a 6/8th page deduction for company moves, accounts for night shoot differentials, and builds the full Cast Day Matrix."*
+### [00:08 – 00:22] Act 1: Cold Open & Manuscript Ingestion (Duration: 14.0s)
+- **Visual**: Backlot Studio workstation loaded live on Google Cloud Run (`backlot-studio-00014-p4r`). Producer opens manuscript drawer and inputs *FREQUENCY ZERO* (contained suspense thriller featuring radio DJ Jack Mercer and engineer Maya in an isolated Nevada broadcast booth encountering a future broadcast).
+- **Key Message**: Real script input kicking off autonomous multi-agent pre-production.
 
-### [02:05 – 02:25] Deliverable 4: Audited Production Budget (Ledger)
-- **Screen**: Select **Audited Budget** tab. Highlight Canonical Production Top Sheet: Grand Total **$34,735.00** (with 10% contingency included). Click line item `1001 Lead Actor (Elena)` to trigger the Cross-Artifact Provenance modal showing its exact `tracesTo` script origin.
-- **Narration**: *"Here is Backlot's core architectural invariant: 100% pure math ledger arithmetic. No financial numbers are ever routed through an LLM. Every single dollar of our $34,735 top sheet carries an explicit `tracesTo` provenance tag linking directly back to the physical scene breakdown."*
+### [00:22 – 00:52] Act 2: Multi-Agent Crew Dispatch & Real-Time Telemetry (Duration: 30.0s)
+- **Visual**: Producer clicks **Greenlight & Dispatch Crew**. Telemetry Wire terminal slides open. Live Server-Sent Events (SSE) stream across the screen as Director coordinates Ink, Slate, Ledger, Easel, and Marquee. Department status pills turn green in real time. Generation completes in 28.5 seconds.
+- **Key Message**: 6 specialized Google Gemini agents orchestrating live with real-time SSE streaming.
 
-### [02:25 – 02:45] Deliverable 5: Previz Storyboard & Pitch Kit (Easel & Marquee)
-- **Screen**: Select **Previz Storyboard** tab to show 2.39:1 anamorphic cinematography cards with lens choices (35mm Anamorphic, 50mm Prime), lighting setups, and keyframe prompts. Then click **Pitch Kit & Sources** to reveal the theatrical key art concept ("Tomorrow's disaster is tonight's last broadcast.") and Marquee's **Source-Backed Production Recommendation**. Highlight the actionable producer decision to protect the $650 Sound Design line item grounded in *The Vast of Night* (Rotten Tomatoes 92% Fresh) acquisition comp, then click **Inspect in Budget** to demonstrate interactive cross-artifact navigation directly to Account 6000.
-- **Narration**: *"Easel blocks shot lists with 2.39:1 aspect ratio specs, while Marquee turns live Parallel Search market signals into actionable producer recommendations. Benchmarking against The Vast of Night's festival breakout, Backlot advises protecting our $650 sound design allocation on Shoot Day 1. With one click, we inspect that exact line item in the budget ledger, closing the loop from web search to physical production decision."*
+### [00:52 – 01:15] Act 3: Market Intelligence & Parallel Search Evidence (Duration: 23.0s)
+- **Visual**: Producer navigates to **Pitch Kit & Sources** tab. Camera scrolls to the **Parallel Search API Intelligence Engine** card showing 15 verified citations and comps (*The Vast of Night*, *Pontypool*, *Talk to Me*). Scrolling further reveals the **Source-Backed Recommendation** card: `Audio-Centric Polish Allocation`, partitioning retrieved fact from inferred advice.
+- **Key Message**: Live Parallel Search grounding with strict separation between retrieved facts and inferred advice.
 
-### [02:45 – 02:55] Architecture & Closing Summary
-- **Screen**: Show `/api/health` endpoint on screen confirming `Gemini Enterprise Agent Platform (Vertex AI)` (`global-aiplatform.googleapis.com`), project `polygraph-hackathon`, `Parallel Search API (v1beta/search)`, and deployed Cloud Run URL (`https://backlot-studio-112519007745.us-central1.run.app`).
-- **Narration**: *"Built exclusively on Google Gemini, Google Cloud Run, and Parallel Search, with 100% deterministic ledger math. Backlot turns screenplays into production-ready greenlight packages in under thirty seconds."*
+### [01:15 – 01:21.5] Supporting Source Web Citation Cut (Duration: 6.5s)
+- **Visual**: Cut to live web capture of *The Film Collaborative* blog article (*Wrap Report – The Popcorn List*), highlighting the exact external industry article retrieved by Parallel Search.
+- **Key Message**: Direct external evidence verification proving grounded market signals with verified external reporting.
 
+### [01:21.5 – 01:43] Act 4: Interactive Budget Inspection & Script Provenance (Duration: 21.5s)
+- **Visual**: Producer clicks **INSPECT IN BUDGET**. The app navigates to the **Audited Budget** tab. The Line Item Audit Drawer highlights Account 6000 *Sound Design, Foley & Mix* ($650.00 flat, `tracesTo: Sound design, foley & mix allocation`). Producer scrolls to inspect the Canonical Production Top Sheet: Audited Production Total `$11,827.00` ($10,752.00 subtotal + $1,075.00 contingency reserve, 24/24 line items traced). Producer dismisses the drawer, confirming the grand total remains mathematically immutable at `$11,827.00`.
+- **Key Message**: Deterministic pure math ledger arithmetic and 100% cross-artifact script provenance.
+
+### [01:43 – 01:59.9] Act 5: Synchronized Studio Deliverables Tour (Duration: 16.9s)
+- **Visual**: Rapid walkthrough of the remaining synchronized tabs:
+  1. **Story Coverage**: Industry-standard reader coverage with `CONSIDER` verdict and calibrated 1-10 diagnostic scores.
+  2. **1st AD Breakdown**: 13 physical categories tagging speaking cast (Jack, Maya), practical SFX (smoke machine/haze), and key props (RCA ribbon mic, acetate record).
+  3. **Stripboard Schedule**: Physical magnetic stripboard showing 1-day night shoot, 15% night differential, 0 moves, and cast matrix.
+  4. **Previz Storyboard**: 2.39:1 anamorphic previz cards with camera motion, 35mm/85mm lenses, and lighting diagrams.
+- **Key Message**: Synchronized studio-grade deliverables produced from a single screenplay input.
+
+### [01:59.9 – 02:04.6] System Architecture & Cloud Run Health (Duration: 4.7s)
+- **Visual**: Live `/api/health` endpoint on Cloud Run returning HTTP 200 JSON confirming Gemini Enterprise Agent Platform, Parallel Search API connectivity, and container status.
+- **Key Message**: Production-ready deployment verification.
+
+### [02:04.6 – 02:12.6] End Card: Production Audit Receipt (Duration: 8.0s)
+- **Visual**: Backlot Studio production audit receipt showing `$11,827.00` deterministic audited budget, 24/24 traced line items (100%), 15 Parallel citations, 100% Google Gemini exclusive runtime, and 68 passing unit tests.
+- **Key Message**: Verifiable production receipts and hackathon compliance.
+
+---
+
+## File Manifest & Export Verification
+
+| File Path | Description | Format | Size |
+|---|---|---|---|
+| `demo/backlot_studio_demo.mp4` | Master narrated demonstration video (Google Gemini TTS) | 1920x1080 H.264 + AAC Stereo (30fps) | 11.55 MB |
+| `demo/backlot_studio_demo_silent_cut.mp4` | Preserved original silent export | 1920x1080 H.264 MP4 (30fps) | 8.78 MB |
+| `demo/narration_script.md` | Timecoded voiceover narration script & sync guide | Markdown | 5.2 KB |
+| `demo/title_card.html` / `demo/title_card.png` | Studio title card asset | HTML5 / PNG (1920x1080) | 157 KB |
+| `demo/end_card.html` / `demo/end_card.png` | Production audit receipt end card | HTML5 / PNG (1920x1080) | 125 KB |
+| `demo/captures/backlot_master_take.webm` | Continuous master capture from Cloud Run | 1920x1080 WebM | 3.54 MB |
+| `demo/captures/seg_c_source.webm` | Supporting source webpage capture | 1920x1080 WebM | 388 KB |
+| `demo/captures/seg_f_health_1080.webm` | Live architecture health capture | 1920x1080 WebM | 136 KB |
+| `demo/final_frames/` | Keyframe verification PNG captures | 1920x1080 PNGs | 11.2 MB |

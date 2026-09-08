@@ -26,7 +26,7 @@ An AI-native pre-production studio crew powered by Google Gemini and Parallel Se
 - **Hosted Live Application:** `https://backlot-studio-112519007745.us-central1.run.app`
 - **Health & Architecture Endpoint:** `https://backlot-studio-112519007745.us-central1.run.app/api/health`
 - **GitHub Repository:** `https://github.com/zaeem-rafiq/backlot-gemini`
-- **Demo Video:** `[Pending Recording/Upload — see tasks/video-plan.md for 2:55 planned script]`
+- **Demo Video:** `demo/backlot_studio_demo.mp4` (Local 1080p demonstration export with full Google Gemini 2.5 Flash TTS narration; authentic live Cloud Run recording, run `run_1788831276597`, 02:12 duration, accompanied by `demo/narration_script.md`; preserved silent rough cut available at `demo/backlot_studio_demo_silent_cut.mp4`)
 
 ### Built With (Tags)
 ```text
@@ -57,10 +57,10 @@ Backlot is an AI-native pre-production studio workstation that takes raw screenp
 
 1. **Ink (Senior Story Analyst):** Analyzes narrative structure, premise viability, character arcs, and commercial appeal, delivering calibrated 1–10 radar scores, reader pull quotes, and an official Reader Verdict (`RECOMMEND` / `CONSIDER` / `PASS`).
 2. **Slate (1st Assistant Director):** Performs a comprehensive, scene-by-scene script breakdown across **13 physical production categories** (Cast, Background Extras, SFX, VFX, Stunts, Props, Wardrobe, Vehicles, Special Equipment, Sound, Animal Handlers, Location Security, and Makeup/Hair).
-3. **Ledger (Deterministic Line Producer):** Generates an industry-standard **Stripboard Shooting Schedule** (enforcing DGA 12-hour turnaround rest, location clustering, and 3/8-page setup floors) and an **Audited Production Budget** ($34,735 top sheet for *FREQUENCY ZERO*) where **100% of line items carry explicit `tracesTo` provenance strings** linking every dollar directly to its breakdown trigger.
+3. **Ledger (Deterministic Line Producer):** Generates an industry-standard **Stripboard Shooting Schedule** (enforcing DGA 12-hour turnaround rest, location clustering, and 3/8-page setup floors) and an **Audited Production Budget** ($34,735 top sheet for *FREQUENCY ZERO*) where **100% of line items carry explicit `tracesTo` provenance strings** linking each line item to the script breakdown element that triggered it. Direct script elements trace directly to breakdown elements; rate cards, union tiers, packaging, and contingency derive from deterministic rules and package assumptions, not direct script tokens. The workstation UI supports interactive line-item inspection, cross-artifact highlighting, and evidence drawer review.
 4. **Easel (Key Storyboard Artist):** Generates a **2.39:1 Anamorphic Previz Deck** with shot-by-shot lens choices, camera motion blocking, Kodak 5219 film stock LUTs, and lighting schemas. Previz cards degrade gracefully with full prompt engineering if image generation quota is unavailable.
-5. **Marquee (Packaging & Distribution):** Queries the live **Parallel Search API** at runtime to pull real-time theatrical and festival comparables, target audience personas, ROI projections, and a curated festival submission roadmap with verified submission windows. It translates market comps into **source-backed production recommendations** that cross-link directly to budget line items (e.g. protecting the $650 Sound Design allocation based on *The Vast of Night* critical acclaim). In keeping with our strict grounding invariants, **recommendations are withheld when no source evidence is returned**, keeping retrieved factual findings visibly distinct from inferred producer counsel.
-6. **Revision Diffing & Cascade Invalidation Engine:** When a filmmaker edits a screenplay (e.g., cutting a high-hazard stunt in Scene 8), Backlot re-analyzes only the modified scene, **pinning all 9 untouched scenes with 100% zero mathematical drift**. The Executive Delta banner immediately reports the exact computed variance (**-$6,484 net budget reduction**) and marks affected storyboard keyframes as `STALE` for selective re-render.
+5. **Marquee (Packaging & Distribution):** Queries the live **Parallel Search API** at runtime to pull real-time theatrical and festival comparables, target audience personas, ROI projections, and a curated festival submission roadmap with verified submission windows. It translates market comps into **source-backed production recommendations** that cross-link directly to budget line items (specifically Account 6000 *Sound Design, Foley & Mix* at $650 flat based on *The Vast of Night* critical acclaim, distinct from on-set crew rates or sound mixer compensation). In keeping with our strict grounding invariants, **recommendations are withheld when no source evidence is returned**, keeping retrieved factual findings visibly distinct from inferred producer counsel.
+6. **Screenplay Revision Cascade Engine:** Backlot includes a deterministic cascade invalidation engine (`revision-engine.ts`) that matches scene headers, pins all unmodified scenes, re-breaks only changed scenes, and computes exact budget/schedule deltas without mathematical drift. The studio UI focuses on interactive line-item inspection, cross-artifact highlighting, and full-package generation rather than unvetted selective budget edits.
 7. **Zero-Quota Demonstration Mode:** Pre-loaded with a verified 7-artifact production package (`src/fixtures/sample-run.json`) and static renders, allowing evaluators and judges to inspect the complete studio workstation at zero API quota cost.
 
 ---
@@ -76,15 +76,15 @@ Backlot was engineered as a high-performance, containerized studio workstation w
   - *Fast Synthesis & Packaging (Easel, Marquee):* `gemini-3.1-flash-lite` $\rightarrow$ `gemini-2.5-flash-lite` $\rightarrow$ `gemini-2.5-flash`
   - *Visual Storyboard Keyframes (Easel):* `gemini-2.5-flash-image` $\rightarrow$ `gemini-3.1-flash-image` $\rightarrow$ `gemini-3-pro-image`
 - **Official Parallel Search API (Partner Track):** Marquee connects to `https://api.parallel.ai/v1beta/search` at runtime via a clean REST client, pulling live market comps and festival signals without bloated third-party wrappers. Retrieved facts remain strictly separate from inferred producer advice; URL membership in search citations indicates query relevance rather than proof that a source supports every recommendation. When search returns no citations or is offline, recommendations are withheld rather than hallucinated.
-- **100% Deterministic Pure TypeScript Ledger Math:** Financial calculations, night premiums (+15%), overtime thresholds, catering person-days ($22/person/day), and 10% contingency reserves are computed in pure TypeScript functions covered by **48 automated unit tests**. Financial numbers and scheduling formulas are **never routed through an LLM**.
+- **100% Deterministic Pure TypeScript Ledger Math:** Budget and schedule arithmetic is computed deterministically in TypeScript, with cross-artifact provenance tracing each line item to the script breakdown element that triggered it. Financial calculations, night premiums (+15%), overtime thresholds, catering person-days ($22/person/day), and 10% contingency reserves are computed in pure TypeScript functions covered by **68 automated unit tests**. Financial numbers and scheduling formulas are **never routed through an LLM**.
 - **Deployment & Cloud Infrastructure:** Containerized with **Docker** and deployed to **Google Cloud Run** in `us-central1` with a 900-second execution timeout, auto-scaling, and measured warm health responses at ~37ms.
 
 ---
 
 ### Challenges We Ran Into
 
-1. **Eliminating Arithmetic Hallucinations:** Early experiments demonstrated that LLMs frequently make subtle math errors on complex budgets (drifting subtotals, missed overtime multipliers, inconsistent catering counts). We solved this by enforcing a strict architectural invariant: **zero LLM math**. The AI agents extract physical elements (stunts, cast, rain rigs); our deterministic pure TypeScript engine calculates all days, rates, and budgets.
-2. **Preventing Physical Breakdown Hallucinations:** During dogfooding with an artisan screenplay (*The Glassblower*), the breakdown agent classified holding a glassblowing pipe as a physical stunt, booking an unnecessary $1,300 Stunt Coordinator. We resolved this by engineering strict negative constraints in the agent prompt, cleanly separating artisan craft and manual labor from genuine high-hazard stunts.
+1. **Eliminating Arithmetic Inaccuracies:** Early experiments demonstrated that LLMs frequently make subtle math errors on complex budgets (drifting subtotals, missed overtime multipliers, inconsistent catering counts). We solved this by enforcing a strict architectural invariant: **zero LLM math**. The AI agents extract physical elements (stunts, cast, rain rigs); our deterministic pure TypeScript engine calculates all days, rates, and budgets.
+2. **Preventing Physical Breakdown Classification Errors:** During dogfooding with an artisan screenplay (*The Glassblower*), the breakdown agent classified holding a glassblowing pipe as a physical stunt, booking an unnecessary $1,300 Stunt Coordinator. We resolved this by engineering strict negative constraints in the agent prompt, cleanly separating artisan craft and manual labor from genuine high-hazard stunts.
 3. **Selective Scene Pinning & Invalidation:** When a screenwriter modifies one scene in a 10-scene script, re-running all agents introduces random drift in untouched scenes. We built a deterministic cascade invalidation engine (`revision-engine.ts`) that matches scene headers, pins all unmodified scenes, re-breaks only changed scenes, and computes exact budget/schedule deltas.
 4. **Honest Degraded States & Zero-Quota Bake:** Public demos often fail when API quotas or rate limits are exceeded. We designed Backlot from day one with graceful fallbacks: prompt-only previz cards when image quotas are exhausted, clear degradation notices for search APIs, and a verified baked fixture that loads all 7 artifacts instantly.
 
@@ -95,7 +95,7 @@ Backlot was engineered as a high-performance, containerized studio workstation w
 - **100% Google AI & Hackathon Rule Compliance (§7.B):** Backlot uses exclusively Google Gemini models across all agent workflows. Zero non-Google AI libraries (no OpenAI, Anthropic, Replicate, FLUX, LangChain, LlamaIndex, or CrewAI).
 - **Measured Live Studio Execution:** Completed a full 6-agent streaming pipeline with live Parallel search in ~27.8s on Cloud Run for a 2-scene script.
 - **Mathematical Auditability:** Recomputed 28 of 28 line items, 7 of 7 category subtotals, and verified 100% of `tracesTo` provenance strings against script elements.
-- **Robustness & Test Suite:** 46 automated unit tests passing across ledger math, schema contracts, fallback chains, and parallel mapping.
+- **Robustness & Test Suite:** 68 automated unit tests passing across ledger math, schema contracts, fallback chains, and parallel mapping.
 - **Live Cloud Run Deployment:** Verified on Google Cloud Run in `us-central1` with healthy `/api/health` introspection and `/api/run` SSE telemetry streaming.
 
 ---
@@ -124,7 +124,7 @@ Backlot was engineered as a high-performance, containerized studio workstation w
 | **100% Google Gemini Models** | Ink/Slate: `gemini-3.5-flash`; Easel/Marquee: `gemini-3.1-flash-lite`; Easel Previz: `gemini-2.5-flash-image` | **COMPLIANT** |
 | **Zero Non-Google AI** | 0 references to OpenAI, Anthropic, Replicate, FLUX, LangChain, LlamaIndex, CrewAI | **COMPLIANT** |
 | **Partner Track Integration** | Official runtime integration with Parallel Search API (`v1beta/search`) in Marquee | **COMPLIANT** |
-| **Deterministic Math** | Pure TypeScript ledger engine for all budget and schedule arithmetic (46 unit tests) | **COMPLIANT** |
+| **Deterministic Math** | Budget and schedule arithmetic computed deterministically in TypeScript (68 unit tests) | **COMPLIANT** |
 | **Cross-Artifact Provenance** | 100% of budget line items contain `tracesTo` links back to breakdown elements | **COMPLIANT** |
 | **Zero-Quota Bake** | Pre-baked 7-artifact sample fixture loads instantly (~37ms local load) with zero API calls | **COMPLIANT** |
 | **Live Deployed URL** | Live container deployed on Google Cloud Run (`us-central1`) | **COMPLIANT** |
@@ -135,20 +135,22 @@ Backlot was engineered as a high-performance, containerized studio workstation w
 
 ## 4. Verification Evidence & Inspection Commands
 
-### Automated Test Suite (46 Tests Passing)
+### Automated Test Suite (68 Tests Passing)
 ```bash
 $ npm test
-✓ src/lib/ai/__tests__/fallback.test.ts (7 tests)
 ✓ src/lib/parallel/__tests__/parallel.test.ts (3 tests)
 ✓ src/lib/ledger/__tests__/schedule.test.ts (7 tests)
 ✓ src/lib/ledger/__tests__/budget.test.ts (9 tests)
 ✓ src/lib/ledger/__tests__/revision-adversarial.test.ts (4 tests)
 ✓ src/lib/ledger/__tests__/revision.test.ts (9 tests)
-✓ src/lib/types/__tests__/schemas.test.ts (5 tests)
+✓ src/lib/types/__tests__/schemas.test.ts (7 tests)
+✓ src/lib/agents/__tests__/marquee-recommendation.test.ts (10 tests)
 ✓ src/lib/agents/__tests__/director.test.ts (2 tests)
+✓ src/lib/ai/__tests__/fallback.test.ts (7 tests)
+✓ src/components/artifacts/__tests__/AuditedBudget.test.ts (10 tests)
 
-Test Files  8 passed (8)
-     Tests  46 passed (46)
+Test Files  10 passed (10)
+     Tests  68 passed (68)
 ```
 
 ### Production Build Verification

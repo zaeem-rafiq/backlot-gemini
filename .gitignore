@@ -33,3 +33,11 @@ scratch/
 .scratch/
 .compound-engineering/*.local.yaml
 .agents/
+
+# Demo captures, video exports & frame dumps
+demo/captures/
+demo/*.mp4
+demo/*.webm
+demo/*.png
+demo/*frames/
+demo/master_timeline/
