@@ -871,12 +871,14 @@ export default function BacklotStudioPage() {
                 runState?.budget ? (
                   <AuditedBudget
                     budget={runState.budget}
+                    productionRecommendation={runState.pitchKit?.productionRecommendation ?? null}
                     recommendedItemName={
                       highlightedBudgetItem ??
                       (runState.pitchKit?.productionRecommendation?.affectedArtifact?.kind === "budget_line_item"
                         ? runState.pitchKit.productionRecommendation.affectedArtifact.identifier
                         : undefined)
                     }
+                    initialSelectedItemName={highlightedBudgetItem ?? undefined}
                   />
                 ) : (
                   <EmptyArtifactPlaceholder

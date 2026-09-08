@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo, useEffect } from "react";
 import { Budget, BudgetLineItem } from "@/lib/types/budget";
+import { ProductionRecommendation } from "@/lib/types/pitch";
 import {
   DollarSign,
   ShieldCheck,
@@ -17,34 +18,74 @@ import {
   Calculator,
 } from "lucide-react";
 
-interface AuditedBudgetProps {
-  budget: Budget;
-  recommendedItemName?: string;
+export function getRecommendationForBudgetItem(
+  item: BudgetLineItem | null | undefined,
+  recommendation?: ProductionRecommendation | null
+): ProductionRecommendation | null {
+  if (!item || !recommendation) return null;
+  if (recommendation.affectedArtifact.kind !== "budget_line_item") return null;
+
+  const recTarget = recommendation.affectedArtifact.identifier.toLowerCase().trim();
+  const itemName = item.item.toLowerCase().trim();
+
+  if (itemName.includes(recTarget) || recTarget.includes(itemName)) {
+    return recommendation;
+  }
+  return null;
 }
 
-export function AuditedBudget({ budget, recommendedItemName }: AuditedBudgetProps) {
-  const [selectedTraceItem, setSelectedTraceItem] = useState<BudgetLineItem | null>(null);
+export interface AuditedBudgetProps {
+  budget: Budget;
+  productionRecommendation?: ProductionRecommendation | null;
+  recommendedItemName?: string;
+  initialSelectedItemName?: string;
+}
+
+export function AuditedBudget({
+  budget,
+  productionRecommendation,
+  recommendedItemName,
+  initialSelectedItemName,
+}: AuditedBudgetProps) {
+  const [selectedTraceItem, setSelectedTraceItem] = useState<BudgetLineItem | null>(() => {
+    const targetName = initialSelectedItemName || recommendedItemName;
+    if (targetName) {
+      for (const section of budget.sections) {
+        const found = section.items.find(
+          (i) =>
+            i.item.toLowerCase().includes(targetName.toLowerCase()) ||
+            targetName.toLowerCase().includes(i.item.toLowerCase())
+        );
+        if (found) return found;
+      }
+    }
+    return null;
+  });
   const [collapsedCategories, setCollapsedCategories] = useState<Record<string, boolean>>({});
   const toggleCategory = (cat: string) => {
     setCollapsedCategories((prev) => ({ ...prev, [cat]: !prev[cat] }));
   };
 
-  // Ensure the section containing recommendedItemName is uncollapsed
+  // Ensure the section containing recommendedItemName or initialSelectedItemName is uncollapsed
   useEffect(() => {
-    if (recommendedItemName) {
+    const targetName = initialSelectedItemName || recommendedItemName;
+    if (targetName) {
       for (const section of budget.sections) {
         const found = section.items.find(
           (i) =>
-            i.item.toLowerCase().includes(recommendedItemName.toLowerCase()) ||
-            recommendedItemName.toLowerCase().includes(i.item.toLowerCase())
+            i.item.toLowerCase().includes(targetName.toLowerCase()) ||
+            targetName.toLowerCase().includes(i.item.toLowerCase())
         );
         if (found) {
           setCollapsedCategories((prev) => ({ ...prev, [section.category]: false }));
+          if (initialSelectedItemName) {
+            setSelectedTraceItem(found);
+          }
           break;
         }
       }
     }
-  }, [recommendedItemName, budget.sections]);
+  }, [initialSelectedItemName, recommendedItemName, budget.sections]);
 
   // Scroll to provenance drawer when an item is selected
   useEffect(() => {
@@ -197,17 +238,53 @@ export function AuditedBudget({ budget, recommendedItemName }: AuditedBudgetProp
                 <span className="text-studio-400 uppercase text-[10px] block mb-0.5 font-bold">Script Breakdown Origin (tracesTo):</span>
                 <strong className="text-white">{selectedTraceItem.tracesTo}</strong>
               </div>
-              {recommendedItemName && selectedTraceItem.item.toLowerCase().includes(recommendedItemName.toLowerCase()) && (
-                <div className="text-xs text-sky-300 bg-sky-950/30 border border-sky-500/30 rounded-lg p-2.5 mt-1 flex items-start gap-2">
-                  <Search className="w-3.5 h-3.5 text-sky-400 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <span className="text-sky-300 uppercase text-[10px] block font-extrabold tracking-wider">Parallel Market Comp Reference:</span>
-                    <span className="text-[11px] text-studio-200">
-                      Grounded in retrieved Parallel Search comps. Backlot Studio infers maintaining this audio design allocation to preserve festival acquisition value.
-                    </span>
+              {/* Parallel Market Comp Reference: Grounded dynamically in current run's recommendation */}
+              {(() => {
+                const matchingRec = getRecommendationForBudgetItem(selectedTraceItem, productionRecommendation);
+                if (!matchingRec) return null;
+                return (
+                  <div className="text-xs text-sky-300 bg-sky-950/40 border border-sky-500/40 rounded-lg p-3 mt-1 flex flex-col gap-2">
+                    <div className="flex items-center justify-between gap-2 flex-wrap">
+                      <span className="text-sky-300 uppercase text-[10px] font-extrabold tracking-wider flex items-center gap-1.5">
+                        <Search className="w-3.5 h-3.5 text-sky-400 flex-shrink-0" />
+                        Parallel Market Comp Reference ({matchingRec.category.replace(/_/g, " ")})
+                      </span>
+                      {matchingRec.sourceCitation.url ? (
+                        <a
+                          href={matchingRec.sourceCitation.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[9px] px-2 py-0.5 rounded bg-sky-500/20 text-sky-300 hover:text-white border border-sky-500/40 font-bold underline transition"
+                        >
+                          {matchingRec.sourceCitation.title}
+                        </a>
+                      ) : (
+                        <span className="text-[9px] px-2 py-0.5 rounded bg-sky-500/20 text-sky-300 border border-sky-500/40 font-bold">
+                          {matchingRec.sourceCitation.title}
+                        </span>
+                      )}
+                    </div>
+                    <div className="bg-[#06080C] border border-sky-500/20 rounded p-2.5 text-[11px] text-studio-200">
+                      <span className="text-sky-400 text-[9px] uppercase font-bold block mb-0.5">
+                        [Retrieved Fact · Parallel Search API]
+                      </span>
+                      {matchingRec.factualFinding}
+                    </div>
+                    <div className="bg-[#06080C] border border-amber-500/20 rounded p-2.5 text-[11px] text-studio-200">
+                      <span className="text-amber-400 text-[9px] uppercase font-bold block mb-0.5">
+                        [Inferred Producer Advice · Studio OS]
+                      </span>
+                      {matchingRec.inferredAdvice}
+                    </div>
+                    {matchingRec.actionableDecision && (
+                      <div className="text-[11px] text-studio-300 pt-0.5">
+                        <strong className="text-white">Actionable Decision: </strong>
+                        {matchingRec.actionableDecision}
+                      </div>
+                    )}
                   </div>
-                </div>
-              )}
+                );
+              })()}
               <span className="text-[11px] text-studio-300 pt-1 font-mono-tabular">
                 Deterministic Formula: {selectedTraceItem.qty} {selectedTraceItem.unit} @ ${selectedTraceItem.rate.toLocaleString()} / unit = <strong className="text-emerald-400">${selectedTraceItem.total.toLocaleString()}</strong>
               </span>
@@ -290,11 +367,13 @@ export function AuditedBudget({ budget, recommendedItemName }: AuditedBudgetProp
                     </thead>
                     <tbody className="divide-y divide-studio-800/60 font-mono">
                       {section.items.map((item, idx) => {
+                        const matchingRec = getRecommendationForBudgetItem(item, productionRecommendation);
                         const isRecommended = Boolean(
-                          recommendedItemName && (
+                          matchingRec ||
+                          (recommendedItemName && (
                             item.item.toLowerCase().includes(recommendedItemName.toLowerCase()) ||
                             recommendedItemName.toLowerCase().includes(item.item.toLowerCase())
-                          )
+                          ))
                         );
                         return (
                           <tr

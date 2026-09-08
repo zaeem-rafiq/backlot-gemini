@@ -24,11 +24,12 @@ Requirements:
 6. Provide a vertical (2:3) poster concept and generation prompt.
 7. CRITICAL: The pitchParagraph (3-5 sentences) MUST EXPLICITLY REFERENCE the story analyst coverage verdict (e.g. RECOMMEND/CONSIDER) AND the exact audited budget total dollar amount calculated by Ledger.
 8. SOURCE-BACKED PRODUCTION RECOMMENDATION:
-   - When verified MARKET RESEARCH EVIDENCE from Parallel Search is provided: You MUST synthesize an actionable 'productionRecommendation' for an indie producer.
+   - When verified MARKET RESEARCH EVIDENCE from Parallel Search is provided: You may synthesize an actionable 'productionRecommendation' for an indie producer.
      * factualFinding: Direct factual market benchmark or distribution precedent directly established by the source citation.
      * inferredAdvice: Strategic recommendation inferred by Backlot Studio for this specific production.
      * Connect one specific finding from the retrieved market citations to a concrete production artifact (a shooting day from the schedule, a scene from the script, a specific budget line item from the ledger, or a coverage diagnostic score). Formulate a concrete producer action and trade-off rationale. The sourceCitation must use an exact citation provided in the prompt.
-   - When MARKET RESEARCH EVIDENCE is offline/empty: Do NOT emit any production recommendation.
+     * CRITICAL PHYSICAL FEASIBILITY INVARIANT: NEVER recommend cutting, defunding, or diverting budget away from cast, crew, or equipment required by physical screenplay breakdown elements (e.g., Stunt Coordinator, Practical SFX Technician, Special HMU, Animal Wrangler). Screenplay requirements are fixed for physical production and cannot be compromised based on festival market comps. Market research citations support strategic festival windowing, distribution packaging, or allocating/protecting post-production sound, color finishing, and deliverables.
+   - When MARKET RESEARCH EVIDENCE is offline/empty, or citations do not justify a concrete production action: Do NOT emit any production recommendation (leave null).
 9. Output must strictly conform to the JSON schema.`;
 
 const PITCH_KIT_JSON_SCHEMA = {
@@ -144,6 +145,82 @@ const PITCH_KIT_JSON_SCHEMA = {
   ],
 };
 
+export function validateProductionRecommendation(
+  rec: ProductionRecommendation | null,
+  budget: Budget,
+  marketEvidence: ParallelSourceCitation[]
+): ProductionRecommendation | null {
+  if (!rec) return null;
+  if (!marketEvidence || marketEvidence.length === 0) return null;
+
+  // Must match a real citation from marketEvidence
+  const citationMatches = marketEvidence.some(
+    (c) => c.url === rec.sourceCitation.url || c.title === rec.sourceCitation.title
+  );
+  if (!citationMatches) return null;
+
+  // If affectedArtifact targets a budget line item
+  if (rec.affectedArtifact.kind === "budget_line_item") {
+    const targetId = rec.affectedArtifact.identifier.toLowerCase().trim();
+    const allItems = budget.sections.flatMap((s) => s.items);
+    const targetItem = allItems.find(
+      (i) => i.item.toLowerCase().includes(targetId) || targetId.includes(i.item.toLowerCase())
+    );
+
+    if (targetItem) {
+      // Check if target item is required by physical script breakdown
+      const tracesLower = targetItem.tracesTo.toLowerCase();
+      const isScriptRequired =
+        tracesLower.includes("flagged in scene") ||
+        tracesLower.includes("stunts flagged") ||
+        tracesLower.includes("practical sfx flagged") ||
+        tracesLower.includes("special makeup");
+
+      if (isScriptRequired) {
+        // Does the recommendation propose cutting, defunding, or diverting away from this required crew?
+        const diversionKeywords = /\b(divert|cut|reduce|defund|trim|slash|reallocate away|reallocating away|saving from)\b/i;
+        const textToCheck = `${rec.actionableDecision} ${rec.inferredAdvice} ${rec.tradeoffRationale}`;
+        if (diversionKeywords.test(textToCheck)) {
+          // Unsupported budget diversion from script-required crew!
+          // Check if it can be narrowed to a supported post-production action
+          const postItem = allItems.find(
+            (i) =>
+              i.category.toLowerCase().includes("post") ||
+              i.item.toLowerCase().includes("sound design") ||
+              i.item.toLowerCase().includes("color")
+          );
+
+          const mentionsPost = /\b(sound design|foley|audio|color grading|mastering)\b/i.test(textToCheck);
+          const citationMentionsPost = /\b(sound|audio|score|music|color|visual|post)\b/i.test(
+            `${rec.sourceCitation.snippet} ${rec.sourceCitation.title}`
+          );
+
+          if (postItem && mentionsPost && citationMentionsPost) {
+            // Narrow to supported post-production allocation
+            return {
+              ...rec,
+              title: `Protect & Prioritize ${postItem.item}`,
+              actionableDecision: `Prioritize and allocate dedicated investment for ${postItem.item} to meet festival acquisition standards grounded in ${rec.sourceCitation.title}.`,
+              tradeoffRationale: `Grounded in market comps from ${rec.sourceCitation.title}. Maintaining dedicated post-production finishing preserves festival programmer engagement.`,
+              affectedArtifact: {
+                kind: "budget_line_item",
+                identifier: postItem.item,
+                label: `Account: ${postItem.category} / ${postItem.item}`,
+                tabTarget: "BUDGET",
+              },
+            };
+          }
+
+          // Otherwise, the diversion cannot be justified against the production requirement: withhold!
+          return null;
+        }
+      }
+    }
+  }
+
+  return rec;
+}
+
 export class MarqueeAgent {
   private client: GeminiStudioClient;
   private parallelClient: ParallelSearchClient;
@@ -244,7 +321,8 @@ INSTRUCTIONS:
 - Create a portrait (2:3) poster art direction and self-contained generation prompt.
 - Write a 3-5 sentence executive pitchParagraph that explicitly cites the '${coverage.verdict}' coverage verdict and the exact '${budgetTotalFormatted}' budget total.
 - SOURCE-BACKED PRODUCTION RECOMMENDATION:
-  * If MARKET RESEARCH EVIDENCE is provided above: Synthesize exactly one high-leverage 'productionRecommendation' for an indie producer. Select one of the exact citations retrieved above, link it to a concrete artifact (e.g., 'Shoot Day 1', a specific budget line item like 'Sound Design & Foley', or a scene), state the actionable decision, and provide the evidence-backed tradeoff rationale.
+  * If MARKET RESEARCH EVIDENCE is provided above: Synthesize at most one high-leverage 'productionRecommendation' for an indie producer. Select one of the exact citations retrieved above, link it to a concrete artifact (e.g., 'Shoot Day 1', an enhanceable post-production line item like 'Sound Design & Foley', or a scene), state the actionable decision, and provide the evidence-backed tradeoff rationale.
+  * PHYSICAL FEASIBILITY INVARIANT: Never recommend cutting, defunding, or diverting funds from script-required physical crew or equipment (such as Practical SFX Technician, Stunt Coordinator, or Key HMU). Budget recommendations must only target enhanceable allocations (Sound, Color, Deliverables, Contingency), or focus on FESTIVAL_WINDOW / DISTRIBUTION_STRATEGY. If citations do not support a valid tradeoff, omit productionRecommendation (null).
   * If MARKET RESEARCH EVIDENCE is offline/empty: Do NOT include a productionRecommendation (leave null).`;
 
     const result = await this.client.generateStructured<unknown>({
@@ -268,7 +346,7 @@ INSTRUCTIONS:
 
         try {
           const rawArtifact = (rawRec.affectedArtifact as Record<string, unknown>) || {};
-          productionRecommendation = {
+          const candidateRec: ProductionRecommendation = {
             title: String(rawRec.title),
             category: (rawRec.category as ProductionRecommendation["category"]) || "DISTRIBUTION_STRATEGY",
             factualFinding: String(rawRec.factualFinding || matchedCitation.snippet),
@@ -283,29 +361,18 @@ INSTRUCTIONS:
             },
             sourceCitation: matchedCitation,
           };
+
+          // Validate physical feasibility: do not allow unsupported diversions from script-required crew
+          productionRecommendation = validateProductionRecommendation(candidateRec, budget, marketEvidence);
+          if (!productionRecommendation && candidateRec) {
+            onLog?.(
+              "info",
+              `Marquee withheld unsupported recommendation targeting script-required crew '${candidateRec.affectedArtifact.identifier}'.`
+            );
+          }
         } catch {
           productionRecommendation = null;
         }
-      }
-
-      // If the LLM omitted it despite live evidence, ground it to the primary citation
-      if (!productionRecommendation && marketEvidence[0]) {
-        const primary = marketEvidence[0];
-        productionRecommendation = {
-          title: `Market Alignment for ${scriptParse.title}`,
-          category: "DISTRIBUTION_STRATEGY",
-          factualFinding: primary.snippet,
-          inferredAdvice: `Align festival submission strategy and sound design investment with comparable benchmarks established by ${primary.title}.`,
-          actionableDecision: `Benchmark festival positioning and audio/visual expectations against verified market comps from ${primary.title}.`,
-          tradeoffRationale: primary.snippet,
-          affectedArtifact: {
-            kind: "budget_line_item",
-            identifier: "Sound Design, Foley & Mix",
-            label: "Account 6000: Post Production / Sound Design, Foley & Mix",
-            tabTarget: "BUDGET",
-          },
-          sourceCitation: primary,
-        };
       }
     }
 
