@@ -221,6 +221,64 @@ describe("AuditedBudget — Recommendation Provenance & Drawer Display", () => {
     expect(html).not.toContain("Parallel Market Comp Reference");
     expect(html).not.toContain("Actionable Decision:");
   });
+
+  it("clears stale selected drawer and row highlight when budget or run is replaced", () => {
+    // Initial render with Sound Design highlighted and selected
+    const initialHtml = renderToStaticMarkup(
+      React.createElement(AuditedBudget, {
+        budget: mockBudget,
+        productionRecommendation: soundRec,
+        recommendedItemName: "Sound Design, Foley & Mix",
+        initialSelectedItemName: "Sound Design, Foley & Mix",
+      })
+    );
+    expect(initialHtml).toContain("line-item-audit-drawer");
+    expect(initialHtml).toContain("Sound Design, Foley &amp; Mix");
+    expect(initialHtml).toContain("border-sky-400");
+
+    // New run / sample replacement: new budget without that recommendation or selection
+    const newSampleBudget: Budget = {
+      ...mockBudget,
+      sections: [
+        {
+          category: "Crew",
+          subtotal: 500,
+          items: [
+            {
+              category: "Crew",
+              item: "Director of Photography",
+              unit: "day",
+              qty: 1,
+              rate: 500,
+              total: 500,
+              tracesTo: "DP booked for 1 day",
+            },
+          ],
+        },
+      ],
+      summary: {
+        ...mockBudget.summary,
+        crewSubtotal: 500,
+        grandTotal: 550,
+      },
+    };
+
+    const replacedHtml = renderToStaticMarkup(
+      React.createElement(AuditedBudget, {
+        budget: newSampleBudget,
+        productionRecommendation: null,
+        recommendedItemName: undefined,
+        initialSelectedItemName: undefined,
+      })
+    );
+
+    // Stale drawer and stale highlight must be completely absent!
+    expect(replacedHtml).not.toContain("line-item-audit-drawer");
+    expect(replacedHtml).not.toContain("border-sky-400");
+    expect(replacedHtml).not.toContain("bg-sky-500/15");
+    expect(replacedHtml).not.toContain("Sound Design, Foley & Mix");
+    expect(replacedHtml).toContain("Director of Photography");
+  });
 });
 
 describe("PitchKitView — Recommendation & Withholding Copy Calibration", () => {
@@ -251,6 +309,7 @@ describe("PitchKitView — Recommendation & Withholding Copy Calibration", () =>
   it("displays evidence unavailable notice when market evidence is empty", () => {
     const html = renderToStaticMarkup(
       React.createElement(PitchKitView, {
+        title: "FREQUENCY ZERO",
         pitchKit: {
           ...basePitchKit,
           marketEvidence: [],
@@ -268,6 +327,7 @@ describe("PitchKitView — Recommendation & Withholding Copy Calibration", () =>
   it("distinguishes rejected recommendation with available citations from unavailable search", () => {
     const html = renderToStaticMarkup(
       React.createElement(PitchKitView, {
+        title: "FREQUENCY ZERO",
         pitchKit: {
           ...basePitchKit,
           marketEvidence: [
@@ -294,6 +354,7 @@ describe("PitchKitView — Recommendation & Withholding Copy Calibration", () =>
   it("displays supported recommendation with retrieved fact and inferred advice strictly partitioned", () => {
     const html = renderToStaticMarkup(
       React.createElement(PitchKitView, {
+        title: "FREQUENCY ZERO",
         pitchKit: {
           ...basePitchKit,
           marketEvidence: [

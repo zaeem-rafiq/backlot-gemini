@@ -277,15 +277,18 @@ describe("validateProductionRecommendation — Physical Feasibility & Feasibilit
 describe("MarqueeAgent Normalization Boundary & Provider Mocking", () => {
   const mockScriptParse: ScriptParse = {
     title: "FREQUENCY ZERO",
+    format: "short",
     logline: "A radio host discovers a broadcast from the future.",
     scenes: [
       {
-        sceneId: 1,
+        id: 1,
         slugline: "INT. RADIO BOOTH - NIGHT",
+        intExt: "INT",
         location: "RADIO BOOTH",
         timeOfDay: "NIGHT",
+        summary: "Jack sits by the vintage broadcast console.",
+        characters: ["JACK"],
         pageEighths: 8,
-        description: "Jack sits by the vintage broadcast console.",
       },
     ],
   };
@@ -521,5 +524,176 @@ describe("MarqueeAgent Normalization Boundary & Provider Mocking", () => {
     expect(capturedPrompt).toContain("ELIGIBLE BUDGET LINE ITEMS FROM AUDITED LEDGER:");
     expect(capturedPrompt).toContain("Production Sound Mixer");
     expect(capturedPrompt).toContain("Sound Design, Foley & Mix");
+  });
+
+  it("withholds recommendation when matched citation has an empty or unusable excerpt", async () => {
+    const citationWithEmptySnippet: ParallelSourceCitation = {
+      ...canonicalCitation,
+      snippet: "   ", // Empty / whitespace-only excerpt!
+    };
+
+    const mockGeminiClient = {
+      generateStructured: vi.fn().mockResolvedValue({
+        data: {
+          tagline: "Static in the dark.",
+          loglines: ["A late night DJ hears tomorrow's news.", "Static yields secrets."],
+          whyNow: "Audio suspense is booming.",
+          audience: { primary: "Indie thriller fans", secondary: "Festival goers" },
+          festivalStrategy: [{ name: "Sundance", tier: "Tier 1 / Oscar Qualifying", why: "Strong genre fit" }],
+          posterConcept: { description: "Radio tower", imagePrompt: "Dark radio tower in storm." },
+          pitchParagraph: "Carrying a CONSIDER verdict and an audited budget total of $1,210.",
+          productionRecommendation: {
+            title: "Protect Sound Design Allocation",
+            category: "BUDGET_ALLOCATION",
+            factualFinding: "Some model text",
+            inferredAdvice: "Protect sound allocation.",
+            actionableDecision: "Protect Sound Design, Foley & Mix line item.",
+            tradeoffRationale: "Essential for festivals.",
+            affectedArtifact: {
+              kind: "budget_line_item",
+              identifier: "Sound Design, Foley & Mix",
+              label: "Account 6000: Post Production / Sound Design, Foley & Mix",
+              tabTarget: "BUDGET",
+            },
+            sourceCitation: {
+              title: citationWithEmptySnippet.title,
+              url: citationWithEmptySnippet.url,
+            },
+          },
+        },
+        rawText: "{}",
+        modelUsed: "gemini-3.1-flash-lite",
+        durationMs: 400,
+      }),
+    } as unknown as GeminiStudioClient;
+
+    const mockParallelClient = {
+      searchMarket: vi.fn().mockResolvedValue([citationWithEmptySnippet]),
+    } as unknown as ParallelSearchClient;
+
+    const agent = new MarqueeAgent(mockGeminiClient, mockParallelClient);
+    const result = await agent.generatePitchKit(mockScriptParse, mockCoverage, mockFullBudget, mockBreakdown);
+
+    // An empty or unusable excerpt cannot become claimed supporting evidence!
+    expect(result.pitchKit.productionRecommendation).toBeNull();
+  });
+
+  it("withholds recommendation when model emits an invalid or ambiguous budget target (nonexistent or substring)", async () => {
+    const mockGeminiClient = {
+      generateStructured: vi.fn().mockResolvedValue({
+        data: {
+          tagline: "Static in the dark.",
+          loglines: ["A late night DJ hears tomorrow's news.", "Static yields secrets."],
+          whyNow: "Audio suspense is booming.",
+          audience: { primary: "Indie thriller fans", secondary: "Festival goers" },
+          festivalStrategy: [{ name: "Sundance", tier: "Tier 1 / Oscar Qualifying", why: "Strong genre fit" }],
+          posterConcept: { description: "Radio tower", imagePrompt: "Dark radio tower in storm." },
+          pitchParagraph: "Carrying a CONSIDER verdict.",
+          productionRecommendation: {
+            title: "VFX Polish",
+            category: "BUDGET_ALLOCATION",
+            factualFinding: canonicalCitation.snippet,
+            inferredAdvice: "Invest in visual effects.",
+            actionableDecision: "Allocate funds to VFX pipeline.",
+            tradeoffRationale: "Enhances genre appeal.",
+            affectedArtifact: {
+              kind: "budget_line_item",
+              identifier: "VFX Supervisor & Pipeline", // Nonexistent in ledger!
+              label: "VFX",
+              tabTarget: "BUDGET",
+            },
+            sourceCitation: {
+              title: canonicalCitation.title,
+              url: canonicalCitation.url,
+            },
+          },
+        },
+        rawText: "{}",
+        modelUsed: "gemini-3.1-flash-lite",
+        durationMs: 400,
+      }),
+    } as unknown as GeminiStudioClient;
+
+    const mockParallelClient = {
+      searchMarket: vi.fn().mockResolvedValue([canonicalCitation]),
+    } as unknown as ParallelSearchClient;
+
+    const agent = new MarqueeAgent(mockGeminiClient, mockParallelClient);
+    const result = await agent.generatePitchKit(mockScriptParse, mockCoverage, mockFullBudget, mockBreakdown);
+
+    // Invalid budget target must cause recommendation to be withheld entirely!
+    expect(result.pitchKit.productionRecommendation).toBeNull();
+  });
+
+  it("removes the entire recommendation including inferredAdvice when crew-diversion is proposed", async () => {
+    // Budget with script-required crew (Practical SFX Technician)
+    const budgetWithRequiredCrew: Budget = {
+      ...mockFullBudget,
+      sections: [
+        {
+          category: "Crew",
+          subtotal: 450,
+          items: [
+            {
+              category: "Crew",
+              item: "Practical SFX Technician",
+              unit: "day",
+              qty: 1,
+              rate: 450,
+              total: 450,
+              tracesTo: "Practical SFX Tech booked for 1 day(s) ← practical SFX flagged in scene(s): 1",
+            },
+          ],
+        },
+        ...mockFullBudget.sections.slice(1),
+      ],
+    };
+
+    const mockGeminiClient = {
+      generateStructured: vi.fn().mockResolvedValue({
+        data: {
+          tagline: "Static in the dark.",
+          loglines: ["A late night DJ hears tomorrow's news.", "Static yields secrets."],
+          whyNow: "Audio suspense is booming.",
+          audience: { primary: "Indie thriller fans", secondary: "Festival goers" },
+          festivalStrategy: [{ name: "Sundance", tier: "Tier 1 / Oscar Qualifying", why: "Strong genre fit" }],
+          posterConcept: { description: "Radio tower", imagePrompt: "Dark radio tower in storm." },
+          pitchParagraph: "Carrying a CONSIDER verdict.",
+          productionRecommendation: {
+            title: "Divert SFX Budget to Sound Design",
+            category: "BUDGET_ALLOCATION",
+            factualFinding: canonicalCitation.snippet,
+            inferredAdvice: "Divert $300 from Practical SFX Technician to sound design.",
+            actionableDecision: "Divert funds away from Practical SFX Technician.",
+            tradeoffRationale: "Audio atmosphere delivers more festival ROI than practical haze.",
+            affectedArtifact: {
+              kind: "budget_line_item",
+              identifier: "Practical SFX Technician",
+              label: "Account 2000: Crew / Practical SFX Technician",
+              tabTarget: "BUDGET",
+            },
+            sourceCitation: {
+              title: canonicalCitation.title,
+              url: canonicalCitation.url,
+            },
+          },
+        },
+        rawText: "{}",
+        modelUsed: "gemini-3.1-flash-lite",
+        durationMs: 400,
+      }),
+    } as unknown as GeminiStudioClient;
+
+    const mockParallelClient = {
+      searchMarket: vi.fn().mockResolvedValue([canonicalCitation]),
+    } as unknown as ParallelSearchClient;
+
+    const agent = new MarqueeAgent(mockGeminiClient, mockParallelClient);
+    const result = await agent.generatePitchKit(mockScriptParse, mockCoverage, budgetWithRequiredCrew, mockBreakdown);
+
+    // Crew-diversion rejection must remove the ENTIRE recommendation, including inferredAdvice!
+    expect(result.pitchKit.productionRecommendation).toBeNull();
+    // Verify that inferredAdvice does not exist on the pitch kit
+    expect((result.pitchKit as Record<string, unknown>).inferredAdvice).toBeUndefined();
   });
 });

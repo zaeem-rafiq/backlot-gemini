@@ -157,6 +157,10 @@ export function validateProductionRecommendation(
   const matchedCitation = marketEvidence.find((c) => c.url === rec.sourceCitation.url);
   if (!matchedCitation) return null;
 
+  // An empty or unusable excerpt cannot become claimed supporting evidence.
+  const usableSnippet = (matchedCitation.snippet || rec.sourceCitation?.snippet || rec.factualFinding || "").trim();
+  if (!usableSnippet || usableSnippet.length < 10) return null;
+
   // 2. If affectedArtifact targets a budget line item
   if (rec.affectedArtifact.kind === "budget_line_item") {
     const targetId = rec.affectedArtifact.identifier.trim();
@@ -342,13 +346,20 @@ INSTRUCTIONS:
           : undefined;
 
         if (matchedCitation) {
-          try {
-            const rawArtifact = (rawRec.affectedArtifact as Record<string, unknown>) || {};
-            const candidateRec: ProductionRecommendation = {
-              title: String(rawRec.title),
-              category: (rawRec.category as ProductionRecommendation["category"]) || "DISTRIBUTION_STRATEGY",
-              // Use the canonical returned citation's excerpt as retrieved evidence
-              factualFinding: matchedCitation.snippet,
+          const canonicalSnippet = (matchedCitation.snippet || "").trim();
+          if (!canonicalSnippet || canonicalSnippet.length < 10) {
+            onLog?.(
+              "info",
+              "Marquee withheld recommendation because matched citation has an empty or unusable excerpt."
+            );
+          } else {
+            try {
+              const rawArtifact = (rawRec.affectedArtifact as Record<string, unknown>) || {};
+              const candidateRec: ProductionRecommendation = {
+                title: String(rawRec.title),
+                category: (rawRec.category as ProductionRecommendation["category"]) || "DISTRIBUTION_STRATEGY",
+                // Use the canonical returned citation's excerpt as retrieved evidence
+                factualFinding: canonicalSnippet,
               // Keep model-written interpretation explicitly labeled as inferred advice
               inferredAdvice: String(rawRec.inferredAdvice || rawRec.actionableDecision || rawRec.tradeoffRationale),
               actionableDecision: String(rawRec.actionableDecision),
@@ -370,8 +381,9 @@ INSTRUCTIONS:
                 `Marquee withheld unsupported recommendation for '${candidateRec.affectedArtifact.identifier}'.`
               );
             }
-          } catch {
-            productionRecommendation = null;
+            } catch {
+              productionRecommendation = null;
+            }
           }
         } else {
           onLog?.(
