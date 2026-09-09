@@ -130,13 +130,16 @@ This topology reproduces the live production deployment: Backlot Studio hosted o
 #### 1. Build and Push Reasoning Engine Container
 The Agent Runtime container encapsulates the unary query route (`/api/reasoning_engine`), health endpoint (`/health`), and schema contracts:
 ```bash
-# Build using Cloud Build
-gcloud builds submit --config cloudbuild-agent-runtime.yaml --project=YOUR_PROJECT_ID
+# Build using Cloud Build with _IMAGE_NAME substitution
+gcloud builds submit \
+  --config cloudbuild-agent-runtime.yaml \
+  --substitutions=_IMAGE_NAME="us-central1-docker.pkg.dev/YOUR_PROJECT_ID/cloud-run-source-deploy/backlot-marquee-runtime" \
+  --project=YOUR_PROJECT_ID
 
 # Or build locally and push to Artifact Registry
 docker build -f Dockerfile.agent-runtime \
-  -t us-central1-docker.pkg.dev/YOUR_PROJECT_ID/backlot-artifacts/backlot-agent-runtime:latest .
-docker push us-central1-docker.pkg.dev/YOUR_PROJECT_ID/backlot-artifacts/backlot-agent-runtime:latest
+  -t us-central1-docker.pkg.dev/YOUR_PROJECT_ID/cloud-run-source-deploy/backlot-marquee-runtime:latest .
+docker push us-central1-docker.pkg.dev/YOUR_PROJECT_ID/cloud-run-source-deploy/backlot-marquee-runtime:latest
 ```
 
 #### 2. Configure Secret Manager
@@ -170,28 +173,32 @@ gcloud projects add-iam-policy-binding YOUR_PROJECT_ID \
 ```
 
 #### 4. Provision Managed Reasoning Engine Resource
-Run the automated deployment script, which creates the Reasoning Engine resource with custom container specification and polls the long-running operation to completion:
+The deployment script [`scripts/deploy_reasoning_engine.sh`](scripts/deploy_reasoning_engine.sh) is Backlot's production release and verification procedure, preconfigured for project `polygraph-hackathon` (`112519007745`) in region `us-central1`. It creates the ReasoningEngine resource, performs bounded polling until active, deploys a staged baseline revision with `--no-traffic`, validates candidate acceptance runs, and executes traffic promotion.
+
+For the Backlot deployment:
 ```bash
-PROJECT_ID=YOUR_PROJECT_ID \
-LOCATION=us-central1 \
-CONTAINER_IMAGE=us-central1-docker.pkg.dev/YOUR_PROJECT_ID/backlot-artifacts/backlot-agent-runtime:latest \
 bash scripts/deploy_reasoning_engine.sh
 ```
-This outputs the canonical resource name, e.g.:
+This provisions and outputs the canonical ReasoningEngine resource:
 `projects/112519007745/locations/us-central1/reasoningEngines/2061959785300885504`
 
+*(Note: To adapt this procedure to an alternate GCP project, update the script's internal configuration constants — `PROJECT_ID`, `PROJECT_NUMBER`, `REGION`, `RUNTIME_REPO`, and service account identities — before running.)*
+
 #### 5. Deploy Studio Service to Cloud Run
-Deploy the Backlot Studio frontend service, configuring its managed runtime query endpoint:
+Deploy the Backlot Studio frontend service, configuring its managed runtime resource and Gemini environment:
 ```bash
-# Build and deploy Studio image
-gcloud builds submit --config cloudbuild-studio.yaml --project=YOUR_PROJECT_ID
+# Build Studio image using Cloud Build with _IMAGE_NAME substitution
+gcloud builds submit \
+  --config cloudbuild-studio.yaml \
+  --substitutions=_IMAGE_NAME="us-central1-docker.pkg.dev/YOUR_PROJECT_ID/cloud-run-source-deploy/backlot-studio" \
+  --project=YOUR_PROJECT_ID
 
 # Deploy to Cloud Run with environment wiring
 gcloud run deploy backlot-studio \
   --image=us-central1-docker.pkg.dev/YOUR_PROJECT_ID/cloud-run-source-deploy/backlot-studio:latest \
   --region=us-central1 \
   --service-account="${PROJECT_NUMBER}-compute@developer.gserviceaccount.com" \
-  --set-env-vars="GOOGLE_GENAI_USE_VERTEXAI=true,CLOUD_ML_REGION=us-central1,MARQUEE_AGENT_URL=https://us-central1-aiplatform.googleapis.com/v1/projects/YOUR_PROJECT_ID/locations/us-central1/reasoningEngines/YOUR_REASONING_ENGINE_ID:query,REASONING_ENGINE_RESOURCE_NAME=projects/${PROJECT_NUMBER}/locations/us-central1/reasoningEngines/YOUR_REASONING_ENGINE_ID" \
+  --set-env-vars="USE_VERTEX=true,GCP_PROJECT=YOUR_PROJECT_ID,GCP_LOCATION=global,VERTEX_REASONING_ENGINE_RESOURCE_NAME=projects/${PROJECT_NUMBER}/locations/us-central1/reasoningEngines/YOUR_REASONING_ENGINE_ID" \
   --set-secrets="PARALLEL_API_KEY=PARALLEL_API_KEY:latest"
 ```
 
