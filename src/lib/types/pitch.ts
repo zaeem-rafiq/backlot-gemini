@@ -7,6 +7,10 @@ export const ParallelSourceCitationSchema = z.object({
   query: z.string().describe("Search query that yielded this finding"),
   publishedDate: z.string().nullish(),
   relevance: z.string().describe("How this market data grounds the pitch"),
+  rawTitle: z.string().nullish().describe("Raw provider-returned title metadata preserved separately"),
+  publisher: z.string().nullish().describe("Derived publisher or host organization name"),
+  isArchive: z.boolean().nullish().describe("Whether this URL is an archive, tag, or topic feed rather than a single verified article"),
+  isHistorical: z.boolean().nullish().describe("Whether the source material represents historical or archival precedent"),
 });
 
 export type ParallelSourceCitation = z.infer<typeof ParallelSourceCitationSchema>;

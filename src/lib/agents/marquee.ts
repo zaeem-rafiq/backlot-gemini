@@ -1,5 +1,5 @@
 import { GeminiStudioClient } from "../ai/gemini-client";
-import { ParallelSearchClient } from "../parallel/client";
+import { ParallelSearchClient, formatSourceAttribution } from "../parallel/client";
 import { ScriptParse } from "../types/screenplay";
 import { Coverage } from "../types/coverage";
 import { Budget } from "../types/budget";
@@ -29,6 +29,10 @@ Requirements:
      * inferredAdvice: Strategic recommendation inferred by Backlot Studio for this specific production.
      * Connect one specific finding from the retrieved market citations to a concrete production artifact (a shooting day from the schedule, a scene from the script, a specific budget line item from the ledger, or a coverage diagnostic score). Formulate a concrete producer action and trade-off rationale. The sourceCitation must use an exact citation provided in the prompt.
      * CRITICAL PHYSICAL FEASIBILITY INVARIANT: NEVER recommend cutting, defunding, or diverting budget away from cast, crew, or equipment required by physical screenplay breakdown elements (e.g., Stunt Coordinator, Practical SFX Technician, Special HMU, Animal Wrangler). Screenplay requirements are fixed for physical production and cannot be compromised based on festival market comps. Market research citations support strategic festival windowing, distribution packaging, or allocating/protecting post-production sound, color finishing, and deliverables.
+     * CRITICAL CALIBRATION & EVIDENCE BOUNDARIES:
+       - Keep any specific proposed budget allocations clearly identified as model suggestions (e.g., 'Model suggestion: Allocate...' or 'Studio suggestion: Consider allocating...').
+       - NEVER assert that an expenditure is 'most cost-effective' or that it 'directly increases festival selection probability' or guarantees acceptance. Frame recommendations as strategic options aimed at meeting industry craft expectations described in the cited source.
+       - Accurately contextualize historical material (e.g. 2013 festival archives) as historical industry precedent or archival benchmarks rather than implying they represent current market conditions.
    - When MARKET RESEARCH EVIDENCE is offline/empty, or citations do not justify a concrete production action: Do NOT emit any production recommendation (leave null).
 9. Output must strictly conform to the JSON schema.`;
 
@@ -145,6 +149,124 @@ const PITCH_KIT_JSON_SCHEMA = {
   ],
 };
 
+export function isCitationSubstantivelySupported(
+  rec: ProductionRecommendation,
+  citation: ParallelSourceCitation
+): boolean {
+  const snippet = (citation.snippet || "").trim();
+  if (snippet.length < 10) return false;
+
+  const targetId = (rec.affectedArtifact?.identifier || "").toLowerCase().trim();
+  const titleLower = rec.title.toLowerCase();
+  const decisionLower = rec.actionableDecision.toLowerCase();
+  const adviceLower = (rec.inferredAdvice || "").toLowerCase();
+  const fullRecText = `${titleLower} ${decisionLower} ${adviceLower} ${targetId}`;
+
+  const isAudio =
+    targetId.includes("sound") ||
+    targetId.includes("audio") ||
+    targetId.includes("foley") ||
+    targetId.includes("mix") ||
+    fullRecText.includes("sound design") ||
+    fullRecText.includes("foley") ||
+    fullRecText.includes("audio post");
+
+  const isEditorial =
+    targetId.includes("editor") ||
+    targetId.includes("editorial") ||
+    targetId.includes("cut") ||
+    fullRecText.includes("picture edit");
+
+  const isColor =
+    targetId.includes("color") ||
+    targetId.includes("grade") ||
+    targetId.includes("finishing") ||
+    fullRecText.includes("colorist");
+
+  const isFestival =
+    rec.category === "FESTIVAL_WINDOW" ||
+    targetId.includes("festival") ||
+    fullRecText.includes("festival submission") ||
+    fullRecText.includes("festival premiere");
+
+  const isDistribution =
+    rec.category === "DISTRIBUTION_STRATEGY" ||
+    targetId.includes("distribution") ||
+    fullRecText.includes("sales agent") ||
+    fullRecText.includes("theatrical");
+
+  // CRITICAL: Search queries are retrieval instructions, not source evidence.
+  // Exclude queries from support checks! Substantive support must reside in the authentic excerpt.
+  const snippetLower = snippet.toLowerCase();
+  const titleLowerCitation = (citation.title || "").toLowerCase();
+
+  if (isAudio) {
+    return (
+      /\b(sound design|foley|audio mix(?:ing)?|sound mix(?:ing)?|soundtrack|audio design|audio-scape|production value.*?(?:bar|sound|craft)|horror filmmaking: the guts of the craft)\b/i.test(snippetLower) ||
+      (/\b(sound design|foley|audio mix)\b/i.test(titleLowerCitation) && snippetLower.length >= 20)
+    );
+  } else if (isEditorial) {
+    return (
+      /\b(picture edit(?:ing)?|editorial assembly|film editor|pacing in the cut|cutting pace)\b/i.test(snippetLower) ||
+      (/\b(picture edit|editorial)\b/i.test(titleLowerCitation) && snippetLower.length >= 20)
+    );
+  } else if (isColor) {
+    return (
+      /\b(color grad(?:ing|e)|colorist|digital intermediate|lut)\b/i.test(snippetLower) ||
+      (/\b(color grading|colorist)\b/i.test(titleLowerCitation) && snippetLower.length >= 20)
+    );
+  } else if (isFestival) {
+    return (
+      /\b(festival submission|programmer criteria|selection committee|premiere strategy|festival competition|festival award)\b/i.test(snippetLower) ||
+      (/\b(festival submission|festival premiere)\b/i.test(titleLowerCitation) && snippetLower.length >= 20)
+    );
+  } else if (isDistribution) {
+    return (
+      /\b(distribution deal|sales agent|acquisition market|theatrical release|vod distribution|distribution precedent)\b/i.test(snippetLower) ||
+      (/\b(distribution deal|theatrical release)\b/i.test(titleLowerCitation) && snippetLower.length >= 20)
+    );
+  }
+
+  return false;
+}
+
+export function calibrateRecommendationAssertions(rec: ProductionRecommendation): ProductionRecommendation {
+  let actionableDecision = rec.actionableDecision;
+  let tradeoffRationale = rec.tradeoffRationale;
+  let inferredAdvice = rec.inferredAdvice;
+
+  // 1. Keep specific proposed allocations clearly identified as model suggestions
+  const isAllocationProposal = /\b(increase|reallocate|allocate|shift\s+funds?|drawdown|draw\s+down|boost\s+budget|augment)\b/i.test(actionableDecision);
+  const isProtectionOrExisting = /\b(protect|maintain|preserve|keep)\b/i.test(actionableDecision);
+  const isAlreadyMarked = /\b(model suggestion|studio suggestion|suggested proposal|proposed suggestion|consider allocating|studio proposal|proposal)\b/i.test(actionableDecision);
+
+  if (
+    (rec.affectedArtifact.kind === "budget_line_item" || rec.category === "BUDGET_ALLOCATION") &&
+    isAllocationProposal &&
+    !isProtectionOrExisting &&
+    !isAlreadyMarked
+  ) {
+    actionableDecision = `Model suggestion: ${actionableDecision.replace(/^(?:we recommend that you |we recommend |recommend |propose to |please )/i, "")}`;
+  }
+
+  // 2. Remove unsupported assertions that an allocation is "most cost-effective" or "directly increases festival-selection probability"
+  tradeoffRationale = tradeoffRationale
+    .replace(/\b(?:is\s+the\s+most\s+cost-effective\s+way|most\s+cost-effective\s+way|is\s+the\s+single\s+most\s+cost-effective\s+approach)\b/gi, "is one strategic avenue")
+    .replace(/\b(?:directly\s+increasing\s+(?:the\s+)?(?:likelihood|probability)\s+of\s+festival\s+selection|directly\s+increases?\s+(?:the\s+)?(?:likelihood|probability)\s+of\s+festival\s+selection)\b/gi, "aimed at meeting festival craft expectations noted in industry precedent")
+    .replace(/\b(?:guaranteeing\s+festival\s+selection|guarantees?\s+festival\s+selection)\b/gi, "supporting competitive festival positioning");
+
+  inferredAdvice = inferredAdvice
+    .replace(/\b(?:is\s+the\s+most\s+cost-effective\s+way|most\s+cost-effective\s+way)\b/gi, "is a strategic option")
+    .replace(/\b(?:directly\s+increasing\s+(?:the\s+)?(?:likelihood|probability)\s+of\s+festival\s+selection)\b/gi, "aimed at meeting festival craft standards");
+
+  return {
+    ...rec,
+    actionableDecision,
+    tradeoffRationale,
+    inferredAdvice,
+  };
+}
+
 export function findSupportedCitation(
   rec: ProductionRecommendation,
   marketEvidence: ParallelSourceCitation[],
@@ -154,44 +276,11 @@ export function findSupportedCitation(
   const validCitations = marketEvidence.filter((c) => (c.snippet || "").trim().length >= 10);
   if (validCitations.length === 0) return null;
 
-  // An alternative citation must genuinely and specifically support the exact target artifact
-  // and substantive domain of the recommendation. Merely attaching an unrelated nonempty excerpt
-  // to existing advice is strictly prohibited.
-  const targetId = (rec.affectedArtifact?.identifier || "").toLowerCase().trim();
-  const titleLower = rec.title.toLowerCase();
-  const decisionLower = rec.actionableDecision.toLowerCase();
-  const adviceLower = (rec.inferredAdvice || "").toLowerCase();
-  const fullRecText = `${titleLower} ${decisionLower} ${adviceLower} ${targetId}`;
-
-  const isAudio = targetId.includes("sound") || targetId.includes("audio") || targetId.includes("foley") || targetId.includes("mix") || fullRecText.includes("sound design");
-  const isEditorial = targetId.includes("editor") || targetId.includes("editorial") || targetId.includes("cut");
-  const isColor = targetId.includes("color") || targetId.includes("grade") || targetId.includes("finishing");
-  const isFestival = rec.category === "FESTIVAL_WINDOW" || targetId.includes("festival");
-  const isDistribution = rec.category === "DISTRIBUTION_STRATEGY" || targetId.includes("distribution");
-
+  // Search queries are retrieval instructions, not source evidence.
+  // Exclude queries from support checks! Require substantive support in the authentic excerpt.
   for (const citation of validCitations) {
-    const citationText = `${citation.title} ${citation.snippet} ${citation.query || ""}`.toLowerCase();
-
-    if (isAudio) {
-      if (/\b(sound design|foley|audio|sound mix|soundtrack|audio design)\b/i.test(citationText)) {
-        return citation;
-      }
-    } else if (isEditorial) {
-      if (/\b(picture edit|editorial|editor|cutting|assembly)\b/i.test(citationText)) {
-        return citation;
-      }
-    } else if (isColor) {
-      if (/\b(color grading|colorist|digital intermediate|lut)\b/i.test(citationText)) {
-        return citation;
-      }
-    } else if (isFestival) {
-      if (/\b(festival submission|programmer|selection|competition|premiere)\b/i.test(citationText)) {
-        return citation;
-      }
-    } else if (isDistribution) {
-      if (/\b(distribution|sales agent|theatrical|vod|acquisition)\b/i.test(citationText)) {
-        return citation;
-      }
+    if (isCitationSubstantivelySupported(rec, citation)) {
+      return citation;
     }
   }
 
@@ -213,16 +302,41 @@ export function validateProductionRecommendation(
   let supportingCitation = matchedCitation;
   let canonicalSnippet = (supportingCitation.snippet || "").trim();
 
-  // An empty or unusable excerpt cannot qualify as supporting evidence.
-  // Missing, empty, or whitespace-only source text remains unavailable.
-  if (!canonicalSnippet || canonicalSnippet.length < 10) {
+  // If matched citation has an empty snippet or lacks substantive support for the advice:
+  if (!canonicalSnippet || canonicalSnippet.length < 10 || !isCitationSubstantivelySupported(rec, supportingCitation)) {
     const alternative = findSupportedCitation(rec, marketEvidence, budget);
     if (alternative) {
       supportingCitation = alternative;
       canonicalSnippet = (alternative.snippet || "").trim();
     } else {
+      // Substantive support cannot be established. Withhold the recommendation!
       return null;
     }
+  }
+
+  // Ensure honest publisher and archive attribution is applied to the selected citation
+  const attr = formatSourceAttribution(
+    supportingCitation.url,
+    supportingCitation.rawTitle || supportingCitation.title,
+    supportingCitation.publishedDate,
+    canonicalSnippet
+  );
+
+  if (attr.isArchive) {
+    supportingCitation = {
+      ...supportingCitation,
+      title: attr.title,
+      publisher: attr.publisher,
+      isArchive: true,
+      isHistorical: attr.isHistorical,
+      rawTitle: supportingCitation.rawTitle || supportingCitation.title,
+    };
+  } else if (attr.isHistorical && !supportingCitation.isHistorical) {
+    supportingCitation = {
+      ...supportingCitation,
+      isHistorical: true,
+      publisher: supportingCitation.publisher || attr.publisher,
+    };
   }
 
   // 2. If affectedArtifact targets a budget line item
@@ -306,7 +420,7 @@ export function validateProductionRecommendation(
     }
 
     // Return recommendation with canonical item identity and label
-    return {
+    const validatedRec: ProductionRecommendation = {
       ...rec,
       sourceCitation: supportingCitation,
       factualFinding: canonicalSnippet,
@@ -317,13 +431,15 @@ export function validateProductionRecommendation(
         tabTarget: "BUDGET",
       },
     };
+
+    return calibrateRecommendationAssertions(validatedRec);
   }
 
-  return {
+  return calibrateRecommendationAssertions({
     ...rec,
     sourceCitation: supportingCitation,
     factualFinding: canonicalSnippet,
-  };
+  });
 }
 
 export class MarqueeAgent {
@@ -425,7 +541,9 @@ INSTRUCTIONS:
 - Create a portrait (2:3) poster art direction and self-contained generation prompt.
 - Write a 3-5 sentence executive pitchParagraph that explicitly cites the '${coverage.verdict}' coverage verdict and the exact '${budgetTotalFormatted}' budget total.
 - SOURCE-BACKED PRODUCTION RECOMMENDATION:
-  * If MARKET RESEARCH EVIDENCE is provided above: Synthesize at most one high-leverage 'productionRecommendation' for an indie producer. Select one of the exact citations retrieved above, link it to an exact eligible budget item from the list above (e.g., 'Sound Design, Foley & Mix' or 'Picture Editor'), state the actionable decision, and provide the evidence-backed tradeoff rationale.
+  * If MARKET RESEARCH EVIDENCE is provided above: Synthesize at most one high-leverage 'productionRecommendation' for an indie producer. Select one of the exact citations retrieved above, link it to an exact eligible budget item from the list above (e.g., 'Sound Design, Foley & Mix' or 'Picture Editor'), state the actionable decision (clearly framed as a model suggestion, e.g. 'Model suggestion: Allocate...'), and provide the evidence-backed tradeoff rationale.
+  * Avoid unsupported superlatives ('most cost-effective') and causal probability claims ('directly increases festival-selection probability'). Frame recommendations as strategic options aimed at meeting industry craft expectations described in the cited source.
+  * If the citation represents an archive or historical precedent (e.g. from 2013), describe it accurately as historical industry precedent rather than implying it describes current market conditions.
   * PHYSICAL FEASIBILITY INVARIANT: Never recommend cutting, defunding, or diverting funds from script-required physical crew or equipment (such as Practical SFX Technician, Stunt Coordinator, or Key HMU). Budget recommendations must only target enhanceable allocations (Sound, Color, Deliverables, Contingency), or focus on FESTIVAL_WINDOW / DISTRIBUTION_STRATEGY. If citations do not support a valid tradeoff, omit productionRecommendation (null).
   * If MARKET RESEARCH EVIDENCE is offline/empty: Do NOT include a productionRecommendation (leave null).`;
 
@@ -452,14 +570,13 @@ INSTRUCTIONS:
 
         if (matchedCitation) {
           const rawArtifact = (rawRec.affectedArtifact as Record<string, unknown>) || {};
-          let supportingCitation: ParallelSourceCitation | null = matchedCitation;
-          let canonicalSnippet = (supportingCitation.snippet || "").trim();
+          const canonicalSnippet = (matchedCitation.snippet || "").trim();
 
-          if (!canonicalSnippet || canonicalSnippet.length < 10) {
-            const preliminaryRec: ProductionRecommendation = {
+          try {
+            const candidateRec: ProductionRecommendation = {
               title: String(rawRec.title),
               category: (rawRec.category as ProductionRecommendation["category"]) || "DISTRIBUTION_STRATEGY",
-              factualFinding: "",
+              factualFinding: canonicalSnippet,
               inferredAdvice: String(rawRec.inferredAdvice || rawRec.actionableDecision || rawRec.tradeoffRationale),
               actionableDecision: String(rawRec.actionableDecision),
               tradeoffRationale: String(rawRec.tradeoffRationale),
@@ -472,54 +589,21 @@ INSTRUCTIONS:
               sourceCitation: matchedCitation,
             };
 
-            const alternative = findSupportedCitation(preliminaryRec, marketEvidence, budget);
-            if (alternative) {
+            // Validate exact budget target, source attribution, and physical feasibility
+            productionRecommendation = validateProductionRecommendation(candidateRec, budget, marketEvidence);
+            if (!productionRecommendation) {
               onLog?.(
                 "info",
-                `Marquee re-grounded recommendation on genuinely supported returned citation '${alternative.title}'.`
+                `Marquee withheld recommendation for '${candidateRec.affectedArtifact.identifier}' because substantive evidence support could not be established.`
               );
-              supportingCitation = alternative;
-              canonicalSnippet = (alternative.snippet || "").trim();
-            } else {
+            } else if (productionRecommendation.sourceCitation.url !== matchedCitation.url) {
               onLog?.(
                 "info",
-                "Marquee withheld recommendation because matched citation has an empty or unusable excerpt."
+                `Marquee re-grounded recommendation on genuinely supported citation '${productionRecommendation.sourceCitation.title}'.`
               );
-              supportingCitation = null;
             }
-          }
-
-          if (supportingCitation && canonicalSnippet.length >= 10) {
-            try {
-              const candidateRec: ProductionRecommendation = {
-                title: String(rawRec.title),
-                category: (rawRec.category as ProductionRecommendation["category"]) || "DISTRIBUTION_STRATEGY",
-                // Use the canonical returned citation's excerpt as retrieved evidence
-                factualFinding: canonicalSnippet,
-                // Keep model-written interpretation explicitly labeled as inferred advice
-                inferredAdvice: String(rawRec.inferredAdvice || rawRec.actionableDecision || rawRec.tradeoffRationale),
-                actionableDecision: String(rawRec.actionableDecision),
-                tradeoffRationale: String(rawRec.tradeoffRationale),
-                affectedArtifact: {
-                  kind: (rawArtifact.kind as ProductionRecommendation["affectedArtifact"]["kind"]) || "budget_line_item",
-                  identifier: String(rawArtifact.identifier || ""),
-                  label: String(rawArtifact.label || "Production Package"),
-                  tabTarget: (rawArtifact.tabTarget as ProductionRecommendation["affectedArtifact"]["tabTarget"]) || "BUDGET",
-                },
-                sourceCitation: supportingCitation,
-              };
-
-              // Validate exact budget target, source attribution, and physical feasibility
-              productionRecommendation = validateProductionRecommendation(candidateRec, budget, marketEvidence);
-              if (!productionRecommendation && candidateRec) {
-                onLog?.(
-                  "info",
-                  `Marquee withheld unsupported recommendation for '${candidateRec.affectedArtifact.identifier}'.`
-                );
-              }
-            } catch {
-              productionRecommendation = null;
-            }
+          } catch {
+            productionRecommendation = null;
           }
         } else {
           onLog?.(

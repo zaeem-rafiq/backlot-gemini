@@ -284,6 +284,14 @@ export function PitchKitView({ pitchKit, title, onNavigateTab, onInspectArtifact
                     <span data-testid="recommendation-source-title">{pitchKit.productionRecommendation.sourceCitation.title}</span>
                     <ExternalLink className="w-2.5 h-2.5" />
                   </a>
+                  {pitchKit.productionRecommendation.sourceCitation.isHistorical && (
+                    <span
+                      data-testid="recommendation-source-historical-badge"
+                      className="ml-1.5 px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[9px] font-bold"
+                    >
+                      Historical Archive{pitchKit.productionRecommendation.sourceCitation.publishedDate ? ` (${pitchKit.productionRecommendation.sourceCitation.publishedDate.slice(0, 4)})` : ""}
+                    </span>
+                  )}
                 </span>
                 <span className="text-studio-500 truncate max-w-xs">Query: &ldquo;{pitchKit.productionRecommendation.sourceCitation.query}&rdquo;</span>
               </div>

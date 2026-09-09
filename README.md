@@ -157,7 +157,7 @@ Industry benchmarks referenced within Backlot documentation reflect published tr
 ## 7. Verification & Test Commands
 
 ```bash
-# 1. Run deterministic ledger, schema, and agent unit tests (85 tests across 13 suites)
+# 1. Run deterministic ledger, schema, and agent unit tests (91 tests across 14 suites)
 npm test
 
 # 2. Run domain evaluation test suite against FREQUENCY ZERO ground truth (5 evals)

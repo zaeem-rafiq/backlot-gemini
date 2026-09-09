@@ -245,13 +245,23 @@ export function AuditedBudget({
                           href={matchingRec.sourceCitation.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-[9px] px-2 py-0.5 rounded bg-sky-500/20 text-sky-300 hover:text-white border border-sky-500/40 font-bold underline transition"
+                          className="text-[9px] px-2 py-0.5 rounded bg-sky-500/20 text-sky-300 hover:text-white border border-sky-500/40 font-bold underline transition inline-flex items-center gap-1"
                         >
-                          {matchingRec.sourceCitation.title}
+                          <span>{matchingRec.sourceCitation.title}</span>
+                          {matchingRec.sourceCitation.isHistorical && (
+                            <span className="text-amber-300 font-semibold">
+                              [Historical{matchingRec.sourceCitation.publishedDate ? ` ${matchingRec.sourceCitation.publishedDate.slice(0, 4)}` : ""}]
+                            </span>
+                          )}
                         </a>
                       ) : (
-                        <span className="text-[9px] px-2 py-0.5 rounded bg-sky-500/20 text-sky-300 border border-sky-500/40 font-bold">
-                          {matchingRec.sourceCitation.title}
+                        <span className="text-[9px] px-2 py-0.5 rounded bg-sky-500/20 text-sky-300 border border-sky-500/40 font-bold inline-flex items-center gap-1">
+                          <span>{matchingRec.sourceCitation.title}</span>
+                          {matchingRec.sourceCitation.isHistorical && (
+                            <span className="text-amber-300 font-semibold">
+                              [Historical{matchingRec.sourceCitation.publishedDate ? ` ${matchingRec.sourceCitation.publishedDate.slice(0, 4)}` : ""}]
+                            </span>
+                          )}
                         </span>
                       )}
                     </div>

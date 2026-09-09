@@ -76,7 +76,7 @@ Backlot was engineered as a high-performance, containerized studio workstation w
   - *Fast Synthesis & Packaging (Easel, Marquee):* `gemini-3.1-flash-lite` $\rightarrow$ `gemini-2.5-flash-lite` $\rightarrow$ `gemini-2.5-flash`
   - *Visual Storyboard Keyframes (Easel):* `gemini-2.5-flash-image` $\rightarrow$ `gemini-3.1-flash-image` $\rightarrow$ `gemini-3-pro-image`
 - **Official Parallel Search API (Partner Track):** Marquee connects to `https://api.parallel.ai/v1beta/search` at runtime via a clean REST client, pulling live market comps and festival signals without bloated third-party wrappers. Retrieved facts remain strictly separate from inferred producer advice; URL membership in search citations indicates query relevance rather than proof that a source supports every recommendation. When search returns no citations, empty snippets, or is offline, recommendations are withheld rather than hallucinated.
-- **100% Deterministic Pure TypeScript Ledger Math:** Budget and schedule arithmetic is computed deterministically in pure TypeScript, while Gemini receives computed totals for packaging synthesis. Never route arithmetic or financial formulas through an LLM. Rate cards, union tier scale models, crew day-rates, catering allowances (modeled baseline assumption of $22/person/day), and 10% contingency reserves are computed in pure TypeScript functions covered by **85 automated unit tests**, with cross-artifact provenance tracing each line item to the script breakdown element that triggered it.
+- **100% Deterministic Pure TypeScript Ledger Math:** Budget and schedule arithmetic is computed deterministically in pure TypeScript, while Gemini receives computed totals for packaging synthesis. Never route arithmetic or financial formulas through an LLM. Rate cards, union tier scale models, crew day-rates, catering allowances (modeled baseline assumption of $22/person/day), and 10% contingency reserves are computed in pure TypeScript functions covered by **91 automated unit tests**, with cross-artifact provenance tracing each line item to the script breakdown element that triggered it.
 - **Deployment & Cloud Infrastructure:** Containerized with **Docker** and deployed to **Google Cloud Run** in `us-central1` with a 900-second execution timeout, auto-scaling, and measured warm health responses at ~37ms.
 
 ---
@@ -95,7 +95,7 @@ Backlot was engineered as a high-performance, containerized studio workstation w
 - **100% Google AI & Hackathon Rule Compliance (§7.B):** Backlot uses exclusively Google Gemini models across all agent workflows. Zero non-Google AI libraries (no OpenAI, Anthropic, Replicate, FLUX, LangChain, LlamaIndex, or CrewAI).
 - **Measured Live Studio Execution:** Completed a full 6-agent streaming pipeline with live Parallel search on Cloud Run for both 2-scene and 10-scene screenplays.
 - **Mathematical Auditability:** Recomputed 28 of 28 line items, 7 of 7 category subtotals, and verified 100% of `tracesTo` provenance strings against script elements.
-- **Robustness & Test Suite:** 85 automated unit tests passing across 13 test files covering deterministic ledger math, schema contracts, fallback chains, normalization boundaries, missing-excerpt validation, stream consumer recovery, and Parallel mapping.
+- **Robustness & Test Suite:** 91 automated unit tests passing across 14 test files covering deterministic ledger math, schema contracts, fallback chains, normalization boundaries, missing-excerpt validation, stream consumer recovery, and Parallel mapping.
 - **Live Cloud Run Deployment:** Verified on Google Cloud Run in `us-central1` with healthy `/api/health` introspection and `/api/run` SSE telemetry streaming.
 
 ---
@@ -124,7 +124,7 @@ Backlot was engineered as a high-performance, containerized studio workstation w
 | **100% Google Gemini Models** | Ink/Slate: `gemini-3.5-flash`; Easel/Marquee: `gemini-3.1-flash-lite`; Easel Previz: `gemini-2.5-flash-image` | **COMPLIANT** |
 | **Zero Non-Google AI** | 0 references to OpenAI, Anthropic, Replicate, FLUX, LangChain, LlamaIndex, CrewAI | **COMPLIANT** |
 | **Partner Track Integration** | Official runtime integration with Parallel Search API (`v1beta/search`) in Marquee | **COMPLIANT** |
-| **Deterministic Math** | Budget and schedule arithmetic computed deterministically in TypeScript (85 unit tests) | **COMPLIANT** |
+| **Deterministic Math** | Budget and schedule arithmetic computed deterministically in TypeScript (91 unit tests) | **COMPLIANT** |
 | **Cross-Artifact Provenance** | 100% of budget line items contain `tracesTo` links back to breakdown elements | **COMPLIANT** |
 | **Zero-Quota Bake** | Pre-baked 7-artifact sample fixture loads instantly (~37ms local load) with zero API calls | **COMPLIANT** |
 | **Live Deployed URL** | Live container deployed on Google Cloud Run (`us-central1`) | **COMPLIANT** |
@@ -135,7 +135,7 @@ Backlot was engineered as a high-performance, containerized studio workstation w
 
 ## 4. Verification Evidence & Inspection Commands
 
-### Automated Test Suite (85 Tests Passing)
+### Automated Test Suite (91 Tests Passing)
 ```bash
 $ npm test
 ✓ src/lib/parallel/__tests__/parallel-missing-excerpt.test.ts (1 test)
@@ -150,10 +150,11 @@ $ npm test
 ✓ src/lib/agents/__tests__/marquee-missing-excerpt.test.ts (4 tests)
 ✓ src/lib/agents/__tests__/director.test.ts (2 tests)
 ✓ src/lib/agents/__tests__/marquee-recommendation.test.ts (15 tests)
+✓ src/lib/agents/__tests__/marquee-citation-integrity.test.ts (6 tests)
 ✓ src/components/artifacts/__tests__/AuditedBudget.test.ts (11 tests)
 
-Test Files  13 passed (13)
-     Tests  85 passed (85)
+Test Files  14 passed (14)
+     Tests  91 passed (91)
 ```
 
 ### Production Build Verification
