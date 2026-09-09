@@ -129,7 +129,6 @@ async function main() {
       break;
     }
   }
-  }
 
   if (!isDone) {
     throw new Error(`Run verification failed: Execution timed out after ${maxWaitMs / 1000}s without observing package lock.`);

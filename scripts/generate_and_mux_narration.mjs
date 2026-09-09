@@ -29,48 +29,55 @@ const segments = [
     name: "04_act2_ledger",
     targetStart: 35.0,
     windowEnd: 50.0,
-    text: "While the generative agents run in parallel, the Ledger agent calculates rates deterministically in TypeScript. All six department deliverables are locked live on Cloud Run in under sixty seconds."
+    text: "While the generative agents run in parallel, the Ledger agent calculates rates deterministically in TypeScript, locking all six department deliverables live on Cloud Run."
   },
   {
     id: 5,
     name: "05_act2_telemetry",
-    targetStart: 52.0,
-    windowEnd: 77.0,
-    text: "As telemetry streams live across the network, Marquee executes real-time Parallel Search queries to benchmark indie horror distributions, while the crew converges toward package lock. Watch live as all six specialized departments complete their tasks, locking the full pre-production package in under eighty seconds."
+    targetStart: 54.0,
+    windowEnd: 71.0,
+    text: "As telemetry streams live across the network, Marquee executes real-time Parallel Search queries to benchmark indie horror distributions, while the crew converges toward package lock."
   },
   {
     id: 6,
-    name: "06_act3_pitchkit",
-    targetStart: 82.0,
-    windowEnd: 89.5,
-    text: "In the Pitch Kit, Marquee uses Parallel Search to propose an evidence-backed audio recommendation."
+    name: "06_act2_verdict",
+    targetStart: 72.0,
+    windowEnd: 85.0,
+    text: "Ink evaluates narrative structure and commercial viability, delivering a diagnostic Consider verdict as the remaining departments converge."
   },
   {
     id: 7,
-    name: "07_act4_budget",
-    targetStart: 89.8,
-    windowEnd: 99.0,
-    text: "Clicking Inspect in Budget opens the line item audit drawer, verifying script provenance and deterministic math."
+    name: "07_act3_pitchkit",
+    targetStart: 91.0,
+    windowEnd: 101.0,
+    text: "In the Pitch Kit, Marquee uses Parallel Search to propose an evidence-backed audio recommendation."
   },
   {
     id: 8,
-    name: "08_act5_tour",
-    targetStart: 99.5,
-    windowEnd: 119.0,
-    text: "Every deliverable stays synchronized across departments: diagnostic story coverage, thirteen breakdown categories, magnetic stripboard scheduling, and widescreen previz boards."
+    name: "08_act4_budget",
+    targetStart: 102.0,
+    windowEnd: 112.0,
+    text: "Clicking Inspect in Budget opens the line item audit drawer, verifying script provenance and deterministic math."
   },
   {
     id: 9,
-    name: "09_act6_source",
-    targetStart: 120.0,
-    windowEnd: 129.0,
-    text: "Parallel grounds this directly in verified reporting from The Film Collaborative, inspecting the live publication cited in our Pitch Kit."
+    name: "09_act5_tour",
+    targetStart: 113.0,
+    windowEnd: 122.5,
+    text: "Every deliverable stays synchronized across departments: scene breakdowns, magnetic stripboard scheduling, and widescreen previz boards."
   },
   {
     id: 10,
-    name: "10_act7_end",
-    targetStart: 129.8,
-    windowEnd: 136.2,
+    name: "10_act6_source",
+    targetStart: 123.5,
+    windowEnd: 130.0,
+    text: "Parallel grounds this in verified reporting, inspecting the Screen Craft panel cited in our Pitch Kit."
+  },
+  {
+    id: 11,
+    name: "11_act7_end",
+    targetStart: 131.0,
+    windowEnd: 137.5,
     text: "Backlot Studio: multi-agent intelligence and verifiable financial truth."
   }
 ];
@@ -165,7 +172,7 @@ async function generateTTS() {
     .join("; ");
 
   const mixInputs = generatedClips.map((_, idx) => `[a${idx}]`).join("");
-  const totalDur = 136.20;
+  const totalDur = 137.70;
   // normalize=0 eliminates input-counting attenuation that causes dynamic gain swings
   const rawFilter = `${delayFilters}; ${mixInputs}amix=inputs=${generatedClips.length}:normalize=0:dropout_transition=0,apad=whole_dur=${totalDur}[aout]`;
 

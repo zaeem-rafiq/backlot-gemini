@@ -43,3 +43,4 @@ demo/*.png
 demo/*.wav
 demo/*frames/
 demo/master_timeline/
+demo/*.txt
