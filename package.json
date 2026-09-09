@@ -7,6 +7,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:runtime": "esbuild src/agent-runtime/marquee-server.ts --bundle --platform=node --target=node22 --format=esm --packages=external --outfile=dist/agent-runtime/marquee-server.mjs",
+    "build:acceptance": "esbuild scripts/capture_live_acceptance_evidence.ts --bundle --platform=node --target=node22 --format=esm --packages=external --outfile=scripts/capture_live_acceptance_evidence.mjs",
     "start": "next start",
     "lint": "next lint",
     "test": "vitest run --exclude 'evals/**'",

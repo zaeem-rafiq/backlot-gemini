@@ -2,6 +2,7 @@ import { InkAgent } from "./ink";
 import { SlateAgent } from "./slate";
 import { EaselAgent } from "./easel";
 import { MarqueeAgent } from "./marquee";
+import { AgentRuntimeMarqueeClient, AgentRuntimeError } from "./agent-runtime-client";
 import { buildSchedule } from "../ledger/schedule-engine";
 import { buildBudget } from "../ledger/budget-engine";
 import { analyzeScriptRevision, pinUnchangedScenes } from "../ledger/revision-engine";
@@ -25,6 +26,7 @@ export interface DirectorRunOptions {
   slateAgent?: SlateAgent;
   easelAgent?: EaselAgent;
   marqueeAgent?: MarqueeAgent;
+  agentRuntimeClient?: AgentRuntimeMarqueeClient;
   easelRunner?: (
     scriptParse: ScriptParse,
     breakdown: ScriptBreakdown,
@@ -44,17 +46,20 @@ export class DirectorOrchestrator {
   private slate: SlateAgent;
   private easel: EaselAgent;
   private marquee: MarqueeAgent;
+  private agentRuntimeClient: AgentRuntimeMarqueeClient;
 
   constructor(
     inkAgent?: InkAgent,
     slateAgent?: SlateAgent,
     easelAgent?: EaselAgent,
-    marqueeAgent?: MarqueeAgent
+    marqueeAgent?: MarqueeAgent,
+    agentRuntimeClient?: AgentRuntimeMarqueeClient
   ) {
     this.ink = inkAgent || new InkAgent();
     this.slate = slateAgent || new SlateAgent();
     this.easel = easelAgent || new EaselAgent();
     this.marquee = marqueeAgent || new MarqueeAgent();
+    this.agentRuntimeClient = agentRuntimeClient || new AgentRuntimeMarqueeClient();
   }
 
   public async executeRun(
@@ -204,10 +209,14 @@ export class DirectorOrchestrator {
       })();
 
       const marqueePromise = (async () => {
-        try {
-          if (options.signal?.aborted) return;
-          let marqueeResult: { pitchKit: PitchKit; modelUsed: string };
-          if (options.marqueeRunner) {
+        if (options.signal?.aborted) return;
+        let marqueeResult: { pitchKit: PitchKit; modelUsed: string };
+
+        const runtimeClient = options.agentRuntimeClient || this.agentRuntimeClient;
+        const isManagedMode = runtimeClient.isConfigured();
+
+        if (options.marqueeRunner) {
+          try {
             marqueeResult = await options.marqueeRunner(
               parseResult.scriptParse,
               coverageResult.coverage,
@@ -215,7 +224,49 @@ export class DirectorOrchestrator {
               breakdownResult.scriptBreakdown,
               (lvl, msg) => log("marquee", lvl, msg)
             );
-          } else {
+          } catch (runnerErr) {
+            const errMsg = runnerErr instanceof Error ? runnerErr.message : String(runnerErr);
+            log("marquee", "error", `Marquee runner failed: ${errMsg}`);
+            setStatus("marquee", "error", errMsg);
+            throw runnerErr;
+          }
+        } else if (isManagedMode) {
+          try {
+            log("marquee", "info", `[${runId}] Calling Google Agent Runtime for Marquee research-and-pitch stage...`);
+            const runtimeResult = await runtimeClient.generatePitchKit(
+              runId,
+              parseResult.scriptParse,
+              coverageResult.coverage,
+              budget,
+              breakdownResult.scriptBreakdown,
+              {
+                schedule,
+                onLog: (lvl, msg) => log("marquee", lvl, msg),
+                signal: options.signal,
+              }
+            );
+            marqueeResult = {
+              pitchKit: runtimeResult.pitchKit,
+              modelUsed: runtimeResult.modelUsed,
+            };
+          } catch (runtimeErr) {
+            const errMsg = runtimeErr instanceof Error ? runtimeErr.message : String(runtimeErr);
+            log("marquee", "error", `[${runId}] Google Agent Runtime failed: ${errMsg}`);
+            setStatus("marquee", "error", errMsg);
+            // Invariant: Explicit failure — no silent local fallback, no degraded status, no completed-run status!
+            throw runtimeErr;
+          }
+        } else {
+          // In production, managed Google Agent Runtime configuration is mandatory. Never fall back to unmanaged execution.
+          if (process.env.NODE_ENV === "production") {
+            const errMsg = "Managed Google Agent Runtime ReasoningEngine resource configuration is strictly required in production (VERTEX_REASONING_ENGINE_RESOURCE_NAME missing). Local execution disabled in production.";
+            log("marquee", "error", errMsg);
+            setStatus("marquee", "error", errMsg);
+            throw new AgentRuntimeError(errMsg, "AGENT_RUNTIME_NOT_CONFIGURED", runId);
+          }
+
+          // Local Marquee agent fallback ONLY when Agent Runtime is not configured in local development or offline test modes
+          try {
             const marquee = options.marqueeAgent || this.marquee;
             marqueeResult = await marquee.generatePitchKit(
               parseResult.scriptParse,
@@ -228,15 +279,24 @@ export class DirectorOrchestrator {
                 onPosterImage: (url) => emit({ type: "poster_image", posterUrl: url }),
               }
             );
+          } catch (localErr) {
+            const errMsg = localErr instanceof Error ? localErr.message : String(localErr);
+            log("marquee", "error", `Local Marquee failed: ${errMsg}`);
+            setStatus("marquee", "error", errMsg);
+            throw localErr;
           }
-          modelsUsedSet.add(marqueeResult.modelUsed);
-          runState.pitchKit = marqueeResult.pitchKit;
-          emitArtifact("pitchKit", marqueeResult.pitchKit);
-          setStatus("marquee", "done", "Pitch kit synthesized with grounded Parallel market evidence.");
-        } catch (marqueeErr) {
-          log("marquee", "warn", `Marquee encountered error, degrading gracefully: ${String(marqueeErr)}`);
-          setStatus("marquee", "degraded", "Degraded pitch kit without live market queries.");
         }
+
+        modelsUsedSet.add(marqueeResult.modelUsed);
+        runState.pitchKit = marqueeResult.pitchKit;
+        emitArtifact("pitchKit", marqueeResult.pitchKit);
+        setStatus(
+          "marquee",
+          "done",
+          isManagedMode
+            ? "Pitch kit synthesized via Google Agent Runtime with grounded Parallel market evidence."
+            : "Pitch kit synthesized with grounded Parallel market evidence."
+        );
       })();
 
       await Promise.all([easelPromise, marqueePromise]);

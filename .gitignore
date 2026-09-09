@@ -1,6 +1,7 @@
 # Next.js
 .next/
 out/
+dist/
 
 # Node
 node_modules/
@@ -37,10 +38,31 @@ scratch/
 # Demo captures, video exports & frame dumps
 demo/captures/
 demo/narration/
+demo/narration_v2/
+demo/v2_*/
+demo/final_submission_20260909/
 demo/*.mp4
 demo/*.webm
 demo/*.png
 demo/*.wav
+demo/*.srt
 demo/*frames/
 demo/master_timeline/
 demo/*.txt
+
+# Python cache & scratch tooling
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+demo/narration_script_v2.md
+docs/plans/2026-09-09-runtime-evidence-and-compliance.md
+docs/runtime-evidence-compliance.md
+scripts/capture_screens_v2.mjs
+scripts/render_v2_video.py
+scripts/test_frames_v2.py
+scripts/test_tts_v2.mjs
+scripts/test_v2_refined.py
+scripts/verify_candidate_browser.mjs
+
+

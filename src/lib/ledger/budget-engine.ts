@@ -491,3 +491,127 @@ export function buildBudget(
     currency: "USD",
   };
 }
+
+export function validateBudgetSemantics(budget: Budget): { valid: boolean; errors: string[] } {
+  const errors: string[] = [];
+
+  if (!budget || typeof budget !== "object") {
+    return { valid: false, errors: ["Budget is not an object."] };
+  }
+
+  if (!Array.isArray(budget.sections) || budget.sections.length === 0) {
+    errors.push("Budget contains zero sections.");
+    return { valid: false, errors };
+  }
+
+  if (!budget.summary || typeof budget.summary !== "object") {
+    errors.push("Budget summary is missing.");
+    return { valid: false, errors };
+  }
+
+  // 1. Line items & section subtotal arithmetic
+  for (const section of budget.sections) {
+    if (!Array.isArray(section.items) || section.items.length === 0) {
+      errors.push(`Section "${section.category}" contains no line items.`);
+      continue;
+    }
+
+    let itemsSum = 0;
+    for (const item of section.items) {
+      if (!item.tracesTo || !item.tracesTo.trim()) {
+        errors.push(`Budget item "${item.item}" is missing required tracesTo provenance.`);
+      }
+
+      if (item.unit !== "percent") {
+        const expectedItemTotal = item.qty * item.rate;
+        if (item.total !== expectedItemTotal) {
+          errors.push(
+            `Budget item "${item.item}" total mismatch: expected ${expectedItemTotal} (qty ${item.qty} * rate ${item.rate}), received ${item.total}.`
+          );
+        }
+      } else {
+        if (typeof item.total !== "number" || item.total < 0) {
+          errors.push(`Percentage budget item "${item.item}" must have non-negative total, received ${item.total}.`);
+        }
+      }
+
+      itemsSum += item.total;
+    }
+
+    if (section.subtotal !== itemsSum) {
+      errors.push(
+        `Section "${section.category}" subtotal mismatch: items sum to ${itemsSum}, but section subtotal states ${section.subtotal}.`
+      );
+    }
+  }
+
+  // 2. Summary category reconciliation
+  const crewSec = budget.sections.find((s) => s.category === "Crew");
+  const nightSec = budget.sections.find((s) => s.category === "Night Premium");
+  const castSec = budget.sections.find((s) => s.category === "Cast");
+  const equipSec = budget.sections.find((s) => s.category === "Equipment");
+  const locSec = budget.sections.find((s) => s.category === "Locations & Logistics");
+  const postSec = budget.sections.find((s) => s.category === "Post Production");
+  const contingencySec = budget.sections.find((s) => s.category === "Contingency");
+
+  if (budget.summary.crewSubtotal !== (crewSec?.subtotal ?? 0)) {
+    errors.push(`Crew subtotal mismatch: summary has ${budget.summary.crewSubtotal}, section has ${crewSec?.subtotal ?? 0}.`);
+  }
+  if (budget.summary.nightPremiumTotal !== (nightSec?.subtotal ?? 0)) {
+    errors.push(`Night premium mismatch: summary has ${budget.summary.nightPremiumTotal}, section has ${nightSec?.subtotal ?? 0}.`);
+  }
+  if (budget.summary.castSubtotal !== (castSec?.subtotal ?? 0)) {
+    errors.push(`Cast subtotal mismatch: summary has ${budget.summary.castSubtotal}, section has ${castSec?.subtotal ?? 0}.`);
+  }
+  if (budget.summary.equipmentSubtotal !== (equipSec?.subtotal ?? 0)) {
+    errors.push(`Equipment subtotal mismatch: summary has ${budget.summary.equipmentSubtotal}, section has ${equipSec?.subtotal ?? 0}.`);
+  }
+  if (budget.summary.locationsLogisticsSubtotal !== (locSec?.subtotal ?? 0)) {
+    errors.push(
+      `Locations & Logistics subtotal mismatch: summary has ${budget.summary.locationsLogisticsSubtotal}, section has ${locSec?.subtotal ?? 0}.`
+    );
+  }
+  if (budget.summary.postSubtotal !== (postSec?.subtotal ?? 0)) {
+    errors.push(`Post production subtotal mismatch: summary has ${budget.summary.postSubtotal}, section has ${postSec?.subtotal ?? 0}.`);
+  }
+  if (budget.summary.contingencyTotal !== (contingencySec?.subtotal ?? 0)) {
+    errors.push(`Contingency subtotal mismatch: summary has ${budget.summary.contingencyTotal}, section has ${contingencySec?.subtotal ?? 0}.`);
+  }
+
+  // 3. Subtotal before contingency without double-counting
+  const expectedSubtotalBeforeContingency =
+    (crewSec?.subtotal ?? 0) +
+    (nightSec?.subtotal ?? 0) +
+    (castSec?.subtotal ?? 0) +
+    (equipSec?.subtotal ?? 0) +
+    (locSec?.subtotal ?? 0) +
+    (postSec?.subtotal ?? 0);
+
+  if (budget.summary.subtotalBeforeContingency !== expectedSubtotalBeforeContingency) {
+    errors.push(
+      `Budget summary subtotalBeforeContingency mismatch: expected ${expectedSubtotalBeforeContingency}, received ${budget.summary.subtotalBeforeContingency}.`
+    );
+  }
+
+  // 4. Contingency calculation (10%)
+  const expectedContingency = Math.round(budget.summary.subtotalBeforeContingency * 0.1);
+  if (budget.summary.contingencyTotal !== expectedContingency) {
+    errors.push(
+      `Contingency mismatch: expected 10% of subtotalBeforeContingency (${expectedContingency}), received ${budget.summary.contingencyTotal}.`
+    );
+  }
+
+  // 5. Grand total
+  const expectedGrandTotal = budget.summary.subtotalBeforeContingency + budget.summary.contingencyTotal;
+  if (budget.summary.grandTotal !== expectedGrandTotal) {
+    errors.push(
+      `Grand total mismatch: expected ${expectedGrandTotal} (subtotal ${budget.summary.subtotalBeforeContingency} + contingency ${budget.summary.contingencyTotal}), received ${budget.summary.grandTotal}.`
+    );
+  }
+
+  return {
+    valid: errors.length === 0,
+    errors,
+  };
+}
+

@@ -104,4 +104,24 @@ describe("Parallel Partner Search Client", () => {
     expect(citations[0].title).toBe("The Popcorn List: Independent Film Festivals Roundup");
     expect(citations[0].snippet).toBe("The production value bar is set by festival programmers for horror entries.");
   });
+
+  it("treats isConfigured strictly as configuration presence, distinct from live search execution", async () => {
+    const client = new ParallelSearchClient("valid_api_key");
+    // Configuration check evaluates API key presence only
+    expect(client.isConfigured()).toBe(true);
+
+    // Live search execution is separate and depends on network/provider response
+    const mockFetch = vi.fn().mockResolvedValue({
+      ok: false,
+      status: 401,
+      text: async () => "Unauthorized",
+    });
+    global.fetch = mockFetch as any;
+
+    const citations = await client.searchMarket({ query: "market comps" });
+    // Configuration being true does NOT imply successful provider execution
+    expect(client.isConfigured()).toBe(true);
+    expect(citations).toEqual([]);
+  });
 });
+

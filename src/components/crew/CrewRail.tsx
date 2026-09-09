@@ -55,7 +55,7 @@ export const CREW_DEPARTMENTS: CrewDept[] = [
     name: "Director",
     department: "Executive Office",
     role: "Studio Orchestrator",
-    model: "gemini-3.5-flash",
+    model: "gemini-3.8-flash",
     defaultTask: "Supervising multi-agent execution pipeline",
   },
   {
@@ -64,7 +64,7 @@ export const CREW_DEPARTMENTS: CrewDept[] = [
     name: "Ink",
     department: "Story Dept",
     role: "Story Analyst",
-    model: "gemini-3.5-flash",
+    model: "gemini-3.8-flash",
     defaultTask: "Evaluating narrative premise & coverage rubric",
   },
   {
@@ -73,7 +73,7 @@ export const CREW_DEPARTMENTS: CrewDept[] = [
     name: "Slate",
     department: "Production Office",
     role: "1st Assistant Director",
-    model: "gemini-3.5-flash",
+    model: "gemini-3.8-flash",
     defaultTask: "Cataloging 13-category scene elements",
   },
   {
@@ -100,7 +100,7 @@ export const CREW_DEPARTMENTS: CrewDept[] = [
     name: "Marquee",
     department: "Sales & Packaging",
     role: "Market & Distribution",
-    model: "parallel-search + gemini-3.1-flash-lite",
+    model: "parallel-search + gemini-3.8-flash",
     defaultTask: "Querying live festival & box-office comps",
   },
 ];

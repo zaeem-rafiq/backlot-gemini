@@ -240,20 +240,74 @@ assert(
   `Timestamp: ${healthRes.timestamp}`
 );
 
+// 2.5 Verify Partner Integration Configuration State
 assert(
   healthRes.partnerIntegration?.isConfigured === true,
-  "Parallel Search API partner integration is configured and active",
+  "Parallel Search API environment configuration present (isConfigured = true)",
   `Provider: ${healthRes.partnerIntegration?.provider}`
 );
 
-// Save structured acceptance receipt
+// Report configuration, successful provider execution, and complete application behavior separately
+console.log("\n--- PARTNER INTEGRATION STATUS REPORT ---");
+console.log("Configuration Status:            VERIFIED (PARALLEL_API_KEY is configured in Cloud Run runtime)");
+console.log("Health Check Provider Execution: NOT VERIFIED (Health endpoint probes configuration only; live queries run in Marquee workflow)");
+
+const liveEvidenceFile = "demo/captures/acceptance_live_evidence.json";
+let correlatedLiveEvidence = null;
+let applicationBehaviorStatus = "NOT VERIFIED (Requires validated live-run execution evidence)";
+
+if (fs.existsSync(liveEvidenceFile)) {
+  try {
+    const parsedEvidence = JSON.parse(fs.readFileSync(liveEvidenceFile, "utf-8"));
+    if (
+      parsedEvidence?.runIdentity?.terminalStatus === "complete" &&
+      parsedEvidence?.infrastructure?.cloudRunRevision === liveRevision &&
+      parsedEvidence?.parallelSearchPartnerEvidence?.citationsCount > 0
+    ) {
+      applicationBehaviorStatus = "VERIFIED_WITH_CORRELATED_LIVE_EVIDENCE";
+      correlatedLiveEvidence = {
+        runId: parsedEvidence.runIdentity.runId,
+        citationsCount: parsedEvidence.parallelSearchPartnerEvidence.citationsCount,
+        recommendationOutcome: parsedEvidence.parallelSearchPartnerEvidence.recommendationOutcome?.status,
+        timestamp: parsedEvidence.runIdentity.requestTimestamp,
+      };
+    }
+  } catch {
+    // Leave as NOT VERIFIED if file cannot be parsed or lacks complete evidence
+  }
+}
+
+console.log(`End-to-End Application Behavior: ${applicationBehaviorStatus}`);
+
+const localHeadCommit = runCmd("git rev-parse HEAD");
+const deployedSourceCommit = "1fc2bc909d4107953c4dfaf04950808fb4d5eb92";
+
+// Save structured acceptance receipt to dedicated calibrated path to preserve existing demo receipts
 const acceptanceReceipt = {
   timestamp: new Date().toISOString(),
-  candidateCommit: "1fc2bc909d4107953c4dfaf04950808fb4d5eb92",
+  localHeadCommit,
+  deployedSourceCommit,
+  commitsMatch: localHeadCommit === deployedSourceCommit,
   deployedRevision: liveRevision,
   trafficAllocation: `${trafficPercent}%`,
   rollbackTarget: `${rollbackRevision} (${rollbackTag})`,
   serviceUrl: liveServiceUrl,
+  partnerIntegrationAssessment: {
+    configuration: {
+      status: "VERIFIED",
+      details: "PARALLEL_API_KEY present in Cloud Run environment",
+      isConfigured: healthRes.partnerIntegration?.isConfigured ?? false,
+    },
+    liveProviderExecutionInHealthCheck: {
+      status: "NOT VERIFIED",
+      reason: "Health check does not invoke external search queries; live search executed during studio runs",
+    },
+    completeApplicationBehavior: {
+      status: applicationBehaviorStatus,
+      evidencePath: liveEvidenceFile,
+      correlatedDetails: correlatedLiveEvidence,
+    },
+  },
   results: testResults,
   summary: {
     total: testResults.length,
@@ -262,11 +316,14 @@ const acceptanceReceipt = {
   },
 };
 
+
+const receiptPath = "demo/captures/acceptance_verification_receipt_calibrated.json";
 fs.writeFileSync(
-  "demo/captures/acceptance_verification_receipt.json",
+  receiptPath,
   JSON.stringify(acceptanceReceipt, null, 2),
   "utf-8"
 );
 
-console.log(`\n Acceptance receipt written to demo/captures/acceptance_verification_receipt.json`);
+console.log(`\n Acceptance receipt written to ${receiptPath}`);
 console.log(`All ${testResults.length} acceptance assertions passed successfully!`);
+

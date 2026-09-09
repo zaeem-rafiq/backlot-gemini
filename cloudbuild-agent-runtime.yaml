@@ -1,0 +1,16 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-f'
+      - 'Dockerfile.agent-runtime'
+      - '-t'
+      - '$_IMAGE_NAME:$_TAG'
+      - '.'
+images:
+  - '$_IMAGE_NAME:$_TAG'
+substitutions:
+  _IMAGE_NAME: 'us-central1-docker.pkg.dev/polygraph-hackathon/cloud-run-source-deploy/backlot-marquee-runtime'
+  _TAG: 'latest'
+options:
+  logging: CLOUD_LOGGING_ONLY
