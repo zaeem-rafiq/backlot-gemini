@@ -145,6 +145,59 @@ const PITCH_KIT_JSON_SCHEMA = {
   ],
 };
 
+export function findSupportedCitation(
+  rec: ProductionRecommendation,
+  marketEvidence: ParallelSourceCitation[],
+  budget: Budget
+): ParallelSourceCitation | null {
+  // Candidate citations must have an authentic returned excerpt of at least 10 characters
+  const validCitations = marketEvidence.filter((c) => (c.snippet || "").trim().length >= 10);
+  if (validCitations.length === 0) return null;
+
+  // An alternative citation must genuinely and specifically support the exact target artifact
+  // and substantive domain of the recommendation. Merely attaching an unrelated nonempty excerpt
+  // to existing advice is strictly prohibited.
+  const targetId = (rec.affectedArtifact?.identifier || "").toLowerCase().trim();
+  const titleLower = rec.title.toLowerCase();
+  const decisionLower = rec.actionableDecision.toLowerCase();
+  const adviceLower = (rec.inferredAdvice || "").toLowerCase();
+  const fullRecText = `${titleLower} ${decisionLower} ${adviceLower} ${targetId}`;
+
+  const isAudio = targetId.includes("sound") || targetId.includes("audio") || targetId.includes("foley") || targetId.includes("mix") || fullRecText.includes("sound design");
+  const isEditorial = targetId.includes("editor") || targetId.includes("editorial") || targetId.includes("cut");
+  const isColor = targetId.includes("color") || targetId.includes("grade") || targetId.includes("finishing");
+  const isFestival = rec.category === "FESTIVAL_WINDOW" || targetId.includes("festival");
+  const isDistribution = rec.category === "DISTRIBUTION_STRATEGY" || targetId.includes("distribution");
+
+  for (const citation of validCitations) {
+    const citationText = `${citation.title} ${citation.snippet} ${citation.query || ""}`.toLowerCase();
+
+    if (isAudio) {
+      if (/\b(sound design|foley|audio|sound mix|soundtrack|audio design)\b/i.test(citationText)) {
+        return citation;
+      }
+    } else if (isEditorial) {
+      if (/\b(picture edit|editorial|editor|cutting|assembly)\b/i.test(citationText)) {
+        return citation;
+      }
+    } else if (isColor) {
+      if (/\b(color grading|colorist|digital intermediate|lut)\b/i.test(citationText)) {
+        return citation;
+      }
+    } else if (isFestival) {
+      if (/\b(festival submission|programmer|selection|competition|premiere)\b/i.test(citationText)) {
+        return citation;
+      }
+    } else if (isDistribution) {
+      if (/\b(distribution|sales agent|theatrical|vod|acquisition)\b/i.test(citationText)) {
+        return citation;
+      }
+    }
+  }
+
+  return null;
+}
+
 export function validateProductionRecommendation(
   rec: ProductionRecommendation | null,
   budget: Budget,
@@ -154,12 +207,23 @@ export function validateProductionRecommendation(
   if (!marketEvidence || marketEvidence.length === 0) return null;
 
   // 1. Require the selected source to match an actual returned citation by URL. A matching title alone is insufficient.
-  const matchedCitation = marketEvidence.find((c) => c.url === rec.sourceCitation.url);
+  const matchedCitation = marketEvidence.find((c) => c.url === rec.sourceCitation?.url);
   if (!matchedCitation) return null;
 
-  // An empty or unusable excerpt cannot become claimed supporting evidence.
-  const usableSnippet = (matchedCitation.snippet || rec.sourceCitation?.snippet || rec.factualFinding || "").trim();
-  if (!usableSnippet || usableSnippet.length < 10) return null;
+  let supportingCitation = matchedCitation;
+  let canonicalSnippet = (supportingCitation.snippet || "").trim();
+
+  // An empty or unusable excerpt cannot qualify as supporting evidence.
+  // Missing, empty, or whitespace-only source text remains unavailable.
+  if (!canonicalSnippet || canonicalSnippet.length < 10) {
+    const alternative = findSupportedCitation(rec, marketEvidence, budget);
+    if (alternative) {
+      supportingCitation = alternative;
+      canonicalSnippet = (alternative.snippet || "").trim();
+    } else {
+      return null;
+    }
+  }
 
   // 2. If affectedArtifact targets a budget line item
   if (rec.affectedArtifact.kind === "budget_line_item") {
@@ -244,6 +308,8 @@ export function validateProductionRecommendation(
     // Return recommendation with canonical item identity and label
     return {
       ...rec,
+      sourceCitation: supportingCitation,
+      factualFinding: canonicalSnippet,
       affectedArtifact: {
         ...rec.affectedArtifact,
         identifier: targetItem.item,
@@ -253,7 +319,11 @@ export function validateProductionRecommendation(
     };
   }
 
-  return rec;
+  return {
+    ...rec,
+    sourceCitation: supportingCitation,
+    factualFinding: canonicalSnippet,
+  };
 }
 
 export class MarqueeAgent {
@@ -381,21 +451,15 @@ INSTRUCTIONS:
           : undefined;
 
         if (matchedCitation) {
-          const canonicalSnippet = (matchedCitation.snippet || "").trim();
+          const rawArtifact = (rawRec.affectedArtifact as Record<string, unknown>) || {};
+          let supportingCitation: ParallelSourceCitation | null = matchedCitation;
+          let canonicalSnippet = (supportingCitation.snippet || "").trim();
+
           if (!canonicalSnippet || canonicalSnippet.length < 10) {
-            onLog?.(
-              "info",
-              "Marquee withheld recommendation because matched citation has an empty or unusable excerpt."
-            );
-          } else {
-            try {
-              const rawArtifact = (rawRec.affectedArtifact as Record<string, unknown>) || {};
-              const candidateRec: ProductionRecommendation = {
-                title: String(rawRec.title),
-                category: (rawRec.category as ProductionRecommendation["category"]) || "DISTRIBUTION_STRATEGY",
-                // Use the canonical returned citation's excerpt as retrieved evidence
-                factualFinding: canonicalSnippet,
-              // Keep model-written interpretation explicitly labeled as inferred advice
+            const preliminaryRec: ProductionRecommendation = {
+              title: String(rawRec.title),
+              category: (rawRec.category as ProductionRecommendation["category"]) || "DISTRIBUTION_STRATEGY",
+              factualFinding: "",
               inferredAdvice: String(rawRec.inferredAdvice || rawRec.actionableDecision || rawRec.tradeoffRationale),
               actionableDecision: String(rawRec.actionableDecision),
               tradeoffRationale: String(rawRec.tradeoffRationale),
@@ -408,14 +472,51 @@ INSTRUCTIONS:
               sourceCitation: matchedCitation,
             };
 
-            // Validate exact budget target, source attribution, and physical feasibility
-            productionRecommendation = validateProductionRecommendation(candidateRec, budget, marketEvidence);
-            if (!productionRecommendation && candidateRec) {
+            const alternative = findSupportedCitation(preliminaryRec, marketEvidence, budget);
+            if (alternative) {
               onLog?.(
                 "info",
-                `Marquee withheld unsupported recommendation for '${candidateRec.affectedArtifact.identifier}'.`
+                `Marquee re-grounded recommendation on genuinely supported returned citation '${alternative.title}'.`
               );
+              supportingCitation = alternative;
+              canonicalSnippet = (alternative.snippet || "").trim();
+            } else {
+              onLog?.(
+                "info",
+                "Marquee withheld recommendation because matched citation has an empty or unusable excerpt."
+              );
+              supportingCitation = null;
             }
+          }
+
+          if (supportingCitation && canonicalSnippet.length >= 10) {
+            try {
+              const candidateRec: ProductionRecommendation = {
+                title: String(rawRec.title),
+                category: (rawRec.category as ProductionRecommendation["category"]) || "DISTRIBUTION_STRATEGY",
+                // Use the canonical returned citation's excerpt as retrieved evidence
+                factualFinding: canonicalSnippet,
+                // Keep model-written interpretation explicitly labeled as inferred advice
+                inferredAdvice: String(rawRec.inferredAdvice || rawRec.actionableDecision || rawRec.tradeoffRationale),
+                actionableDecision: String(rawRec.actionableDecision),
+                tradeoffRationale: String(rawRec.tradeoffRationale),
+                affectedArtifact: {
+                  kind: (rawArtifact.kind as ProductionRecommendation["affectedArtifact"]["kind"]) || "budget_line_item",
+                  identifier: String(rawArtifact.identifier || ""),
+                  label: String(rawArtifact.label || "Production Package"),
+                  tabTarget: (rawArtifact.tabTarget as ProductionRecommendation["affectedArtifact"]["tabTarget"]) || "BUDGET",
+                },
+                sourceCitation: supportingCitation,
+              };
+
+              // Validate exact budget target, source attribution, and physical feasibility
+              productionRecommendation = validateProductionRecommendation(candidateRec, budget, marketEvidence);
+              if (!productionRecommendation && candidateRec) {
+                onLog?.(
+                  "info",
+                  `Marquee withheld unsupported recommendation for '${candidateRec.affectedArtifact.identifier}'.`
+                );
+              }
             } catch {
               productionRecommendation = null;
             }

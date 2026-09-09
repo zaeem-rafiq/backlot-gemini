@@ -25,6 +25,16 @@ async function main() {
   const webmPath = "demo/captures/fresh_master_run.webm";
   const receiptPath = "demo/captures/fresh_run_receipt.json";
 
+  // Ensure no stale receipt masquerades as success if this run fails
+  if (fs.existsSync(receiptPath)) {
+    try {
+      fs.unlinkSync(receiptPath);
+      console.log(`Cleaned up prior receipt at ${receiptPath}`);
+    } catch (e) {
+      console.warn("Could not remove stale receipt:", e.message);
+    }
+  }
+
   // Step 1: Set viewport
   console.log("[1/10] Setting viewport to 1920x1080...");
   runCmd("agent-browser set viewport 1920 1080");
@@ -87,22 +97,38 @@ async function main() {
       const isRunning = !!btnOrchestrating || (btnGreenlight && btnGreenlight.disabled);
       
       const text = document.body.innerText || "";
-      const hasError = text.includes("Studio execution error") || text.includes("Pipeline Failed") || text.includes("error occurred during execution");
+      const hasError = text.includes("Fatal run failure:") ||
+                       text.includes("Studio execution error") ||
+                       text.includes("Pipeline Failed") ||
+                       text.includes("error occurred during execution") ||
+                       text.includes("Studio run rejected:") ||
+                       text.includes("Stream terminated unexpectedly") ||
+                       !!document.querySelector('[data-testid="stream-error-banner"]');
       
-      return { isRunning: !!isRunning, hasError: !!hasError };
+      // Check for presence of all required department artifacts/cards
+      const hasCoverage = !!document.getElementById("tab-COVERAGE");
+      const hasBreakdown = !!document.getElementById("tab-BREAKDOWN");
+      const hasSchedule = !!document.getElementById("tab-SCHEDULE");
+      const hasBudget = !!document.getElementById("tab-BUDGET");
+      const hasPreviz = !!document.getElementById("tab-STORYBOARD");
+      const hasPitchKit = !!document.getElementById("tab-PITCH_KIT");
+      const allTabsPresent = hasCoverage && hasBreakdown && hasSchedule && hasBudget && hasPreviz && hasPitchKit;
+
+      return { isRunning: !!isRunning, hasError: !!hasError, allTabsPresent };
     })()`);
 
-    console.log(`[Status +${Math.round(elapsed / 1000)}s] isRunning: ${status?.isRunning}, error: ${status?.hasError}`);
+    console.log(`[Status +${Math.round(elapsed / 1000)}s] isRunning: ${status?.isRunning}, error: ${status?.hasError}, tabs: ${status?.allTabsPresent}`);
 
     if (status?.hasError) {
-      throw new Error("Run verification failed: Studio execution error or pipeline failure observed in UI.");
+      throw new Error("Run verification failed: Studio execution error, fatal failure banner, or stream termination observed in UI.");
     }
 
-    if (status && !status.isRunning && elapsed > 8000) {
+    if (status && !status.isRunning && status.allTabsPresent && elapsed > 8000) {
       isDone = true;
-      console.log("Live run completed successfully!");
+      console.log("Live run completed successfully with all deliverables tabs present!");
       break;
     }
+  }
   }
 
   if (!isDone) {
@@ -173,10 +199,15 @@ async function main() {
     const withheldEl = document.querySelector('[data-testid="recommendation-withheld"]');
 
     if (!card) {
+      if (!withheldEl) {
+        return {
+          error: "Incomplete Pitch Kit rendering: neither recommendation-card nor recommendation-withheld element exists in DOM."
+        };
+      }
       return {
         hasRecommendation: false,
         status: "withheld",
-        reason: withheldEl ? withheldEl.textContent.trim() : "Market citations retrieved, but no supported production recommendation produced."
+        reason: withheldEl.textContent.trim()
       };
     }
 
@@ -212,6 +243,10 @@ async function main() {
     };
   })()`);
 
+  if (recDetails.error) {
+    throw new Error(`Run verification failed: ${recDetails.error}`);
+  }
+
   // Enforce receipt integrity validation
   if (recDetails.hasRecommendation) {
     if (!recDetails.title) throw new Error("Receipt validation failed: missing recommendation title");
@@ -231,21 +266,6 @@ async function main() {
     }
   }
 
-  const fullReceipt = {
-    ...initialReceipt,
-    deployedRevision,
-    recommendation: recDetails,
-    verification: {
-      crewDispatchStarted: started,
-      packageLocked: isDone,
-      noPipelineErrors: true,
-      workflowOutcome: recDetails.hasRecommendation ? "positive_recommendation_verified" : "valid_negative_outcome_withheld"
-    }
-  };
-
-  fs.writeFileSync(receiptPath, JSON.stringify(fullReceipt, null, 2), "utf-8");
-  console.log("Full Receipt Saved:\n", JSON.stringify(fullReceipt, null, 2));
-
   await sleep(3000);
 
   // Step 8: Click INSPECT IN BUDGET if available
@@ -256,12 +276,18 @@ async function main() {
 
     const drawerAudit = browserEval(`(() => {
       const drawer = document.getElementById("line-item-audit-drawer");
-      return drawer ? {
+      if (!drawer) return { found: false };
+      const text = drawer.innerText || "";
+      const formulaEl = drawer.querySelector('[data-testid="line-item-formula"]') ||
+                        Array.from(drawer.querySelectorAll('*')).find(el => el.textContent.includes('@') && el.textContent.includes('='));
+      return {
         found: true,
-        text: drawer.innerText
-      } : { found: false };
+        text,
+        hasFormula: !!formulaEl,
+        formulaText: formulaEl ? formulaEl.textContent.trim() : ""
+      };
     })()`);
-    console.log("Audit drawer found:", drawerAudit?.found);
+    console.log("Audit drawer found:", drawerAudit?.found, "formula:", drawerAudit?.formulaText);
     if (!drawerAudit?.found) {
       throw new Error("Run verification failed: Line item audit drawer did not open on inspect CTA click.");
     }
@@ -331,34 +357,50 @@ async function main() {
     try {
       runCmd(`agent-browser open "${recDetails.sourceCitation.url}"`);
       await sleep(4000);
-      const passageLoaded = browserEval(`(() => {
+      const passageCheck = browserEval(`(() => {
         const text = document.body.innerText || "";
-        const target = Array.from(document.querySelectorAll('h1, h2, h3, a, p, em, strong')).find(el => {
+        const paragraphs = Array.from(document.querySelectorAll('p, blockquote, div, h1, h2, h3'));
+        const target = paragraphs.find(el => {
           const t = el.textContent || "";
           return (
-            t.includes("production value") ||
-            t.includes("Should you make a horror film") ||
+            t.includes("Horror Filmmaking: The Guts of the Craft") ||
             t.includes("Guts of the Craft") ||
-            t.includes("Screen Craft") ||
-            t.includes("horror")
+            (t.includes("production value bar has to be raised") && t.includes("Screen Craft"))
           );
         });
         if (target) {
           target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        } else {
-          window.scrollBy({ top: 400, behavior: 'smooth' });
+          return { found: true, snippet: target.textContent.trim().slice(0, 150) };
         }
-        return text.length > 50;
+        return { found: false, textLength: text.length };
       })()`);
       await sleep(4500);
-      if (!passageLoaded) {
-        throw new Error(`Run verification failed: Supporting source citation page failed to load content: ${recDetails.sourceCitation.url}`);
+      if (!passageCheck?.found) {
+        throw new Error(`Run verification failed: Supporting source citation passage not found on external page: ${recDetails.sourceCitation.url}`);
       }
+      console.log("Verified supporting source citation passage visible on external page:", passageCheck.snippet);
     } catch (e) {
       console.warn("Could not navigate to external source URL:", e.message);
       throw e;
     }
   }
+
+  // Step 11: Write receipt ONLY after all previous verification steps have succeeded
+  const fullReceipt = {
+    ...initialReceipt,
+    deployedRevision,
+    recommendation: recDetails,
+    verification: {
+      crewDispatchStarted: started,
+      packageLocked: isDone,
+      noPipelineErrors: true,
+      workflowOutcome: recDetails.hasRecommendation ? "positive_recommendation_verified" : "valid_negative_outcome_withheld",
+      allStepsCompleted: true
+    }
+  };
+
+  fs.writeFileSync(receiptPath, JSON.stringify(fullReceipt, null, 2), "utf-8");
+  console.log("Full Receipt Saved AFTER verified completion:\n", JSON.stringify(fullReceipt, null, 2));
 
   // Stop recording
   console.log("Stopping recording...");

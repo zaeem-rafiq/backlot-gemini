@@ -251,6 +251,7 @@ export class DirectorOrchestrator {
         type: "done",
         runId,
         durationMs: totalDuration,
+        modelsUsed: Array.from(modelsUsedSet),
       });
 
       return runState;
@@ -410,6 +411,7 @@ export class DirectorOrchestrator {
         type: "done",
         runId,
         durationMs: totalDuration,
+        modelsUsed: Array.from(modelsUsedSet),
       });
 
       return runState;

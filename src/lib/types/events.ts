@@ -76,6 +76,7 @@ export const DoneEventSchema = z.object({
   type: z.literal("done"),
   runId: z.string(),
   durationMs: z.number(),
+  modelsUsed: z.array(z.string()).optional(),
 });
 export type DoneEvent = z.infer<typeof DoneEventSchema>;
 

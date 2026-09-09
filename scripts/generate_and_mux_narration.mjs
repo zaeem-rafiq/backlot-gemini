@@ -7,15 +7,15 @@ const segments = [
     id: 1,
     name: "01_title_card",
     targetStart: 0.1,
-    windowEnd: 6.1,
-    text: "Backlot Studio: an AI-native pre-production crew powered by Google Gemini."
+    windowEnd: 6.0,
+    text: "Backlot Studio: an AI-native pre-production crew powered by Gemini."
   },
   {
     id: 2,
     name: "02_act1_script",
     targetStart: 6.5,
-    windowEnd: 16.5,
-    text: "Every production starts with the script. Our producer inspects Frequency Zero, a contained suspense thriller in a remote broadcast booth."
+    windowEnd: 16.0,
+    text: "Every production starts with the script. Our producer inspects Frequency Zero, a contained suspense thriller in a broadcast booth."
   },
   {
     id: 3,
@@ -28,43 +28,50 @@ const segments = [
     id: 4,
     name: "04_act2_ledger",
     targetStart: 35.0,
-    windowEnd: 68.0,
+    windowEnd: 50.0,
     text: "While the generative agents run in parallel, the Ledger agent calculates rates deterministically in TypeScript. All six department deliverables are locked live on Cloud Run in under sixty seconds."
   },
   {
     id: 5,
-    name: "05_act3_pitchkit",
-    targetStart: 70.0,
-    windowEnd: 83.0,
-    text: "Inside the Pitch Kit, Marquee uses the Parallel Search API to ground our screenplay against market comps, proposing an evidence-backed recommendation to maximize festival competition polish."
+    name: "05_act2_telemetry",
+    targetStart: 52.0,
+    windowEnd: 77.0,
+    text: "As telemetry streams live across the network, Marquee executes real-time Parallel Search queries to benchmark indie horror distributions, while the crew converges toward package lock. Watch live as all six specialized departments complete their tasks, locking the full pre-production package in under eighty seconds."
   },
   {
     id: 6,
-    name: "06_act4_budget",
-    targetStart: 83.5,
-    windowEnd: 99.0,
-    text: "Clicking Inspect in Budget opens the line item audit drawer, verifying script breakdown origin and deterministic math. Our forty-three thousand, four hundred sixty-five dollar total remains immutable."
+    name: "06_act3_pitchkit",
+    targetStart: 82.0,
+    windowEnd: 89.5,
+    text: "In the Pitch Kit, Marquee uses Parallel Search to propose an evidence-backed audio recommendation."
   },
   {
     id: 7,
-    name: "07_act5_tour",
-    targetStart: 99.5,
-    windowEnd: 114.0,
-    text: "Every deliverable stays synchronized across departments: diagnostic story coverage, thirteen breakdown categories, magnetic stripboard scheduling, and widescreen previz boards."
+    name: "07_act4_budget",
+    targetStart: 89.8,
+    windowEnd: 99.0,
+    text: "Clicking Inspect in Budget opens the line item audit drawer, verifying script provenance and deterministic math."
   },
   {
     id: 8,
-    name: "08_act6_source",
-    targetStart: 115.0,
+    name: "08_act5_tour",
+    targetStart: 99.5,
+    windowEnd: 119.0,
+    text: "Every deliverable stays synchronized across departments: diagnostic story coverage, thirteen breakdown categories, magnetic stripboard scheduling, and widescreen previz boards."
+  },
+  {
+    id: 9,
+    name: "09_act6_source",
+    targetStart: 120.0,
     windowEnd: 129.0,
     text: "Parallel grounds this directly in verified reporting from The Film Collaborative, inspecting the live publication cited in our Pitch Kit."
   },
   {
-    id: 9,
-    name: "09_act7_end",
+    id: 10,
+    name: "10_act7_end",
     targetStart: 129.8,
     windowEnd: 136.2,
-    text: "Backlot Studio: authentic multi-agent intelligence and verifiable financial truth."
+    text: "Backlot Studio: multi-agent intelligence and verifiable financial truth."
   }
 ];
 

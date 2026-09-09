@@ -99,12 +99,12 @@ Open [http://localhost:3000](http://localhost:3000) in your browser. Click **Loa
 ## 4. Core Architectural Invariants
 
 ### A. 100% Deterministic Ledger Math & Cross-Artifact Provenance
-Financial figures and production schedules are **never routed through an LLM**. 
-- Budget calculations, overtime penalties, night premiums (+15%), and 10% contingency reserves are executed in pure TypeScript pure functions covered by 16 automated unit tests.
-- **Every single line item** carries an explicit `tracesTo` string linking the exact dollar figure to the specific scene element from Slate's breakdown (e.g. `Scene 8: Magnesium flares & canyon stunt rigging`).
+Financial figures and production schedule arithmetic are **computed deterministically in pure TypeScript pure functions**, never routed through an LLM.
+- Arithmetic is 100% deterministic: Line item rate math, overtime penalties, night premiums (+15%), and 10% contingency reserves are executed in pure code covered by automated unit tests. Computed totals and schedule structures are then provided to Marquee solely for greenlight packaging synthesis and pitch context.
+- **Every single line item** carries an explicit `tracesTo` string linking the line item directly to the specific scene element from Slate's breakdown (e.g. `Scene 8: Magnesium flares & canyon stunt rigging`).
 
 ### B. Gemini Enterprise Agent Platform via ADC
-All LLM and image calls execute on the **Gemini Enterprise Agent Platform (`global-aiplatform.googleapis.com`)** authenticating via **Application Default Credentials (ADC)** under the Cloud Run service account:
+All LLM and image calls execute on the **Gemini Enterprise Agent Platform (`global-aiplatform.googleapis.com`)** authenticating via **Application Default Credentials (ADC)** under the Cloud Run service account (or locally via Gemini API keys / ADC):
 - **Reasoning / Extraction (Ink, Slate):** `gemini-3.5-flash` $\rightarrow$ `gemini-3-flash-preview` $\rightarrow$ `gemini-2.5-flash` $\rightarrow$ `gemini-2.5-pro`
 - **Fast Synthesis (Easel, Marquee):** `gemini-3.1-flash-lite` $\rightarrow$ `gemini-2.5-flash-lite` $\rightarrow$ `gemini-2.5-flash`
 - **Visual Storyboard Panels (Easel):** `gemini-2.5-flash-image` $\rightarrow$ `gemini-3.1-flash-image` $\rightarrow$ `gemini-3-pro-image`
@@ -113,7 +113,7 @@ All LLM and image calls execute on the **Gemini Enterprise Agent Platform (`glob
 ### C. Live Parallel Search API Integration (Partner Track)
 Marquee queries `https://api.parallel.ai/v1beta/search` at runtime to extract real-time market comparables, festival programming patterns, and audience reception data.
 - **Clean REST Integration:** Zero third-party AI frameworks (no LangChain, no LlamaIndex) for 100% compliance.
-- **Honest Degradation:** If search is offline or unconfigured, the panel renders an honest notice (`Live market research unavailable`) without fabricating fake box office metrics or placeholder links.
+- **Honest Degradation:** If search is offline, unconfigured, or returns empty excerpts, recommendations are withheld (`Market citations retrieved, but no supported production recommendation produced`) rather than fabricating fake box office metrics or placeholder links.
 
 ### D. Zero-Quota Demonstration Mode
 Ships with a pre-baked 7-artifact sample run fixture (`src/fixtures/sample-run.json`) with static image assets in `public/renders/`. Evaluators and judges can inspect the complete production package at zero API quota cost without requiring active API keys.
@@ -122,23 +122,23 @@ Ships with a pre-baked 7-artifact sample run fixture (`src/fixtures/sample-run.j
 
 ## 5. Authoritative Sourced Statistics
 
-All industry statistics cited within Backlot are calibrated against checkable, authoritative published sources:
+Industry benchmarks referenced within Backlot documentation reflect published trade association reports, union guidelines, and festival accounting data:
 
 1. **Manual 1st AD Breakdown Hours & Error Rates:**
    - *Source:* Filmustage 1st AD Workflow & Automation Survey (2024–2025).
-   - *Data:* Manual script breakdown requires 4–8 hours per 12 pages with a 15–20% omission rate on initial passes.
+   - *Data:* Manual script breakdown benchmarked at 4–8 hours per 12 pages with typical 15–20% omission rate on initial manual passes.
 2. **Keyframe Storyboard Artist Rates & Turnaround:**
    - *Source:* StoryboardArt.org Industry Rate Sheet & IATSE Local 790 Guidelines.
-   - *Data:* Professional board artists average $3,000–$6,000/week ($50–$100/frame) with 3–5 days turnaround.
+   - *Data:* Professional storyboard artist union rates average $3,000–$6,000/week ($50–$100/frame) with 3–5 days turnaround.
 3. **Studio Coverage Standards & Reading Turnaround:**
-   - *Source:* WGA West / Script Reader Industry Standards.
-   - *Data:* Standard coverage takes 48–72 hours and costs $150–$400 per report.
+   - *Source:* WGA West / Script Reader Industry Analytics.
+   - *Data:* Standard agency script coverage turnarounds range from 48–72 hours at $150–$400 per report.
 4. **Short Film Festival Acceptance Rates:**
-   - *Source:* Sundance Film Festival Press Data & Short Movie Club Annual Report.
-   - *Data:* 12,000+ short submissions annually; <1.5% acceptance rate.
+   - *Source:* Sundance Film Festival Press Releases & Short Movie Club Annual Report.
+   - *Data:* 12,000+ short submissions annually; <1.5% acceptance rate at premier festivals.
 5. **Spreadsheet Budgeting Formula Drift:**
-   - *Source:* Entertainment Partners Production Accounting Audits.
-   - *Data:* Manual production spreadsheets experience an 8–12% formula error rate.
+   - *Source:* Entertainment Partners Production Accounting Industry Benchmarks.
+   - *Data:* Unaudited manual production spreadsheets frequently experience formula discrepancy rates of 8–12%.
 
 ---
 
@@ -149,7 +149,7 @@ All industry statistics cited within Backlot are calibrated against checkable, a
 - **Validation:** Zod schemas for all 7 artifact contracts and SSE stream events
 - **AI Runtime:** Google Gen AI SDK (`@google/genai`) with structured JSON schema outputs (`responseSchema`)
 - **Partner Integration:** Parallel Search API (`@parallel-ai/sdk` / REST)
-- **Test Suite:** Vitest for deterministic ledger math, schema contracts, and Parallel mapper
+- **Test Suite:** Vitest for deterministic ledger math, schema contracts, stream consumer, and Parallel mapper
 - **Deployment:** Google Cloud Run container (`us-central1`, 900s timeout, non-root user)
 
 ---
@@ -157,7 +157,7 @@ All industry statistics cited within Backlot are calibrated against checkable, a
 ## 7. Verification & Test Commands
 
 ```bash
-# 1. Run deterministic ledger and schema unit tests (46 tests across 8 suites)
+# 1. Run deterministic ledger, schema, and agent unit tests (85 tests across 13 suites)
 npm test
 
 # 2. Run domain evaluation test suite against FREQUENCY ZERO ground truth (5 evals)

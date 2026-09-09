@@ -23,6 +23,7 @@ import {
   Radio,
   CheckCircle2,
   AlertCircle,
+  AlertTriangle,
   ShieldAlert,
   Square,
   GitCompare,
@@ -30,6 +31,7 @@ import {
 } from "lucide-react";
 import { FREQUENCY_ZERO_SCRIPT } from "@/fixtures/frequency-zero";
 import { RunState, StreamEvent, AgentId, AgentStatusState } from "@/lib/types/events";
+import { consumeStudioSSEStream } from "@/lib/stream/sse-consumer";
 import { CrewLogEntry, CREW_DEPARTMENTS } from "@/components/crew/CrewRail";
 import { CoverageDossier } from "@/components/artifacts/CoverageDossier";
 import { BreakdownTable } from "@/components/artifacts/BreakdownTable";
@@ -236,7 +238,10 @@ export default function BacklotStudioPage() {
     const controller = new AbortController();
     abortControllerRef.current = controller;
 
+    // Reset drawers, highlights, and transient state on dispatch
+    setScriptDrawerOpen(false);
     setHighlightedBudgetItem(null);
+    setCommandPaletteOpen(false);
     setRunSource("live");
     if (typeof window !== "undefined" && window.innerWidth < 768) {
       setSidebarOpen(false);
@@ -255,7 +260,7 @@ export default function BacklotStudioPage() {
     });
 
     const initialRun: RunState = {
-      id: `run_${Date.now()}`,
+      id: `run_pending`,
       createdAt: new Date().toISOString(),
       title: "CUSTOM PRODUCTION",
       screenplayText: screenplay,
@@ -290,86 +295,142 @@ export default function BacklotStudioPage() {
       }
 
       if (!response.body) {
-        throw new Error("No SSE response stream received");
+        throw new Error("No SSE response stream received from server");
       }
 
       const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-      let buffer = "";
 
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split("\n\n");
-        buffer = lines.pop() || "";
-
-        for (const line of lines) {
-          if (line.startsWith("data: ")) {
-            try {
-              const event: StreamEvent = JSON.parse(line.slice(6));
-              if (event.type === "agent_log") {
-                enqueueLog({ agent: event.agent, message: event.message, timestamp: event.timestamp, level: event.level });
-              } else if (event.type === "agent_status") {
-                setAgentStatuses((prev) => ({ ...prev, [event.agent]: event.status }));
-              } else if (event.type === "artifact") {
-                setRunState((prev) => {
-                  if (!prev) return prev;
-                  const updated = { ...prev };
-                  if (event.kind === "scriptParse") updated.scriptParse = event.data as any;
-                  if (event.kind === "coverage") updated.coverage = event.data as any;
-                  if (event.kind === "breakdown") updated.breakdown = event.data as any;
-                  if (event.kind === "schedule") updated.schedule = event.data as any;
-                  if (event.kind === "budget") updated.budget = event.data as any;
-                  if (event.kind === "boardPlan") updated.boardPlan = event.data as any;
-                  if (event.kind === "pitchKit") updated.pitchKit = event.data as any;
-                  if (event.kind === "revision") updated.revision = event.data as any;
-                  return updated;
-                });
-              } else if (event.type === "frame_image") {
-                setRunState((prev) => {
-                  if (!prev?.boardPlan) return prev;
-                  const frames = prev.boardPlan.frames.map((f) =>
-                    f.frameId === event.frameId ? { ...f, imageUrl: event.imageUrl } : f
-                  );
-                  return { ...prev, boardPlan: { ...prev.boardPlan, frames } };
-                });
-              } else if (event.type === "poster_image") {
-                setRunState((prev) => {
-                  if (!prev?.pitchKit) return prev;
-                  return {
-                    ...prev,
-                    pitchKit: {
-                      ...prev.pitchKit,
-                      posterConcept: { ...prev.pitchKit.posterConcept, posterUrl: event.posterUrl },
-                    },
-                  };
-                });
-              } else if (event.type === "done") {
-                flushLogs();
-                setRunState((prev) => (prev ? { ...prev, status: "complete" } : null));
-                setIsRunning(false);
-              } else if (event.type === "error") {
-                flushLogs();
-                setRunState((prev) => (prev ? { ...prev, status: "error", error: event.message } : null));
-                setIsRunning(false);
-              }
-            } catch (jsonErr) {
-              console.error("Error decoding SSE stream chunk:", jsonErr);
+      await consumeStudioSSEStream({
+        reader,
+        onEvent: (event: StreamEvent) => {
+          if (event.type === "agent_log") {
+            enqueueLog({ agent: event.agent, message: event.message, timestamp: event.timestamp, level: event.level });
+            const runIdMatch = event.message.match(/Starting pre-production studio run \[(run_[0-9]+)\]/);
+            if (runIdMatch) {
+              setRunState((prev) => (prev ? { ...prev, id: runIdMatch[1] } : null));
             }
+            const modelMatch = event.message.match(/\[(gemini-[a-zA-Z0-9.-]+)\]/);
+            if (modelMatch) {
+              setRunState((prev) => {
+                if (!prev) return prev;
+                const currentModels = prev.modelsUsed || [];
+                if (!currentModels.includes(modelMatch[1])) {
+                  return { ...prev, modelsUsed: [...currentModels, modelMatch[1]] };
+                }
+                return prev;
+              });
+            }
+          } else if (event.type === "agent_status") {
+            setAgentStatuses((prev) => ({ ...prev, [event.agent]: event.status }));
+          } else if (event.type === "artifact") {
+            setRunState((prev) => {
+              if (!prev) return prev;
+              const updated = { ...prev };
+              if (event.kind === "scriptParse") {
+                updated.scriptParse = event.data as any;
+                if ((event.data as any)?.title) {
+                  updated.title = (event.data as any).title;
+                }
+              }
+              if (event.kind === "coverage") updated.coverage = event.data as any;
+              if (event.kind === "breakdown") updated.breakdown = event.data as any;
+              if (event.kind === "schedule") updated.schedule = event.data as any;
+              if (event.kind === "budget") updated.budget = event.data as any;
+              if (event.kind === "boardPlan") updated.boardPlan = event.data as any;
+              if (event.kind === "pitchKit") updated.pitchKit = event.data as any;
+              if (event.kind === "revision") updated.revision = event.data as any;
+              return updated;
+            });
+          } else if (event.type === "frame_image") {
+            setRunState((prev) => {
+              if (!prev?.boardPlan) return prev;
+              const frames = prev.boardPlan.frames.map((f) =>
+                f.frameId === event.frameId ? { ...f, imageUrl: event.imageUrl } : f
+              );
+              return { ...prev, boardPlan: { ...prev.boardPlan, frames } };
+            });
+          } else if (event.type === "poster_image") {
+            setRunState((prev) => {
+              if (!prev?.pitchKit) return prev;
+              return {
+                ...prev,
+                pitchKit: {
+                  ...prev.pitchKit,
+                  posterConcept: { ...prev.pitchKit.posterConcept, posterUrl: event.posterUrl },
+                },
+              };
+            });
+          } else if (event.type === "done") {
+            flushLogs();
+            setRunState((prev) => (prev ? {
+              ...prev,
+              id: event.runId || prev.id,
+              status: "complete",
+              modelsUsed: event.modelsUsed && event.modelsUsed.length > 0
+                ? Array.from(new Set([...(prev.modelsUsed || []), ...event.modelsUsed]))
+                : prev.modelsUsed,
+            } : null));
+            setIsRunning(false);
+          } else if (event.type === "error") {
+            flushLogs();
+            setRunState((prev) => (prev ? { ...prev, status: "error", error: event.message } : null));
+            setAgentStatuses((prev) => ({ ...prev, director: "error" }));
+            setIsRunning(false);
           }
-        }
-      }
+        },
+        onPrematureEOF: (errorMessage: string) => {
+          enqueueLog({
+            agent: "director",
+            level: "error",
+            message: errorMessage,
+            timestamp: new Date().toISOString(),
+          });
+          flushLogs();
+          setRunState((prev) => (prev ? { ...prev, status: "error", error: errorMessage } : null));
+          setAgentStatuses((prev) => ({ ...prev, director: "error" }));
+          setIsRunning(false);
+        },
+        onError: (err: Error | string) => {
+          const networkErrMsg = err instanceof Error ? err.message : String(err);
+          enqueueLog({
+            agent: "director",
+            level: "error",
+            message: `Network transport error: ${networkErrMsg}`,
+            timestamp: new Date().toISOString(),
+          });
+          flushLogs();
+          setRunState((prev) => (prev ? { ...prev, status: "error", error: networkErrMsg } : null));
+          setAgentStatuses((prev) => ({ ...prev, director: "error" }));
+          setIsRunning(false);
+        },
+      });
     } catch (err: any) {
       if (err?.name === "AbortError") {
         console.log("Studio stream aborted cleanly.");
+        enqueueLog({
+          agent: "director",
+          level: "warn",
+          message: "Studio run canceled by user.",
+          timestamp: new Date().toISOString(),
+        });
+        flushLogs();
+        setRunState((prev) => (prev ? { ...prev, status: "idle" } : null));
+        setAgentStatuses((prev) => ({ ...prev, director: "idle" }));
+        setIsRunning(false);
         return;
       }
       console.error("Studio execution error:", err);
+      const networkErrorMessage = err instanceof Error ? err.message : String(err);
+      enqueueLog({
+        agent: "director",
+        level: "error",
+        message: `Network transport error: ${networkErrorMessage}`,
+        timestamp: new Date().toISOString(),
+      });
       flushLogs();
-      setIsRunning(false);
+      setRunState((prev) => (prev ? { ...prev, status: "error", error: networkErrorMessage } : null));
       setAgentStatuses((prev) => ({ ...prev, director: "error" }));
+      setIsRunning(false);
     }
   };
 
@@ -588,11 +649,19 @@ export default function BacklotStudioPage() {
             </div>
           ) : (
             <div className="hidden lg:flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#040508] border border-studio-800 text-[11px] text-studio-300">
-              <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse flex-shrink-0" />
-              <span className="font-semibold text-emerald-300">
+              <span className={`h-2 w-2 rounded-full flex-shrink-0 ${
+                runState?.modelsUsed && runState.modelsUsed.length > 0
+                  ? "bg-emerald-400 animate-pulse"
+                  : "bg-studio-500"
+              }`} />
+              <span className={`font-semibold ${
+                runState?.modelsUsed && runState.modelsUsed.length > 0
+                  ? "text-emerald-300"
+                  : "text-studio-400"
+              }`}>
                 {runState?.modelsUsed && runState.modelsUsed.length > 0
-                  ? `${runState.modelsUsed.find((m) => m.startsWith("gemini")) || "gemini-3.5-flash"} Live`
-                  : "Gemini 3.5 Flash Live"}
+                  ? `${runState.modelsUsed.find((m) => m.startsWith("gemini")) || runState.modelsUsed[0]} Live`
+                  : "Model Unknown"}
               </span>
             </div>
           )}
@@ -824,6 +893,35 @@ export default function BacklotStudioPage() {
               aria-labelledby={`tab-${activeTab}`}
               className="w-full min-w-0"
             >
+              {runState?.status === "error" && (
+                <div
+                  role="alert"
+                  data-testid="stream-error-banner"
+                  className="mb-6 p-4 rounded-xl bg-rose-950/40 border border-rose-500/50 text-rose-200 flex items-start justify-between gap-3 shadow-lg animate-document-land"
+                >
+                  <div className="flex items-start gap-3">
+                    <AlertTriangle className="w-5 h-5 text-rose-400 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <h4 className="text-xs font-mono font-bold text-rose-300 uppercase tracking-wide">
+                        Studio Run Incomplete (Error)
+                      </h4>
+                      <p className="text-xs text-rose-300/90 mt-1 font-mono">
+                        {runState.error || "Execution terminated unexpectedly before all deliverables were completed."}
+                      </p>
+                      <p className="text-[11px] text-rose-400/80 mt-1">
+                        Deliverable package is incomplete. Correct screenplay issues or retry to produce a verified deliverable suite.
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={handleStartRun}
+                    className="px-3 py-1.5 rounded-md bg-rose-500 hover:bg-rose-400 text-black font-mono font-bold text-xs flex items-center gap-1.5 flex-shrink-0 transition cursor-pointer"
+                  >
+                    <RefreshCw className="w-3.5 h-3.5" /> Retry Run
+                  </button>
+                </div>
+              )}
+
               {activeTab === "COVERAGE" && (
                 runState?.coverage ? (
                   <CoverageDossier coverage={runState.coverage} title={runState.title} />

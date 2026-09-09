@@ -89,11 +89,14 @@ export class ParallelSearchClient {
         if (!item.url) continue;
         const title = item.title || "Market Analysis Source";
         const url = item.url;
-        let snippet = "Verified market evidence record.";
+        let snippet = "";
 
         if (Array.isArray(item.excerpts) && item.excerpts.length > 0) {
-          snippet = item.excerpts[0].trim();
-        } else if (item.snippet) {
+          const firstNonEmpty = item.excerpts.find((e) => typeof e === "string" && e.trim().length > 0);
+          if (firstNonEmpty) {
+            snippet = firstNonEmpty.trim();
+          }
+        } else if (typeof item.snippet === "string" && item.snippet.trim().length > 0) {
           snippet = item.snippet.trim();
         }
 
